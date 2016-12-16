@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# This bash script will be executed by the Jenkins build tool.
+# Add addtional testing that you would like to preform for the Docker inside here.

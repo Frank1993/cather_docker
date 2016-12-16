@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# This file is only for reference and to test the custom-built Docker feature in the WUI
+# It will read in the values from the command line (supplied by the run-cntk-job script)
+# and print them to a testRunCust.txt saved in the log directory. All but the running 
+# time (-r|--runningTime) are hardcoded parameters from the GUI.  The running time can be
+# used in the extra parameters field of the GUI.  The main loop will run for the specified
+# running time and print a statement to the output file every 5 seconds.  This is to 
+# monitor through ssh (with 'tail -f -n +1 testRunCust.txt') that the script was started 
+# and is running.  Making a short running time you can test that the job completes correctly.
+
+CONFIG_FILE=NONE
+DATA_DIR=NONE
+LOG_DIR=$PWD
+MODEL_DIR=NONE
+PREV_MODEL_PATH=NONE
+IS_MEMCHECK=FALSE
+RUNNING_TIME=60     # Seconds (1 minute)
+
+# parsing command line arguments:
+while [[ $# > 0 ]]
+do
+key="$1"
+
+case $key in
+    -h|--help)
+    echo "Usage: runCust [run_options]"
+    echo "Options:"
+    echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
+    echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
+    echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
+    echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  -p|--prevModelPath <path> - directory w/ filename which holds models to start with (default NONE)"
+    echo "  -r|--runningTime <seconds> - number of seconds the script should run (default 1800)"
+    echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    exit 1
+    ;;
+    -c|--configFile)
+    CONFIG_FILE="$2"
+    shift # pass argument
+    ;;
+    -d|--dataDir)
+    DATA_DIR="$2"
+    shift # pass argument
+    ;;
+    -l|--logDir)
+    LOG_DIR="$2"
+    shift # pass argument
+    ;;
+    -m|--modelDir)
+    MODEL_DIR="$2"
+    shift # pass argument
+    ;;
+    -p|--prevModelPath)
+    PREV_MODEL_PATH="$2"
+    shift # pass argument
+    ;;
+    -r|--runningTime)
+    RUNNING_TIME="$2"
+    shift # pass argument
+    ;;
+    --memCheck)
+    IS_MEMCHECK=TRUE
+    ;;
+    *)
+    echo Unkown option $key
+    ;;
+esac
+shift # past argument or value
+done
+
+iteration=0
+timeIncrement=5    # Seconds
+seconds=0
+progress=00.00
+
+echo "runCust: Using private-custom-docker-image"
+echo "runCust: CONFIG_FILE=$CONFIG_FILE"
+echo "runCust: DATA_DIR=$DATA_DIR"
+echo "runCust: LOG_DIR=$LOG_DIR"
+echo "runCust: MODEL_DIR=$MODEL_DIR"
+echo "runCust: PREV_MODEL_PATH=$PREV_MODEL_PATH"
+echo "runCust: RUNNING_TIME=$RUNNING_TIME"
+echo "runCust: IS_MEMCHECK=$IS_MEMCHECK"
+
+while [ $seconds -lt $RUNNING_TIME ]; do
+    current_date_time="`date +"[%d/%b/%Y %k:%M:%S %z]"`";
+    outputLine="runCust: $current_date_time Iteration #$iteration"
+    echo $outputLine
+    progress=$(bc -l <<< "100.00 * $iteration * ($timeIncrement / $RUNNING_TIME)" | awk '{printf "%05.2f", $0}') 
+    echo "PROGRESS: $progress%"
+    let "seconds += timeIncrement"
+    let "iteration += 1"
+    sleep $timeIncrement
+done
+
+outputLine="runCust: $current_date_time DONE!!!"
+echo $outputLine
+echo "PROGRESS: 100.00%"

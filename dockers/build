@@ -1,0 +1,106 @@
+#!/bin/bash
+
+# Global Variables
+BUILD_DEPS="TRUE"
+NO_CACHE=""
+TARGET=""
+
+exit-with-error()
+{
+    echo -e "$@"
+    exit 1
+}
+
+# parsing command line arguments
+while [[ $# > 0 ]]; do
+    key="$1"
+
+    case $key in
+        -h|--help)
+            echo ""
+            echo "Usage: build [options] <target>"
+            echo ""
+            echo "Options:"
+            echo "  -nd|--no-deps    - skip building of dependencies  (default - Build dependencies)"
+            echo "  -nc|--no-cache   - does not use the Docker cache  (default - Build with cache)"
+            echo ""
+            echo "If no target is specified then all directories are built (except custom-dockers)"
+            echo "If a target is specified then directory (within custom-dockers) must exist"
+            exit 1
+            ;;
+        -nd|--no-deps)
+            BUILD_DEPS="FALSE"
+            ;;
+        -nc|--no-cache)
+            NO_CACHE="--no-cache"
+            ;;
+        -*)
+            exit-with-error "Unkown option $key"
+            ;;
+        *)
+            if [ ! -z $TARGET ]; then
+                exit-with-error "ERROR: Only one target can be specified"
+            fi
+            TARGET="$key"
+            ;;
+    esac
+    shift # past argument or value
+done
+
+echo ""
+
+docker-wrapper()
+{
+    # Set this variable to TRUE if you are testing changes.
+    # This will stop the docker commands for debugging script.
+    if [ "${debug^^}" != "TRUE" ]; then
+        docker $@ || exit-with-error "ERROR: Docker build failed"
+    fi
+}
+
+build-docker()
+{
+    local dir="$1"
+    
+    if [ $BUILD_DEPS == "TRUE" ] && [ ! -z $TARGET ]; then
+        inherits=`grep -i ^FROM $dir/Dockerfile* | awk '{print $2}'`
+        inherit_dir=${inherits//-devel}
+        echo "Building docker: $inherits in $inherit_dir"
+        docker-wrapper build -t $inherits -f ../$inherit_dir/$inherits/Dockerfile $NO_CACHE ../$inherit_dir/$inherits
+    fi
+    
+    ls
+    echo "Building docker: $dir"
+    docker-wrapper build -t $dir -f $dir/Dockerfile $NO_CACHE $dir
+}
+
+if [ "$TARGET" == "" ]; then
+    BUILD_DEPS=1
+    directories=*
+    
+    # Loop through directories and build everything
+    for directory in $directories; do
+        if [ -d $directory ] && [ $directory != "custom-dockers" ]; then
+            echo "Entering directory: $directory"
+            cd $directory
+            sub_directories=*
+            for sub_directory in $sub_directories; do
+                if [ -d $sub_directory ] && [ -f $sub_directory/Dockerfile ]; then
+                    build-docker $sub_directory
+                fi
+            done
+            cd ..
+        fi
+    done
+else
+    if [ ! -d "custom-dockers/$TARGET" ]; then
+        exit-with-error "custom-dockers/$TARGET does not exist, aborting..."
+    fi
+    cd custom-dockers
+    build-docker $TARGET
+    cd ..
+fi
+
+echo ""
+echo "Completed Successfully"
+echo ""
