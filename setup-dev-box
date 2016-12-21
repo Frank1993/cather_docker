@@ -1,0 +1,64 @@
+#! /bin/bash
+
+function run()
+{
+   echo ============ Running sudo $@ ============
+   sudo $@ || exit 1
+}
+
+sudo apt-get update
+sudo apt-get -y install unzip
+
+# We need to de-activate dnsmasq service. When the service is running, /etc/resolv.conf doesn't have IPs
+# of real DNS servers. Docker recognizes that and defaults to 8.8.8.8 (Google public DNS), however
+# the latter is blocked by MSIT, so in order to get Docker working by default, simply disabling dnsmasq
+grep -q "nameserver 127\." /etc/resolv.conf && {
+    echo "De-activating dnsmasq service, commenting out dns=dnsmasq line in /etc/NetworkManager/NetworkManager.conf"
+    sed -E 's/^(dns=dnsmasq)/#\1/' </etc/NetworkManager/NetworkManager.conf >/tmp/NetworkManager.conf || exit 1
+    run "cp -f /tmp/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf"
+    run "restart network-manager"
+    sleep 1
+    grep -q "nameserver 127\." /etc/resolv.conf && {
+        echo "ERROR: something went wrong, /etc/resolv.conf still doesn not have real IP addresses for DNS servers"
+        echo "       you will need to tune network settnigs manually"
+    }
+}
+
+# Installing docker on demand
+if ! which docker > /dev/null; then
+    echo "============ Installing Docker directly from docker.com website ============"
+    wget -qO- https://get.docker.com/ | sh || exit 1
+    sudo service docker stop >/dev/null 2>&1
+    run "service docker start"
+fi
+
+# Checking Docker
+if docker -v > /dev/null; then
+  # The following if statement should last until dockers get into versions >= 10
+  echo "$(docker -v)"
+  if docker -v | grep -q "version 1\.[6-9]\." > /dev/null || docker -v | grep -q "version [1-9]\.[1-9][0-9]\." > /dev/null || docker -v | grep -q "version [2-9]\." > /dev/null; then
+     # Adding current user to the docker group
+     sudo su -l $USER -c groups | grep -q docker || run gpasswd -a ${USER} docker
+     groups | grep -q docker || { echo "ATTENTION: Current user has been added to docker group and you need to logoff and logon to see those changes. Alternatively if you don't want to relogin now then type 'sudo su -l ${USER}' in your terminal and run commands from that shell"; }
+  else
+    echo "Docker is installed but the supported version didn't match (should be 1.6 or higher)."
+  fi
+else
+    echo "Docker isn't installed. Please install it manualy from the Docker website"
+fi
+
+# Configuring registry access for docker
+if ! grep -q "^DOCKER_OPTS=.*--insecure-registry=master.ccp.philly" /etc/default/docker; then
+    echo Configuring docker access to insecure registry service running on local cluster...
+    echo ========= updating /etc/default/docker
+    sudo sh -c 'echo DOCKER_OPTS=\"\$DOCKER_OPTS --insecure-registry=192.168.3.5:5000 --insecure-registry=10.177.92.5:5000 --insecure-registry=master.ccp:5000 --insecure-registry=master.ccp.philly.selfhost.corp.microsoft.com:5000\" >> /etc/default/docker'
+    run service docker restart || exit 1
+fi
+
+# Installing nvidia-docker on demand
+if ! which nvidia-docker > /dev/null; then
+    echo "============ Installing nvidia-docker directly from github website ============"
+    wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.0-rc.3/nvidia-docker_1.0.0.rc.3-1_amd64.deb || exit 1
+    sudo dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb
+    run "service docker start"
+fi

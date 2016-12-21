@@ -1,0 +1,159 @@
+#!/bin/bash
+
+# Global Variables
+CUSTOM_DOCKER_NAME=""
+REPLACE="false"
+BUILD_ONLY="false"
+NO_CACHE="false"
+DESCRIPTION=""
+REGISTRY_IP="10.177.92.5"
+USERNAME=""
+API_TOKEN=""
+
+exit-with-error()
+{
+    echo -e "$@"
+    exit 1
+}
+
+# parsing command line arguments
+while [[ $# > 0 ]]; do
+    key="$1"
+
+    case $key in
+        -h|--help)
+            echo ""
+            echo "Usage: jenkins-submit [options] custom-docker-name"
+            echo ""
+            echo "  custom-docker-name - name for your docker image (Format regex: custom-[a-z0-9-]+$)"
+            echo "                       this is the directory in the custom-dockers directory"
+            echo ""
+            echo "Options:"
+            echo "  -r|--replace              - replace current docker if it exists  (default - NO)"
+            echo "  -b|--build-only           - only build the docker, do not push   (default - NO)"
+            echo "  -nc|--no-cache            - build exerything from scratch        (default - NO)"
+            echo "  -d|--description \"descip\" - decription of the custom docker      (default - NONE)"
+            echo "  -u|--username <input>     - user and domain (i.e. user@domain    (default - NONE)"
+            echo "  -a|--api-token            - api token for username               (default - NONE)"
+            echo "                              This can be found in Jenkins from user configure"
+            echo ""
+            echo "If this is the first time this docker is being added to the repositories,"
+            echo "then a description must be specified"
+            exit 1
+            ;;
+        -r|--replace)
+            REPLACE="true"
+            ;;
+        -b|--build-only)
+            BUILD_ONLY="true"
+            ;;
+        -nc|--no-cache)
+            NO_CACHE="true"
+            ;;
+        -d|--description)
+            DESCRIPTION="$2"
+            shift
+            ;;
+        -u|--username)
+            USERNAME="$2"
+            shift
+            ;;
+        -a|--api-token)
+            API_TOKEN="$2"
+            shift
+            ;;
+        -*)
+            exit-with-error "Unkown option $key"
+            ;;
+        *)
+            if [ ! -z $CUSTOM_DOCKER_NAME ]; then
+                exit-with-error "ERROR: Only one custom-docker can be specified"
+            fi
+            CUSTOM_DOCKER_NAME="$key"
+            ;;
+    esac
+    shift # past argument or value
+done
+
+if [ -z $USERNAME ]; then
+    exit-with-error "ERROR: username must be specified, use --help for more info"
+fi
+
+if [ -z $API_TOKEN ]; then
+    exit-with-error "ERROR: api-token must be specified, use --help for more info"
+fi
+
+if [ -z $CUSTOM_DOCKER_NAME ]; then
+    exit-with-error "ERROR: custom-docker-name must be specified, use --help for more info"
+else
+    CUSTOM_DOCKER_ZIP=$PWD/zip-files/$CUSTOM_DOCKER_NAME.zip
+    if [ ! -f $CUSTOM_DOCKER_ZIP ]; then
+        exit-with-error "ERROR: missing zip file - $CUSTOM_DOCKER_ZIP"
+    fi
+fi
+
+# Test for the docker in the repo, if it exists warn the user
+echo ""
+echo "==================== Examine the ccp-test for the image ====================" 
+echo "Searching for the docker image: $CUSTOM_DOCKER_NAME"
+RESPONSE=$(curl -s -X GET http://$REGISTRY_IP:5000/v2/ccp-test/infrastructure/tags/list)
+SEARCH_STRING="\"$CUSTOM_DOCKER_NAME\""
+if echo $RESPONSE | grep -q "$SEARCH_STRING"; then
+    echo "Found the image \"$CUSTOM_DOCKER_NAME\" in the CCP registry"
+else
+    echo "Did not find the image \"$CUSTOM_DOCKER_NAME\" in the CCP registry"
+
+    if [ -z "$DESCRIPTION" ]; then
+        exit-with-error "ERROR: a description must be specified, use --help for more info"
+    fi
+fi
+
+echo ""
+echo "CUSTOM_DOCKER_NAME = $CUSTOM_DOCKER_NAME"
+echo "REPLACE = $REPLACE"
+echo "BUILD_ONLY = $BUILD_ONLY"
+echo "NO_CACHE = $NO_CACHE"
+echo "DESCRIPTION = $DESCRIPTION"
+
+encodeURIComponents()
+{
+    local string=${1}
+    local strlen=${#string}
+    local encoded=""
+    local pos c o
+
+    for (( pos=0 ; pos<strlen ; pos++ )); do
+        c=${string:$pos:1}
+        case "$c" in
+            [-_.~a-zA-Z0-9] ) o="${c}" ;;
+            * )               printf -v o '%%%02x' "'$c"
+        esac
+        encoded+="${o}"
+    done
+    
+    echo "${encoded}"
+}
+
+#USERNAME=$(encodeURIComponents $USERNAME)
+    
+CMD="http://$USERNAME:$API_TOKEN@jenkins.ccp.philly.selfhost.corp.microsoft.com/view/All/job/CustomDocker-BuildAndTest/buildWithParameters?"
+CMD+="custom-docker-files.zip=$(encodeURIComponents $CUSTOM_DOCKER_ZIP)&"
+CMD+="CUSTOM_DOCKER_NAME=$(encodeURIComponents $CUSTOM_DOCKER_NAME)&"
+CMD+="REPLACE_CURRENT_DOCKER=$REPLACE&"
+CMD+="BUILD_ONLY=$BUILD_ONLY&"
+CMD+="NO_CACHED=$NO_CACHE&"
+CMD+="DESCRIPTION=$(encodeURIComponents "$DESCRIPTION")"
+
+CMD="http://jenkins.ccp.philly.selfhost.corp.microsoft.com/view/All/job/CustomDocker-BuildAndTest/buildWithParameters? "
+CMD+="--user $USERNAME:$API_TOKEN "
+CMD+="--form custom-docker-files.zip=@$CUSTOM_DOCKER_ZIP "
+CMD+="--form CUSTOM_DOCKER_NAME=$CUSTOM_DOCKER_NAME "
+CMD+="--form REPLACE_CURRENT_DOCKER=$REPLACE "
+CMD+="--form BUILD_ONLY=$BUILD_ONLY "
+CMD+="--form NO_CACHED=$NO_CACHE "
+CMD+="--form DESCRIPTION=$(encodeURIComponents "$DESCRIPTION")"
+
+echo ""
+echo "Jenkins command:"
+echo "$CMD"
+curl -X POST $CMD

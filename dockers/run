@@ -1,0 +1,84 @@
+#!/bin/bash
+
+CONFIGURATION_FILE=""
+DATA_DIRECTORY=""
+CUSTOM_DOCKER_NAME=""
+ADDITIONAL_ARGUMENTS=""
+
+if [[ "$1" =~ -h|--help ]] ; then
+    echo "Usage: run custom-docker-name [runCust-args]"
+    echo ""
+    echo "  custom-docker-name - name for your docker image (Format regex: custom-[a-z0-9-]+$)"
+    echo "                       this is the directory in the custom-dockers directory"
+    echo "  runCust-args       - these are additional arguments for runCust"
+    echo "                       gets appended to the runCust execution command"
+    exit 1
+fi
+
+CUSTOM_DOCKER_NAME=$1
+shift
+ADDITIONAL_ARGUMENTS="$@"
+
+if [ -z $CUSTOM_DOCKER_NAME ]; then
+    exit-testing 1 "ERROR: custom-docker-name must be specified"
+fi
+
+CUSTOM_DOCKER_DIR=$PWD/custom-dockers/$CUSTOM_DOCKER_NAME
+if [ ! -d $CUSTOM_DOCKER_DIR ]; then
+    exit-testing 1 "ERROR: $CUSTOM_DOCKER_DIR does not exist"
+fi
+
+# Get the Configuration file name and the data directory
+contents=$CUSTOM_DOCKER_DIR/*
+required="Dockerfile runCust testCust jenkins_config"
+for content in $contents; do
+    if [[ $required != *"${content##*/}"* ]]; then
+        if [ -d $content ] && [ -z $DATA_DIRECTORY ]; then
+            DATA_DIRECTORY=${content##*/}
+        elif [ -f $content ] && [ -z $CONFIGURATION_FILE ]; then
+            CONFIGURATION_FILE=${content##*/}
+        else
+            exit-testing 1 "ERROR: Too many files or directories included\nPlease refer to SharePoint for valid directory setup"
+        fi
+    fi
+done
+
+if [ ! -f "$CUSTOM_DOCKER_DIR/$CONFIGURATION_FILE" ]; then 
+    echo "ERROR: $CUSTOM_DOCKER_DIR/$CONFIGURATION_FILE missing"
+    exit 1
+fi
+
+if [ ! -d "$CUSTOM_DOCKER_DIR/$DATA_DIRECTORY" ]; then 
+    echo "ERROR: $CUSTOM_DOCKER_DIR/$DATA_DIRECTORY missing"
+    exit 1
+fi
+
+OUTPUT_DIRECTORY=$PWD"/run-output/$CUSTOM_DOCKER_NAME"
+
+echo ""
+echo "CUSTOM_DOCKER_NAME = $CUSTOM_DOCKER_NAME"
+echo "CONFIGURATION_FILE = $CONFIGURATION_FILE"
+echo "DATA_DIRECTORY = $DATA_DIRECTORY"
+echo "OUTPUT_DIRECTORY = $OUTPUT_DIRECTORY"
+
+echo ""
+echo "==================== Making sure required packages are installed ===================="
+declare -a PACKAGES=("docker" "nvidia-docker")
+for pkg_name in "${PACKAGES[@]}"; do
+    if [ -z "$(which $pkg_name)" ]; then
+        echo ""
+        echo "ERROR: $pkg_name is not installed"
+        echo "       Try pulling the latest from repo and re-running setup-script."
+        exit 1
+    else
+        echo "$pkg_name is installed, can continue"
+    fi
+done
+
+echo ""
+echo "==================== Running the docker container ===================="
+mkdir -p $OUTPUT_DIRECTORY
+DOCKER_COMMAND="/home/custom/runCust --configFile /var/scratch/$CONFIGURATION_FILE --dataDir /var/hdfs --logDir /var/logs --modelDir /var/models $ADDITIONAL_ARGUMENTS"
+echo "Docker command: nvidia-docker run --rm -ti -v $CUSTOM_DOCKER_DIR:/var/scratch -v $CUSTOM_DOCKER_DIR:/var/hdfs -v $OUTPUT_DIRECTORY:/var/logs​ -v $OUTPUT_DIRECTORY:/var/models​ $CUSTOM_DOCKER_NAME $DOCKER_COMMAND"
+echo ""
+nvidia-docker run --rm -ti -v $CUSTOM_DOCKER_DIR:/var/scratch -v $CUSTOM_DOCKER_DIR:/var/hdfs -v $OUTPUT_DIRECTORY:/var/logs​ -v $OUTPUT_DIRECTORY:/var/models​ $CUSTOM_DOCKER_NAME $DOCKER_COMMAND

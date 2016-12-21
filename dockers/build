@@ -69,27 +69,20 @@ build-docker()
         docker-wrapper build -t $inherits -f ../$inherit_dir/$inherits/Dockerfile $NO_CACHE ../$inherit_dir/$inherits
     fi
     
-    ls
-    echo "Building docker: $dir"
-    docker-wrapper build -t $dir -f $dir/Dockerfile $NO_CACHE $dir
+    echo "Building docker: ${dir##*/}"
+    docker-wrapper build -t ${dir##*/} -f $dir/Dockerfile $NO_CACHE $dir
 }
 
 if [ "$TARGET" == "" ]; then
-    BUILD_DEPS=1
-    directories=*
+    BUILD_DEPS="FALSE"
+    directories=$(find . -type d)
     
     # Loop through directories and build everything
     for directory in $directories; do
-        if [ -d $directory ] && [ $directory != "custom-dockers" ]; then
-            echo "Entering directory: $directory"
-            cd $directory
-            sub_directories=*
-            for sub_directory in $sub_directories; do
-                if [ -d $sub_directory ] && [ -f $sub_directory/Dockerfile ]; then
-                    build-docker $sub_directory
-                fi
-            done
-            cd ..
+        if [[ ! ${directory#./} =~ ^custom-dockers ]] && [ -f ${directory#./}/Dockerfile ]; then
+            echo "Entering directory: ${directory#./}"
+            build-docker ${directory#./}
+            echo ""
         fi
     done
 else
