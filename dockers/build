@@ -38,7 +38,7 @@ while [[ $# > 0 ]]; do
             exit-with-error "Unkown option $key"
             ;;
         *)
-            if [ ! -z $TARGET ]; then
+            if [ ! -z "$TARGET" ]; then
                 exit-with-error "ERROR: Only one target can be specified"
             fi
             TARGET="$key"
@@ -63,10 +63,9 @@ build-docker()
     local dir="$1"
     
     if [ $BUILD_DEPS == "TRUE" ] && [ ! -z $TARGET ]; then
-        inherits=`grep -i ^FROM $dir/Dockerfile* | awk '{print $2}'`
-        inherit_dir=${inherits//-devel}
-        echo "Building docker: $inherits in $inherit_dir"
-        docker-wrapper build -t $inherits -f ../$inherit_dir/$inherits/Dockerfile $NO_CACHE ../$inherit_dir/$inherits
+        parent=$(grep -i ^FROM $dir/Dockerfile | awk '{print $2}')
+        echo "Building docker: $parent in inherit-dockers"
+        docker-wrapper build -t $parent -f ../inherit-dockers/$parent/Dockerfile $NO_CACHE ../inherit-dockers/$parent
     fi
     
     echo "Building docker: ${dir##*/}"
@@ -75,11 +74,11 @@ build-docker()
 
 if [ "$TARGET" == "" ]; then
     BUILD_DEPS="FALSE"
-    directories=$(find . -type d)
+    directories=$(find . -name custom-dockers* -prune -or -type d)
     
     # Loop through directories and build everything
     for directory in $directories; do
-        if [[ ! ${directory#./} =~ ^custom-dockers ]] && [ -f ${directory#./}/Dockerfile ]; then
+        if [ -f ${directory#./}/Dockerfile ]; then
             echo "Entering directory: ${directory#./}"
             build-docker ${directory#./}
             echo ""

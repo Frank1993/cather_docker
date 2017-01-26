@@ -1,4 +1,4 @@
-zip-files/*
+zip-files/
 *.zip
-run-output/*
+run-output/
 .api-token

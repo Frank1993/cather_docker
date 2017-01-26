@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This file is only for reference and to test the custom-built Docker feature in the WUI
-# It will read in the values from the command line (supplied by the run-cntk-job script)
+# It will read in the values from the command line (supplied by the Philly Cluster)
 # and print them to a testRunCust.txt saved in the log directory. All but the running 
 # time (-r|--runningTime) are hardcoded parameters from the GUI.  The running time can be
 # used in the extra parameters field of the GUI.  The main loop will run for the specified
@@ -74,7 +74,6 @@ timeIncrement=5    # Seconds
 seconds=0
 progress=00.00
 
-echo "runCust: Using private-custom-docker-image"
 echo "runCust: CONFIG_FILE=$CONFIG_FILE"
 echo "runCust: DATA_DIR=$DATA_DIR"
 echo "runCust: LOG_DIR=$LOG_DIR"

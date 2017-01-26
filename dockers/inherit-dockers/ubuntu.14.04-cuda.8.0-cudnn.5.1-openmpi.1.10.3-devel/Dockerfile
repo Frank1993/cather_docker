@@ -1,8 +1,7 @@
-FROM nvidia/cuda:8.0-cudnn5-runtime
+FROM nvidia/cuda:8.0-cudnn5-devel
 
 # Environment variables
-ENV CUB_VERSIONS="1.4.1 1.5.2" \
-    STAGE_DIR=/root/install \
+ENV STAGE_DIR=/root/gpu/install \
     CUDNN_DIR=/usr/local/cudnn \
     CUDA_DIR=/usr/local/cuda-8.0 \
     OPENMPI_VERSIONBASE=1.10
@@ -36,17 +35,11 @@ RUN apt-get -y update && \
       rsync \
       realpath \
    # Used in MVAPICH2 MPI install:
-      rpm2cpio
+      rpm2cpio \ &&
+      rm -rf /var/lib/apt/lists/* \ &&
+      apt-get autoremove
 
 WORKDIR $STAGE_DIR
-
-##################### NVIDIA CUB #####################
-
-RUN for CUB_VERSION in $CUB_VERSIONS; do \
-      CUB_STRING=cub-$CUB_VERSION; \
-      wget -O - --no-verbose https://github.com/NVlabs/cub/archive/$CUB_VERSION.tar.gz | tar -xzf - -C /usr/local; \
-      test -f /usr/local/$CUB_STRING/cub/cub.cuh; \
-    done
 
 ##################### OPENMPI #####################
 
