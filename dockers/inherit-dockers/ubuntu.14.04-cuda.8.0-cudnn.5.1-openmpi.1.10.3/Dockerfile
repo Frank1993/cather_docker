@@ -1,7 +1,7 @@
-FROM nvidia/cuda:8.0-cudnn5-runtime
+FROM nvidia/cuda:8.0-cudnn5-runtime-ubuntu14.04
 
 # Environment variables
-ENV STAGE_DIR=/root/install \
+ENV STAGE_DIR=/root/gpu/install \
     CUDNN_DIR=/usr/local/cudnn \
     CUDA_DIR=/usr/local/cuda-8.0 \
     OPENMPI_VERSIONBASE=1.10
@@ -12,31 +12,10 @@ RUN mkdir -p $STAGE_DIR
 
 RUN apt-get -y update && \
     apt-get -y install \ 
-      build-essential \
       wget \
-      autotools-dev \
-      byacc \
-      unzip \
-      cmake \
-      pkg-config \
-      gdb \
-      gcc \
-      nano \
-      vim \
-      joe \
-      curl \
       jq \
-      gawk \
-      psmisc \
       openssh-server \
-      openssh-client \
-      git \
-      inotify-tools \
-      rsync \
-      realpath \
-   # Used in MVAPICH2 MPI install:
-      rpm2cpio \ &&
-      rm -rf /var/lib/apt/lists/* \ &&
+      openssh-client \ &&
       apt-get autoremove
 
 WORKDIR $STAGE_DIR
