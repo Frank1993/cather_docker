@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Global Variables
-SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+SCRIPT_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DEPS="TRUE"
 DEBUG="FALSE"
 NO_CACHE=""
@@ -56,11 +56,7 @@ docker-wrapper()
     # Set this variable to TRUE if you are testing changes.
     # This will stop the docker commands for debugging script.
     if [ "${DEBUG^^}" != "TRUE" ]; then
-        docker $@ 
-        if [ $? != 0 ]; then
-            # Try with sudo
-            sudo docker $@ || exit-with-error "ERROR: Docker build failed"
-        fi
+        docker $@  || exit-with-error "ERROR: Docker build failed"
         echo ""
     fi
 }
@@ -80,19 +76,19 @@ build-docker()
         docker-wrapper build -t $parent -f $SCRIPT_DIR/inherit-dockers/$parent/Dockerfile $NO_CACHE $SCRIPT_DIR/inherit-dockers/$parent
     fi
     
-    echo "Building docker: ${dir##*/}"
-    echo "Build command: docker build -t ${dir##*/} -f $SCRIPT_DIR/$parent_dir/$dir/Dockerfile $NO_CACHE $SCRIPT_DIR/$parent_dir/$dir"
-    docker-wrapper build -t ${dir##*/} -f $SCRIPT_DIR/$parent_dir/$dir/Dockerfile $NO_CACHE $SCRIPT_DIR/$parent_dir/$dir
+    echo "Building docker: $dir"
+    echo "Build command: docker build -t $dir -f $SCRIPT_DIR/$parent_dir/$dir/Dockerfile $NO_CACHE $SCRIPT_DIR/$parent_dir/$dir"
+    docker-wrapper build -t $dir -f $SCRIPT_DIR/$parent_dir/$dir/Dockerfile $NO_CACHE $SCRIPT_DIR/$parent_dir/$dir
 }
 
 if [ -z "$TARGET" ]; then
     BUILD_DEPS="FALSE"
-    directories=$(find $SCRIPT_DIR/inherit-dockers -type d)
+    directories=$(find $SCRIPT_DIR/inherit-dockers/* -type d)
     
     # Loop through directories in inherit-dockers and build everything
     for directory in $directories; do
-        if [ -f ${directory#./}/Dockerfile ]; then
-            build-docker ${directory#./} "inherit-dockers"
+        if [ -f $SCRIPT_DIR/inherit-dockers/${directory##*/}/Dockerfile ]; then
+            build-docker ${directory##*/} "inherit-dockers"
         fi
     done
 else
