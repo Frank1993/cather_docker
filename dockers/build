@@ -56,7 +56,11 @@ docker-wrapper()
     # Set this variable to TRUE if you are testing changes.
     # This will stop the docker commands for debugging script.
     if [ "${DEBUG^^}" != "TRUE" ]; then
-        docker $@ || exit-with-error "ERROR: Docker build failed"
+        docker $@ 
+        if [ $? != 0 ]; then
+            # Try with sudo
+            sudo docker $@ || exit-with-error "ERROR: Docker build failed"
+        fi
         echo ""
     fi
 }
