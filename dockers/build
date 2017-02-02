@@ -76,10 +76,12 @@ build-docker()
             exit-with-error "$SCRIPT_DIR/inherit-dockers/$parent does not exist, aborting..."
         fi
         echo "Building docker: $parent"
+        echo "Build command: docker build -t $parent -f $SCRIPT_DIR/inherit-dockers/$parent/Dockerfile $NO_CACHE $SCRIPT_DIR/inherit-dockers/$parent"
         docker-wrapper build -t $parent -f $SCRIPT_DIR/inherit-dockers/$parent/Dockerfile $NO_CACHE $SCRIPT_DIR/inherit-dockers/$parent
     fi
     
     echo "Building docker: ${dir##*/}"
+    echo "Build command: docker build -t ${dir##*/} -f $SCRIPT_DIR/$parent_dir/$dir/Dockerfile $NO_CACHE $SCRIPT_DIR/$parent_dir/$dir"
     docker-wrapper build -t ${dir##*/} -f $SCRIPT_DIR/$parent_dir/$dir/Dockerfile $NO_CACHE $SCRIPT_DIR/$parent_dir/$dir
 }
 
