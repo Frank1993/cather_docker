@@ -9,6 +9,7 @@ DESCRIPTION=""
 REGISTRY_IP="10.177.92.5"
 USERNAME=""
 API_TOKEN=""
+SCRIPT_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 exit-with-error()
 {
@@ -25,17 +26,17 @@ while [[ $# > 0 ]]; do
             echo ""
             echo "Usage: jenkins-submit [options] custom-docker-name"
             echo ""
-            echo "  custom-docker-name - name for your docker image (Format regex: custom-[a-z0-9-]+$)"
+            echo "  custom-docker-name - name for your docker image (Format regex: ^custom-[a-z0-9-]+$)"
             echo "                       this is the directory in the custom-dockers directory"
             echo ""
             echo "Options:"
-            echo "  -r|--replace              - replace current docker if it exists  (default - NO)"
-            echo "  -b|--build-only           - only build the docker, do not push   (default - NO)"
-            echo "  -nc|--no-cache            - build exerything from scratch        (default - NO)"
+            echo "  -r|--replace                - replace current docker if it exists  (default - NO)"
+            echo "  -b|--build-only             - only build the docker, do not push   (default - NO)"
+            echo "  -nc|--no-cache              - build exerything from scratch        (default - NO)"
             echo "  -d|--description \"descip\" - decription of the custom docker      (default - NONE)"
-            echo "  -u|--username <input>     - user and domain (i.e. user@domain    (default - NONE)"
-            echo "  -a|--api-token            - api token for username               (default - NONE)"
-            echo "                              This can be found in Jenkins from user configure"
+            echo "  -u|--username <input>       - user and domain - i.e. user@domain   (default - NONE)"
+            echo "  -a|--api-token              - api token for username               (default - NONE)"
+            echo "                                Username and API Token can be found in Jenkins user configure"
             echo ""
             echo "If this is the first time this docker is being added to the repositories,"
             echo "then a description must be specified"
@@ -86,7 +87,7 @@ fi
 if [ -z $CUSTOM_DOCKER_NAME ]; then
     exit-with-error "ERROR: custom-docker-name must be specified, use --help for more info"
 else
-    CUSTOM_DOCKER_ZIP=$PWD/zip-files/$CUSTOM_DOCKER_NAME.zip
+    CUSTOM_DOCKER_ZIP=$SCRIPT_DIR/zip-files/$CUSTOM_DOCKER_NAME.zip
     if [ ! -f $CUSTOM_DOCKER_ZIP ]; then
         exit-with-error "ERROR: missing zip file - $CUSTOM_DOCKER_ZIP"
     fi
@@ -133,8 +134,6 @@ encodeURIComponents()
     
     echo "${encoded}"
 }
-
-#USERNAME=$(encodeURIComponents $USERNAME)
     
 CMD="http://$USERNAME:$API_TOKEN@jenkins.ccp.philly.selfhost.corp.microsoft.com/view/All/job/CustomDocker-BuildAndTest/buildWithParameters?"
 CMD+="custom-docker-files.zip=$(encodeURIComponents $CUSTOM_DOCKER_ZIP)&"

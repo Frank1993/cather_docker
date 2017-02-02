@@ -4,6 +4,7 @@ CONFIGURATION_FILE=""
 DATA_DIRECTORY=""
 CUSTOM_DOCKER_NAME=""
 ADDITIONAL_ARGUMENTS=""
+SCRIPT_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [[ "$1" =~ -h|--help ]] ; then
     echo "Usage: run custom-docker-name [runCust-args]"
@@ -11,11 +12,12 @@ if [[ "$1" =~ -h|--help ]] ; then
     echo "  custom-docker-name - name for your docker image (Format regex: custom-[a-z0-9-]+$)"
     echo "                       this is the directory in the custom-dockers directory"
     echo "  runCust-args       - these are additional arguments for runCust"
-    echo "                       gets appended to the runCust execution command"
+    echo "                       appended to the runCust execution command"
     exit 1
 fi
 
 CUSTOM_DOCKER_NAME=$1
+CUSTOM_DOCKER_DIR="$SCRIPT_DIR/custom-dockers/$CUSTOM_DOCKER_NAME"
 shift
 ADDITIONAL_ARGUMENTS="$@"
 
@@ -23,7 +25,6 @@ if [ -z $CUSTOM_DOCKER_NAME ]; then
     exit-testing 1 "ERROR: custom-docker-name must be specified"
 fi
 
-CUSTOM_DOCKER_DIR=$PWD/custom-dockers/$CUSTOM_DOCKER_NAME
 if [ ! -d $CUSTOM_DOCKER_DIR ]; then
     exit-testing 1 "ERROR: $CUSTOM_DOCKER_DIR does not exist"
 fi

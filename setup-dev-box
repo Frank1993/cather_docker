@@ -7,7 +7,7 @@ function run()
 }
 
 sudo apt-get update
-sudo apt-get -y install unzip
+sudo apt-get -y install unzip curl
 
 # We need to de-activate dnsmasq service. When the service is running, /etc/resolv.conf doesn't have IPs
 # of real DNS servers. Docker recognizes that and defaults to 8.8.8.8 (Google public DNS), however

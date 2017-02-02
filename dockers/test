@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 CUSTOM_DOCKER_DIR=""
 CUSTOM_DOCKER_NAME=""
@@ -8,6 +8,7 @@ DATA_DIRECTORY=""
 CREATED_JENKINS="FALSE"
 BUILD="FALSE"
 REGISTRY_IP="10.177.92.5"
+SCRIPT_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Wrapper for exit, cleans up directory
 exit-testing()
@@ -21,7 +22,7 @@ exit-testing()
 
 if [[ "$1" =~ -h|--help ]] ; then
     echo ""
-    echo "Usage: test [OPTIONS] <custom-docker-dir>"
+    echo "Usage: test [OPTIONS] <custom-docker-name>"
     echo ""
     echo "  custom-docker-name  - name for your docker image (Format regex: custom-[a-z0-9-]+$)"
     echo "                        this is the directory in the custom-dockers directory"
@@ -41,6 +42,7 @@ if [[ "$1" =~ -b|--build ]]; then
 fi
 
 CUSTOM_DOCKER_NAME=$1
+CUSTOM_DOCKER_DIR="$SCRIPT_DIR/custom-dockers/$CUSTOM_DOCKER_NAME"
 
 if [ ! -z $2 ]; then 
     exit-testing 1 "ERROR: Too many inputs"
@@ -50,14 +52,13 @@ if [ -z $CUSTOM_DOCKER_NAME ]; then
     exit-testing 1 "ERROR: custom-docker-name must be specified"
 fi
 
-CUSTOM_DOCKER_DIR=custom-dockers/$CUSTOM_DOCKER_NAME
 if [ ! -d $CUSTOM_DOCKER_DIR ]; then
     exit-testing 1 "ERROR: $CUSTOM_DOCKER_DIR does not exist"
 fi
 
 # Get the Configuration file name and the data directory
 contents=$CUSTOM_DOCKER_DIR/*
-required="Dockerfile runCust testCust jenkins_config"
+required="Dockerfile runCust jenkins_config"
 for content in $contents; do
     if [[ $required != *"${content##*/}"* ]]; then
         if [ -d $content ] && [ -z $DATA_DIRECTORY ]; then
@@ -78,7 +79,7 @@ echo "DATA_DIRECTORY = $DATA_DIRECTORY"
 # Make sure docker is installed
 echo ""
 echo "==================== Making sure required packages are installed ===================="
-declare -a PACKAGES=("docker" "unzip")
+declare -a PACKAGES=("docker" "unzip" "curl")
 for pkg_name in "${PACKAGES[@]}"; do
     if [ -z "$(which $pkg_name)" ]; then
         echo "ERROR: $pkg_name is not installed, cannot perform some tests"
@@ -122,7 +123,7 @@ test-if-exist()
 # Test that the required files and folders exist
 echo ""
 echo "==================== Testing for required files & folder ===================="
-declare -a INPUTS=("-f Dockerfile" "-f runCust" "-f testCust" "-f jenkins_config" "-f $CONFIGURATION_FILE" "-d $DATA_DIRECTORY")
+declare -a INPUTS=("-f Dockerfile" "-f runCust" "-f jenkins_config" "-f $CONFIGURATION_FILE" "-d $DATA_DIRECTORY")
 for input in "${INPUTS[@]}"; do
     test-if-exist $input
 done
@@ -146,8 +147,6 @@ echo ""
 echo "==================== Testing content of files ===================="
 declare -a CODE_LINES=("RUN mkdir /home/custom" \
                        "COPY runCust /home/custom" \
-                       "COPY testCust /home/custom" \
-                       "RUN chmod u+x /home/custom/testCust" \
                        "RUN chmod u+x /home/custom/runCust")
 for line in "${CODE_LINES[@]}"; do
     if ! grep -q "$line" "$CUSTOM_DOCKER_DIR/Dockerfile"; then
@@ -157,31 +156,34 @@ for line in "${CODE_LINES[@]}"; do
     fi
 done
 
-for file in "runCust" "testCust"; do
-    if ! grep -q "#!/bin/bash" "$CUSTOM_DOCKER_DIR/$file"; then
-        exit-testing 1 "ERROR: Missing \"#!/bin/bash\" in $CUSTOM_DOCKER_DIR/$file"
+# Test that certain lines exist in runCust
+declare -a REQUIRED_RUNCUST_COMMANDS=("#!/bin/bash")
+for cmd in "${REQUIRED_RUNCUST_COMMANDS[@]}"; do
+    if ! grep -q "$cmd" "$CUSTOM_DOCKER_DIR/runCust"; then
+        echo "ERROR: Missing \"$cmd\" in $CUSTOM_DOCKER_DIR/runCust"
+        exit-testing 1
     else
-        echo "Found \"#!/bin/bash\" in $CUSTOM_DOCKER_DIR/$file"
+        echo "Found \"$cmd\" in $CUSTOM_DOCKER_DIR/runCust"
+    fi
+done
+
+# Test that certain lines do not exist in the runCust
+declare -a INVALID_RUNCUST_COMMANDS=("^runCust " "mkdir" "cp")
+for cmd in "${INVALID_RUNCUST_COMMANDS[@]}"; do
+    if grep -q "$cmd" "$CUSTOM_DOCKER_DIR/runCust"; then
+        echo "ERROR: Cannot use \"$cmd\" in $CUSTOM_DOCKER_DIR/runCust"
+        exit-testing 1
+    else
+        echo "Did not find \"$cmd\" in $CUSTOM_DOCKER_DIR/runCust"
     fi
 done
 
 inherits=`grep -i ^FROM $CUSTOM_DOCKER_DIR/Dockerfile* | awk '{print $2}'`
 inherit_dir=${inherits//-devel}
-if [ ! -d $inherit_dir/$inherits ]; then
+if [ ! -d $SCRIPT_DIR/inherit-dockers/$inherits ]; then
     exit-testing 1 "ERROR: You can not inherit from $inherits"
 else 
     echo "Valid inherit from $inherits"
-fi
-
-if grep -q '^[^#]' $CUSTOM_DOCKER_DIR/testCust; then
-    echo ""
-    echo "==================== Running user defined tests ===================="
-    chmod 777 $CUSTOM_DOCKER_DIR/testCust
-    if ! $CUSTOM_DOCKER_DIR/testCust; then
-        exit-testing 1 "User defined tests failed"
-    else
-        echo "User defined tests passed"
-    fi
 fi
 
 if [ $BUILD == "TRUE" ]; then
@@ -196,12 +198,12 @@ else
     # Create a file for Jenkins to use
     echo ""
     echo "==================== Performing automatic zip ===================="
-    ZIP_FILENAME="zip-files/$CUSTOM_DOCKER_NAME.zip"
+    ZIP_FILENAME="$CUSTOM_DOCKER_NAME.zip"
     echo "Zipping the file \"$ZIP_FILENAME\""
     rm -f "$ZIP_FILENAME" 
     cd $CUSTOM_DOCKER_DIR
-    zip -r ../../$ZIP_FILENAME *
-    cd ../..
+    zip -r ../../zip-files/$ZIP_FILENAME *
+    cd $SCRIPT_DIR
 fi
 
 # Test for the docker in the repo, if it exists warn the user

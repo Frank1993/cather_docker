@@ -17,8 +17,12 @@ RUN apt-get -y update && \
       wget \
       jq \
       openssh-server \
-      openssh-client \ &&
-      apt-get autoremove
+      openssh-client \
+    # Needed by OpenMPI
+      cmake \
+      g++ \
+      gcc && \
+    apt-get autoremove
 
 WORKDIR $STAGE_DIR
 
