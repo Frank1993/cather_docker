@@ -93,6 +93,7 @@ else
     if [ -d "$SCRIPT_DIR/custom-dockers/$TARGET" ]; then
         build-docker $TARGET "custom-dockers"
     elif [ -d "$SCRIPT_DIR/inherit-dockers/$TARGET" ]; then
+        BUILD_DEPS="FALSE"
         build-docker $TARGET "inherit-dockers"
     else
         exit-with-error "$SCRIPT_DIR/custom-dockers/$TARGET does not exist, aborting..."
