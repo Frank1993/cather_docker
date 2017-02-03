@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Wrapper for exit, cleans up directory
 exit-testing()
 {
-    if [ $CREATED_JENKINS == "TRUE" ]; then
+    if [ $CREATED_JENKINS == "TRUE" ] && [ $1 != "0" ]; then
         rm -f $CUSTOM_DOCKER_DIR/jenkins_config
     fi
     echo -e "$2"
@@ -157,9 +157,8 @@ done
 if [ $CREATED_JENKINS == "FALSE" ]; then
     echo ""
     echo "==================== Checking manually created jenkins_config ===================="
-    exec 6< $CUSTOM_DOCKER_DIR/jenkins_config
-    read temp_conf <&6
-    read temp_data <&6
+    temp_conf=$(sed '1q;d' "$CUSTOM_DOCKER_DIR/jenkins_config")
+    temp_data=$(sed '2q;d' "$CUSTOM_DOCKER_DIR/jenkins_config")
     if [ "$temp_conf" == "$CONFIGURATION_FILE" ] && [ "$temp_data" == "$DATA_DIRECTORY/" ]; then
         echo "The jenkins_config file is correct"
     else

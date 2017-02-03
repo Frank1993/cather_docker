@@ -6,6 +6,13 @@ CUSTOM_DOCKER_NAME=""
 ADDITIONAL_ARGUMENTS=""
 SCRIPT_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Wrapper for exit, cleans up directory
+exit-testing()
+{
+    echo -e "$2"
+    exit $1
+}
+
 if [[ "$1" =~ -h|--help ]] ; then
     echo "Usage: run custom-docker-name [runCust-args]"
     echo ""
@@ -29,20 +36,15 @@ if [ ! -d $CUSTOM_DOCKER_DIR ]; then
     exit-testing 1 "ERROR: $CUSTOM_DOCKER_DIR does not exist"
 fi
 
-# Get the Configuration file name and the data directory
-contents=$CUSTOM_DOCKER_DIR/*
-required="Dockerfile runCust testCust jenkins_config"
-for content in $contents; do
-    if [[ $required != *"${content##*/}"* ]]; then
-        if [ -d $content ] && [ -z $DATA_DIRECTORY ]; then
-            DATA_DIRECTORY=${content##*/}
-        elif [ -f $content ] && [ -z $CONFIGURATION_FILE ]; then
-            CONFIGURATION_FILE=${content##*/}
-        else
-            exit-testing 1 "ERROR: Too many files or directories included\nPlease refer to SharePoint for valid directory setup"
-        fi
-    fi
-done
+if [ ! -f "$CUSTOM_DOCKER_DIR/jenkins_config" ]; then 
+    echo "ERROR: $CUSTOM_DOCKER_DIR/jenkins_config missing"
+    exit 1
+fi
+
+echo ""
+echo "==================== Parsing jenkins_config ===================="
+CONFIGURATION_FILE=$(sed '1q;d' "$CUSTOM_DOCKER_DIR/jenkins_config")
+DATA_DIRECTORY=$(sed '2q;d' "$CUSTOM_DOCKER_DIR/jenkins_config")
 
 if [ ! -f "$CUSTOM_DOCKER_DIR/$CONFIGURATION_FILE" ]; then 
     echo "ERROR: $CUSTOM_DOCKER_DIR/$CONFIGURATION_FILE missing"
