@@ -20,7 +20,13 @@ exit-testing()
     exit $1
 }
 
-if [[ "$1" =~ -h|--help ]] ; then
+# Parsing command line arguments:
+while [[ $# > 0 ]]
+do
+key="$1"
+
+case $key in
+    -h|--help)
     echo ""
     echo "Usage: test [OPTIONS] <custom-docker-name>"
     echo ""
@@ -29,23 +35,37 @@ if [[ "$1" =~ -h|--help ]] ; then
     echo ""
     echo "options:"
     echo ""
-    echo "  -b|--build - build the docker (default - do not build)"
+    echo "  -b|--build             - build the docker (default - do not build)"
+    echo "  -c|--config <filename> - file used for the test job in ccp (default - none)"
+    echo "  -d|--data <directory>  - directory that contains the data for the job in ccp (default - none)"
     echo ""
     echo "example: ./test custom-docker"
     echo ""
     exit 1
-fi
-
-if [[ "$1" =~ -b|--build ]]; then
+    ;;
+    -b|--build)
     BUILD="TRUE"
-    shift
-fi
+    ;;
+    -c|--config)
+    CONFIGURATION_FILE="$2"
+    shift # pass argument
+    ;;
+    -d|--data)
+    DATA_DIRECTORY="$2"
+    shift # pass argument
+    ;;
+    *)
+    break
+    ;;
+esac
+shift # past argument or value
+done
 
 CUSTOM_DOCKER_NAME=$1
 CUSTOM_DOCKER_DIR="$SCRIPT_DIR/custom-dockers/$CUSTOM_DOCKER_NAME"
 
 if [ ! -z $2 ]; then 
-    exit-testing 1 "ERROR: Too many inputs"
+    exit-testing 1 "ERROR: Too many custom-docker-name inputs"
 fi
 
 if [ -z $CUSTOM_DOCKER_NAME ]; then
@@ -57,24 +77,29 @@ if [ ! -d $CUSTOM_DOCKER_DIR ]; then
 fi
 
 # Get the Configuration file name and the data directory
-contents=$CUSTOM_DOCKER_DIR/*
-required="Dockerfile runCust jenkins_config"
-for content in $contents; do
-    if [[ $required != *"${content##*/}"* ]]; then
-        if [ -d $content ] && [ -z $DATA_DIRECTORY ]; then
-            DATA_DIRECTORY=${content##*/}
-        elif [ -f $content ] && [ -z $CONFIGURATION_FILE ]; then
-            CONFIGURATION_FILE=${content##*/}
-        else
-            exit-testing 1 "ERROR: Too many files or directories included\nPlease refer to SharePoint for valid directory setup"
+if [ -z $CONFIGURATION_FILE ] || [ -z $DATA_DIRECTORY ]; then
+    echo ""
+    echo "WARNING: Either configuration file or data directory not specified"
+    echo "         Trying to automatically find the file and directory..."
+    contents=$CUSTOM_DOCKER_DIR/*
+    required="Dockerfile runCust jenkins_config"
+    for content in $contents; do
+        if [[ $required != *"${content##*/}"* ]]; then
+            if [ -d $content ] && [ -z $DATA_DIRECTORY ]; then
+                DATA_DIRECTORY=${content##*/}
+                echo "DATA_DIRECTORY = $DATA_DIRECTORY"
+            elif [ -f $content ] && [ -z $CONFIGURATION_FILE ]; then
+                CONFIGURATION_FILE=${content##*/}
+                echo "CONFIGURATION_FILE = $CONFIGURATION_FILE"
+            else
+                echo "ERROR: Too many files or directories included"
+                echo "       Cannot determine automatically"
+                echo "       Please retry with specifying the file and directory"
+                exit-testing 1 ""
+            fi
         fi
-    fi
-done
-
-echo ""
-echo "CUSTOM_DOCKER_NAME = $CUSTOM_DOCKER_NAME"
-echo "CONFIGURATION_FILE = $CONFIGURATION_FILE"
-echo "DATA_DIRECTORY = $DATA_DIRECTORY"
+    done
+fi
 
 # Make sure docker is installed
 echo ""
