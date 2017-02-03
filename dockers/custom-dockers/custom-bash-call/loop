@@ -1,0 +1,30 @@
+#!/bin/bash
+
+RUNNING_TIME=60     # Seconds (1 minute)
+
+if [ -n "$1" ]; then
+    RUNNING_TIME="$1"
+fi
+
+iteration=0
+timeIncrement=5    # Seconds
+seconds=0
+progress=00.00
+
+echo ""
+echo "runCust: RUNNING_TIME=$RUNNING_TIME"
+
+while [ $seconds -lt $RUNNING_TIME ]; do
+    current_date_time="`date +"[%d/%b/%Y %k:%M:%S %z]"`";
+    outputLine="runCust: $current_date_time Iteration #$iteration"
+    echo $outputLine
+    progress=$(bc -l <<< "100.00 * $iteration * ($timeIncrement / $RUNNING_TIME)" | awk '{printf "%05.2f", $0}') 
+    echo "PROGRESS: $progress%"
+    let "seconds += timeIncrement"
+    let "iteration += 1"
+    sleep $timeIncrement
+done
+
+outputLine="runCust: $current_date_time DONE!!!"
+echo $outputLine
+echo "PROGRESS: 100.00%"

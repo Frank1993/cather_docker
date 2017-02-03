@@ -82,17 +82,4 @@ echo "runCust: PREV_MODEL_PATH=$PREV_MODEL_PATH"
 echo "runCust: RUNNING_TIME=$RUNNING_TIME"
 echo "runCust: IS_MEMCHECK=$IS_MEMCHECK"
 
-while [ $seconds -lt $RUNNING_TIME ]; do
-    current_date_time="`date +"[%d/%b/%Y %k:%M:%S %z]"`";
-    outputLine="runCust: $current_date_time Iteration #$iteration"
-    echo $outputLine
-    progress=$(bc -l <<< "100.00 * $iteration * ($timeIncrement / $RUNNING_TIME)" | awk '{printf "%05.2f", $0}') 
-    echo "PROGRESS: $progress%"
-    let "seconds += timeIncrement"
-    let "iteration += 1"
-    sleep $timeIncrement
-done
-
-outputLine="runCust: $current_date_time DONE!!!"
-echo $outputLine
-echo "PROGRESS: 100.00%"
+$CONFIG_FILE $RUNNING_TIME || exit 1
