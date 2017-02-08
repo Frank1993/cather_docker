@@ -62,3 +62,5 @@ if ! which nvidia-docker > /dev/null; then
     sudo dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb
     run "service docker start"
 fi
+
+#end
