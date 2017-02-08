@@ -192,7 +192,7 @@ for cmd in "${REQUIRED_RUNCUST_COMMANDS[@]}"; do
 done
 
 # Test that certain lines do not exist in the runCust
-declare -a INVALID_RUNCUST_COMMANDS=("^runCust " "mkdir" "cp")
+declare -a INVALID_RUNCUST_COMMANDS=("^runCust ")
 for cmd in "${INVALID_RUNCUST_COMMANDS[@]}"; do
     if grep -q "$cmd" "$CUSTOM_DOCKER_DIR/runCust"; then
         echo "ERROR: Cannot use \"$cmd\" in $CUSTOM_DOCKER_DIR/runCust"
