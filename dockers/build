@@ -95,7 +95,7 @@ if [ -z "$TARGET" ]; then
         fi
     done
 else
-    if [[ ! "$TARGET" =~ ^custom-[a-z0-9-]+$ ]]; then
+    if [[ ! "$TARGET" =~ ^custom-[a-z0-9-]+$ ]] && [ ! -d "$SCRIPT_DIR/inherit-dockers/$TARGET" ]; then
         exit-with-error "ERROR: Invalid custom docker name ($TARGET)"
     fi
     
