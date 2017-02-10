@@ -226,6 +226,7 @@ else
     echo "Zipping the file \"$ZIP_FILENAME\""
     rm -f "$ZIP_FILENAME" 
     cd $CUSTOM_DOCKER_DIR
+    mkdir -p ../../zip-files
     zip -r ../../zip-files/$ZIP_FILENAME *
     cd $SCRIPT_DIR
 fi
