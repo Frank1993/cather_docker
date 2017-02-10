@@ -1,4 +1,4 @@
-FROM private-custom-scale-image
+FROM <choose-from-inherit-dockers-directory>
 
 # Create the home directory for the custom-docker
 RUN mkdir /home/custom

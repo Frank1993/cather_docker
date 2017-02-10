@@ -20,7 +20,10 @@ while [[ $# > 0 ]]; do
     case $key in
         -h|--help)
             echo ""
-            echo "Usage: build [options] <target>"
+            echo "Usage: build [options] <custom-docker-name>"
+            echo ""
+            echo "custom-docker-name - the directory that contains your custom docker files"
+            echo "                     this is not to be your full path"
             echo ""
             echo "Options:"
             echo "  -nd|--no-deps      - skip building of dependencies   (default - Build dependencies)"
@@ -92,6 +95,10 @@ if [ -z "$TARGET" ]; then
         fi
     done
 else
+    if [[ ! "$TARGET" =~ ^custom-[a-z0-9-]+$ ]]; then
+        exit-with-error "ERROR: Invalid custom docker name ($TARGET)"
+    fi
+    
     if [ -d "$SCRIPT_DIR/custom-dockers/$TARGET" ]; then
         build-docker $TARGET "custom-dockers"
     elif [ -d "$SCRIPT_DIR/inherit-dockers/$TARGET" ]; then

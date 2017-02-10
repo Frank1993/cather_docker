@@ -32,6 +32,10 @@ if [ -z $CUSTOM_DOCKER_NAME ]; then
     exit-testing 1 "ERROR: custom-docker-name must be specified"
 fi
 
+if [[ ! "$CUSTOM_DOCKER_NAME" =~ ^custom-[a-z0-9-]+$ ]]; then
+    exit-with-error "ERROR: Invalid custom docker name ($CUSTOM_DOCKER_NAME)"
+fi
+
 if [ ! -d $CUSTOM_DOCKER_DIR ]; then
     exit-testing 1 "ERROR: $CUSTOM_DOCKER_DIR does not exist"
 fi
