@@ -1,2 +1,3 @@
 USER,BUILD-NUMBER,CUSTOM-DOCKER-NAME,BUILD-ONLY,REPLACE,NO-CACHE,DESCRIPTION,EXIT-CODE,,
-v-jafre@redmond,426,custom-bash-call,false,true,false,TRUE,0
+v-jafre@redmond,426,custom-bash-call,false,true,false,TRUE,0,
+dedey@redmond,427,custom-tf-0-12-python-2-7,false,TRUE,false,TRUE,0
