@@ -1,3 +1,4 @@
 USER,BUILD-NUMBER,CUSTOM-DOCKER-NAME,BUILD-ONLY,REPLACE,NO-CACHE,DESCRIPTION,EXIT-CODE,,
 dedey@redmond,429,must-change,false,false,false,FALSE,103,
-zhongfu@redmond,457,custom-frantic-auto2,false,true,true,TRUE,99
+zhongfu@redmond,457,custom-frantic-auto2,false,true,true,TRUE,99,
+zhongfu@redmond,459,custom-frantic-auto2,false,true,true,TRUE,0
