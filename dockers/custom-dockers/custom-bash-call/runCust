@@ -30,7 +30,6 @@ case $key in
     echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
     echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
     echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
-    echo "  -p|--prevModelPath <path> - directory w/ filename which holds models to start with (default NONE)"
     echo "  -r|--runningTime <seconds> - number of seconds the script should run (default 1800)"
     echo "  --memCheck - start job in memcheck mode (default FALSE)"
     exit 1
@@ -49,10 +48,6 @@ case $key in
     ;;
     -m|--modelDir)
     MODEL_DIR="$2"
-    shift # pass argument
-    ;;
-    -p|--prevModelPath)
-    PREV_MODEL_PATH="$2"
     shift # pass argument
     ;;
     -r|--runningTime)
@@ -78,7 +73,6 @@ echo "runCust: CONFIG_FILE=$CONFIG_FILE"
 echo "runCust: DATA_DIR=$DATA_DIR"
 echo "runCust: LOG_DIR=$LOG_DIR"
 echo "runCust: MODEL_DIR=$MODEL_DIR"
-echo "runCust: PREV_MODEL_PATH=$PREV_MODEL_PATH"
 echo "runCust: RUNNING_TIME=$RUNNING_TIME"
 echo "runCust: IS_MEMCHECK=$IS_MEMCHECK"
 
