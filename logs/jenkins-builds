@@ -1,4 +1,9 @@
 USER,BUILD-NUMBER,CUSTOM-DOCKER-NAME,BUILD-ONLY,REPLACE,NO-CACHE,DESCRIPTION,EXIT-CODE,,
+<<<<<<< HEAD
+dedey@redmond,429,must-change,false,false,false,FALSE,103,
+zhongfu@redmond,457,custom-frantic-auto2,false,true,true,TRUE,99,
+zhongfu@redmond,459,custom-frantic-auto2,false,true,true,TRUE,0
+=======
 v-jafre@redmond,426,custom-bash-call,false,true,false,TRUE,0,
 dedey@redmond,427,custom-tf-0-12-python-2-7,false,TRUE,false,TRUE,0,
 dedey@redmond,428,custom-tf-0-12-python-2-7,false,true,false,TRUE,0,
@@ -36,6 +41,13 @@ zhongfu@redmond,462,custom-frantic-auto,false,true,true,TRUE,0,
 t-rafak@redmond,463,custom-mscog-tf1-th,false,false,false,TRUE,112,
 t-rafak@redmond,464,custom-mscog-tf1-th,false,false,false,TRUE,113,
 t-rafak@redmond,465,custom-mscog-tf1-th,false,false,false,TRUE,112,
+<<<<<<< HEAD
 t-rafak@redmond,466,custom-mscog-tf1-th,false,false,false,TRUE,112,
 t-rafak@redmond,467,custom-mscog-tf1-th,false,false,false,TRUE,112,
 t-rafak@redmond,468,custom-mscog-tf1-th,false,false,false,TRUE,118
+=======
+t-rafak@redmond,466,custom-mscog-tf1-th,false,false,false,TRUE,112
+>>>>>>> 3590c4b9a1780bc7111d95fc27dbb8e60ab39df6,
+t-rafak@redmond,469,custom-mscog-tf1-th,false,false,false,TRUE,113
+>>>>>>> cf2465ebc1ccf14c9b049f280bce8594086bb395,
+t-rafak@redmond,470,custom-mscog-tf1-th,false,false,false,TRUE,113
