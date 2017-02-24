@@ -56,4 +56,5 @@ v-jafre@redmond,472,custom-bash-call,false,true,false,FALSE,0,
 t-rafak@redmond,473,custom-mscog-tf1-th,false,TRUE,true,TRUE,0,
 v-jafre@redmond,479,custom-bash-call,false,true,false,FALSE,0,
 t-rafak@redmond,480,custom-mscog-all,false,TRUE,true,TRUE,0,
-t-rafak@redmond,481,custom-tiny,false,TRUE,true,TRUE,0
+t-rafak@redmond,481,custom-tiny,false,TRUE,true,TRUE,0,
+t-rafak@redmond,483,custom-small,false,false,true,TRUE,0
