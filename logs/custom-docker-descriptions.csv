@@ -22,4 +22,5 @@ custom-simple-loop,v-jafre,"Simple docker that contains a while loop",
 custom-bash-call,v-jafre,"Executes a bash script from the nfs.",
 custom-tf-0-12-python-2-7,dedey,"TF 0.12 Python 2.7",
 custom-tf-0-12-python-2-7-ver2,dedey,"TF 0.12 Python 2.7",
-custom-mscog-tf1-th,t-rafak,"includes Tensorflow 1.0 and torch"
+custom-mscog-tf1-th,t-rafak,"includes Tensorflow 1.0 and torch",
+custom-mscog-all,t-rafak,"includes everything"
