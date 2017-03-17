@@ -14,6 +14,7 @@ RUN apt-get -y update && \
     apt-get -y install \ 
       build-essential \
       autotools-dev \
+      curl \
       wget \
       jq \
       openssh-server \

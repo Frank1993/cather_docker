@@ -213,7 +213,7 @@ fi
 if [ $BUILD == "TRUE" ]; then
     echo ""
     echo "==================== Building $CUSTOM_DOCKER_NAME ===================="
-    ./build $CUSTOM_DOCKER_NAME
+    ./build $CUSTOM_DOCKER_NAME || exit $?
 fi
 
 if [[ "$INPUT_ZIP" =~ *.zip ]]; then

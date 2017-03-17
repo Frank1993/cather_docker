@@ -12,6 +12,7 @@ RUN mkdir -p $STAGE_DIR
 
 RUN apt-get -y update && \
     apt-get -y install \ 
+      curl \
       wget \
       jq \
       openssh-server \
