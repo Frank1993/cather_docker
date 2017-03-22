@@ -12,6 +12,7 @@ RUN mkdir -p $STAGE_DIR
 
 RUN apt-get -y update && \
     apt-get -y install \ 
+      rsync \
       curl \
       wget \
       jq \
