@@ -1,0 +1,409 @@
+2017/03/28 21:51:56 Dialing to: /var/run/docker-wrapper.sock
+docker-wrapper: Performing pre-run cleanup (ok, if fails)
+docker-wrapper: Running: docker kill container_e124_1489651428010_1358_01_000001
+docker-wrapper: docker kill: Failed to kill container (container_e124_1489651428010_1358_01_000001): Error response from daemon: Cannot kill container container_e124_1489651428010_1358_01_000001: No such container: container_e124_1489651428010_1358_01_000001
+docker-wrapper: docker kill exit code 1
+docker-wrapper: Exit code: 1
+docker-wrapper: Running: docker rm container_e124_1489651428010_1358_01_000001
+docker-wrapper: docker rm: Failed to remove container (container_e124_1489651428010_1358_01_000001): Error response from daemon: No such container: container_e124_1489651428010_1358_01_000001
+docker-wrapper: docker rm exit code 1
+docker-wrapper: Exit code: 1
+docker-wrapper: Running container container_e124_1489651428010_1358_01_000001
+docker-wrapper: Running: /opt/bin/hdfs-mount -retryMaxAttempts=10 -allowedPrefixes=pnrsy,philly,public,sys hnn:8020 /tmp/hdfs-mount-container_e124_1489651428010_1358_01_000001
+docker-wrapper: hdfs-mount: 2017/03/28 21:51:57 Mounted successfully
+docker-wrapper: Running: docker run -e ETCD=master --device=/dev/infiniband/issm0 --device=/dev/infiniband/issm1 --device=/dev/infiniband/rdma_cm --device=/dev/infiniband/ucm0 --device=/dev/infiniband/umad0 --device=/dev/infiniband/umad1 --device=/dev/infiniband/uverbs0 -v /var/nfs-mount/jobs:/var/storage/shared/jobs:rw -v /var/nfs-mount/public:/var/storage/shared/public:rw -v /var/nfs-mount/sys:/var/storage/shared/sys:ro -v /var/nfs-mount/pnrsy:/var/storage/shared/pnrsy:rw -v /tmp/hdfs-mount-container_e124_1489651428010_1358_01_000001:/hdfs --name container_e124_1489651428010_1358_01_000001 --workdir /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358 --net=host --memory=4G --cpu-shares=512 --ulimit memlock=-1 --ulimit stack=67108864 --rm -e PHILLY_USER=dedey -e PHILLY_UID=517764042 -e PHILLY_HOME=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358 -e PHILLY_JOB_ID=application_1489651428010_1358 -e PHILLY_SCRATCH_DIR=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358 -e PHILLY_ATTEMPT_ID=1 custom-tf-0-12-python3 /bin/bash -c /hdfs/sys/dynamicScripts/0.0.10/setup-container philly-mpirun --numProcessesPerContainer 1 --ib -- /hdfs/sys/dynamicScripts/0.0.10/run-job  --pathin_dataDir /hdfs/pnrsy/dedey/ --config-file /var/storage/shared/pnrsy/dedey/run_exp_101.sh --hdfs --tool-type cust
+eth0: error fetching interface information: Device not found
+chown -R dedey:dedey /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358 || exit $?
+chown -R dedey:dedey /hdfs/pnrsy/sys/jobs/application_1489651428010_1358 || exit $?
+======== Changing active user to dedey and executing cd /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358 && { /hdfs/sys/dynamicScripts/0.0.10/philly-mpirun --numProcessesPerContainer 1 --ib -- /hdfs/sys/dynamicScripts/0.0.10/run-job --pathin_dataDir /hdfs/pnrsy/dedey/ --config-file /var/storage/shared/pnrsy/dedey/run_exp_101.sh --hdfs --tool-type cust ;} ========
+Updating /etc/hosts file withing this container
+Running: ssh container_e124_1489651428010_1358_01_000002 sudo "sh -c 'cat etc-hosts > /etc/hosts'"
+OpenSSH_6.6.1, OpenSSL 1.0.1f 6 Jan 2014
+debug1: Reading configuration data /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/.ssh/config
+debug1: /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/.ssh/config line 1: Applying options for container_e124_1489651428010_1358_01_000002
+debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: /etc/ssh/ssh_config line 19: Applying options for *
+debug1: Connecting to container_e124_1489651428010_1358_01_000002 [10.198.141.42] port 2234.
+debug1: Connection established.
+debug1: identity file /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/.ssh/id_rsa type 1
+debug1: identity file /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/.ssh/id_rsa-cert type -1
+debug1: Enabling compatibility mode for protocol 2.0
+debug1: Local version string SSH-2.0-OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.8
+debug1: Remote protocol version 2.0, remote software version OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.8
+debug1: match: OpenSSH_6.6.1p1 Ubuntu-2ubuntu2.8 pat OpenSSH_6.6.1* compat 0x04000000
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: server->client aes128-ctr hmac-md5-etm@openssh.com none
+debug1: kex: client->server aes128-ctr hmac-md5-etm@openssh.com none
+debug1: sending SSH2_MSG_KEX_ECDH_INIT
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: Server host key: ECDSA 93:58:d2:2b:5b:62:63:b7:74:f4:9b:bd:8b:a9:4c:0c
+debug1: checking without port identifier
+Warning: Permanently added '[container_e124_1489651428010_1358_01_000002]:2234,[10.198.141.42]:2234' (ECDSA) to the list of known hosts.
+debug1: ssh_ecdsa_verify: signature correct
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: SSH2_MSG_NEWKEYS received
+debug1: SSH2_MSG_SERVICE_REQUEST sent
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+debug1: Authentications that can continue: publickey,password
+debug1: Next authentication method: publickey
+debug1: Offering RSA public key: /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/.ssh/id_rsa
+debug1: Server accepts key: pkalg ssh-rsa blen 279
+debug1: key_parse_private2: missing begin marker
+debug1: read PEM private key done: type RSA
+debug1: Authentication succeeded (publickey).
+Authenticated to container_e124_1489651428010_1358_01_000002 ([10.198.141.42]:2234).
+debug1: channel 0: new [client-session]
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug1: Sending environment.
+debug1: Sending command: sudo sh -c 'cat etc-hosts > /etc/hosts'
+debug1: client_input_channel_req: channel 0 rtype exit-status reply 0
+debug1: channel 0: free: client-session, nchannels 1
+debug1: fd 0 clearing O_NONBLOCK
+debug1: fd 1 clearing O_NONBLOCK
+debug1: fd 2 clearing O_NONBLOCK
+Transferred: sent 3352, received 2480 bytes, in 0.0 seconds
+Bytes per second: sent 123625.5, received 91465.1
+debug1: Exit status 0
+Updating /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/.ssh/environment
+++ readlink /usr/local/mpi
++ [[ /usr/local/openmpi-1.10.3 == *\m\v\a\p\i\c\h* ]]
++ [[ YES == \Y\E\S ]]
++ OMPI_NETWORK_OPTION='--mca btl self,sm,openib'
++ mpirun --hostfile /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/mpi-hosts --npernode 1 -mca btl_openib_want_cuda_gdr 1 --mca oob_tcp_if_exclude docker0,lo,ib0,ib1 --mca btl self,sm,openib /hdfs/sys/dynamicScripts/0.0.10/run-job --pathin_dataDir /hdfs/pnrsy/dedey/ --config-file /var/storage/shared/pnrsy/dedey/run_exp_101.sh --hdfs --tool-type cust
+0: EXTRA_ARGS=
+0: IP/HOSTNAME=10.198.141.42 gcrgpu1028.gcr.philly.selfhost.corp.microsoft.com
+/hdfs/sys/dynamicScripts/0.0.10/run-job: line 207: curl: command not found
+0: GPUTYPE=
+0: PWD=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358
+0: MPI_COMM_WORLD_RANK=0
+0: CONFIG_DIR=/var/storage/shared/pnrsy/dedey
+0: BUILD_ID=
+0: CONFIG_FILE=/var/storage/shared/pnrsy/dedey/run_exp_101.sh
+0: PREV_MODEL_PATH=
+0: IS_DEBUG=false
+0: MODEL_PATH=/hdfs/pnrsy/sys/jobs/application_1489651428010_1358
+0: Input dataDir:/hdfs/pnrsy/dedey/
+0: PHILLY_HOME=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358
+0: PHILLY_ATTEMPT_ID=1
+0: PHILLY_USER=dedey
+0: PHILLY_SCRATCH_DIR=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358
+0: PHILLY_UID=517764042
+0: PHILLY_JOB_ID=application_1489651428010_1358
++ WORK_DIR=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358
++ MODEL_DIR=/hdfs/pnrsy/sys/jobs/application_1489651428010_1358/models
++ LOG_DIR=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/logs
++ BIN_BASE_DIR=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/cntkbin
++ BIN_DIR=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/cntkbin/bin
++ HDFS_DROPS=/hdfs/public/drops
++ for i in '"${!input_paths[@]}"'
++ MAX_ATTEMPTS=5
++ ATTEMPT_NUM=1
++ SLEEP_NUM=10
++ path_for_test=/hdfs/pnrsy/dedey/
++ [[ -e /hdfs/pnrsy/dedey/ ]]
++ [[ 1 == 5 ]]
++ [[ 1 == 5 ]]
++ [[ CUST == \C\N\T\K\-\P\Y\3\4 ]]
++ GLOBAL_DEPLOYMENT_FILE=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/.deployment-done
++ [[ ! -f /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/.deployment-done ]]
++ [[ 0 == \0 ]]
++ '[' '!' -d /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/logs/1 ']'
++ mkdir -p /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/logs/1
++ '[' '!' -d /hdfs/pnrsy/sys/jobs/application_1489651428010_1358/models ']'
++ mkdir -p /hdfs/pnrsy/sys/jobs/application_1489651428010_1358/models
+0:no prev model path -- starting from scratch
++ [[ -z '' ]]
++ echo '0:no prev model path -- starting from scratch'
++ [[ CUST == \C\N\T\K ]]
++ [[ CUST == \C\N\T\K\-\P\Y\3\4 ]]
++ chmod 755 /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358
++ chmod -R 777 /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/amlogs /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/etc-hosts /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/logs /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/metadata.json /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/mpi-hosts /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/stdout
++ touch /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/.deployment-done
++ inputs_dash_string=
++ inputs_double_dash_string=
++ inputs_key_value=
++ for i in '"${!input_paths[@]}"'
++ inputs_double_dash_string=' --dataDir /hdfs/pnrsy/dedey/'
++ inputs_dash_string=' -dataDir /hdfs/pnrsy/dedey/'
++ inputs_key_value=' dataDir=/hdfs/pnrsy/dedey/'
++ outputs_dash_string=
++ outputs_double_dash_string=
++ outputs_key_value_string=
++ [[ 0 -eq 0 ]]
++ outputs_dash_string='-outputdir /hdfs/pnrsy/sys/jobs/application_1489651428010_1358/models'
++ outputs_double_dash_string='--modelDir /hdfs/pnrsy/sys/jobs/application_1489651428010_1358/models '
++ outputs_key_value_string='ModelDir=/hdfs/pnrsy/sys/jobs/application_1489651428010_1358/models '
++ [[ CUST == \C\N\T\K\-\P\Y\3\4 ]]
++ [[ CUST == \C\N\T\K ]]
++ cd /tmp
++ [[ CUST == \C\N\T\K ]]
++ [[ CUST == \C\N\T\K\-\P\Y\3\4 ]]
++ [[ CUST == \C\O\G\1 ]]
++ [[ CUST == \C\O\G\2 ]]
++ [[ CUST == \T\F ]]
++ [[ CUST == \C\U\S\T ]]
++ CMD_ARGS=
++ CMD_ARGS+='--configFile /var/storage/shared/pnrsy/dedey/run_exp_101.sh '
++ CMD_ARGS+=' --dataDir /hdfs/pnrsy/dedey/ '
++ CMD_ARGS+='--logDir /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/logs/1 '
++ CMD_ARGS+='--modelDir /hdfs/pnrsy/sys/jobs/application_1489651428010_1358/models  '
++ [[ FALSE == \T\R\U\E ]]
++ CMD_ARGS+=
++ cat /home/custom/runCust
++ /home/custom/runCust --configFile /var/storage/shared/pnrsy/dedey/run_exp_101.sh --dataDir /hdfs/pnrsy/dedey/ --logDir /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/logs/1 --modelDir /hdfs/pnrsy/sys/jobs/application_1489651428010_1358/models
+#!/bin/bash
+# This script file is where you setup and execute your job inside your docker.  The following
+# is the parsing of all available arguements that you can receive from the process that 
+# runs this script.  They are take directly from the values you supply when you submit a
+# custom job. It is recommended not to change the following and to continue to the end of the
+# file to add your script code.  Refer to the --help for a description of the arguements.
+# Default values
+CONFIG_FILE=NONE
+DATA_DIR=NONE
+LOG_DIR=NONE
+MODEL_DIR=NONE
+PREV_MODEL_PATH=NONE
+IS_MEMCHECK=FALSE
+EXTRA_ARGS=NONE
+# Parsing command line arguments:
+while [[ $# > 0 ]]
+do
+key="$1"
+case $key in
+    -h|--help)
+    echo "Usage: runCust [run_options]"
+    echo "Options:"
+    echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
+    echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
+    echo "  -l|--logDir <path> - directory path to save the log files (default NONE)"
+    echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  -p|--prevModelPath <path> - directory w/ filename which holds models to start with (default NONE)"
+    echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    exit 1
+    ;;
+    -c|--configFile)
+    CONFIG_FILE="$2"
+    shift # pass argument
+    ;;
+    -d|--dataDir)
+    DATA_DIR="$2"
+    shift # pass argument
+    ;;
+    -l|--logDir)
+    LOG_DIR="$2"
+    shift # pass argument
+    ;;
+    -m|--modelDir)
+    MODEL_DIR="$2"
+    shift # pass argument
+    ;;
+    -p|--prevModelPath)
+    PREV_MODEL_PATH="$2"
+    shift # pass argument
+    ;;
+    --memCheck)
+    IS_MEMCHECK=TRUE
+    ;;
+    *)
+    EXTRA_ARGS="$@"
+    break
+    ;;
+esac
+shift # past argument or value
+done
+# Prints out the arguments that were passed into the script
+echo "runCust: CONFIG_FILE=$CONFIG_FILE"
+echo "runCust: DATA_DIR=$DATA_DIR"
+echo "runCust: LOG_DIR=$LOG_DIR"
+echo "runCust: MODEL_DIR=$MODEL_DIR"
+echo "runCust: PREV_MODEL_PATH=$PREV_MODEL_PATH"
+echo "runCust: IS_MEMCHECK=$IS_MEMCHECK"
+echo "runCust: EXTRA_ARGS=$EXTRA_ARGS"
+# TODO: Add your script code below here
+DIRECTORY="$(dirname $CONFIG_FILE)"
+echo "runCust: DIRECTORY=$DIRECTORY"
+bash $CONFIG_FILE -d $DATA_DIR -l $LOG_DIR -p $DIRECTORY -m $MODEL_DIR
+runCust: CONFIG_FILE=/var/storage/shared/pnrsy/dedey/run_exp_101.sh
+runCust: DATA_DIR=/hdfs/pnrsy/dedey/
+runCust: LOG_DIR=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/logs/1
+runCust: MODEL_DIR=/hdfs/pnrsy/sys/jobs/application_1489651428010_1358/models
+runCust: PREV_MODEL_PATH=NONE
+runCust: IS_MEMCHECK=FALSE
+runCust: EXTRA_ARGS=NONE
+runCust: DIRECTORY=/var/storage/shared/pnrsy/dedey
+Unkown option /var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/logs/1
+DATA_DIR=/hdfs/pnrsy/dedey/
+LOG_DIR=/var/storage/shared/pnrsy/sys/jobs/application_1489651428010_1358/logs/1
+CONFIG_DIR=/var/storage/shared/pnrsy/dedey
+MODEL_DIR=/hdfs/pnrsy/sys/jobs/application_1489651428010_1358/models
+I tensorflow/stream_executor/dso_loader.cc:128] successfully opened CUDA library libcublas.so locally
+I tensorflow/stream_executor/dso_loader.cc:128] successfully opened CUDA library libcudnn.so locally
+I tensorflow/stream_executor/dso_loader.cc:128] successfully opened CUDA library libcufft.so locally
+I tensorflow/stream_executor/dso_loader.cc:128] successfully opened CUDA library libcuda.so.1 locally
+I tensorflow/stream_executor/dso_loader.cc:128] successfully opened CUDA library libcurand.so locally
+Filling queue with 100 examples before starting to train. This will take a few minutes.
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:885] Found device 0 with properties: 
+name: Tesla M40
+major: 5 minor: 2 memoryClockRate (GHz) 1.112
+pciBusID 0000:2b:00.0
+Total memory: 11.17GiB
+Free memory: 11.07GiB
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:906] DMA: 0 
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:916] 0:   Y 
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:975] Creating TensorFlow device (/gpu:0) -> (device: 0, name: Tesla M40, pci bus id: 0000:2b:00.0)
+2017-03-28 21:52:32.465854: Execute Command: TRAIN-1
+2017-03-28 21:52:41.347790: step 0, loss = 42.48 (1.2 examples/sec; 3.445 sec/batch)
+2017-03-28 21:52:51.485653: step 10, loss = 54.85 (7.3 examples/sec; 0.545 sec/batch)
+2017-03-28 21:52:57.012634: step 20, loss = 44.45 (7.2 examples/sec; 0.553 sec/batch)
+2017-03-28 21:53:02.557199: step 30, loss = 40.65 (7.2 examples/sec; 0.553 sec/batch)
+2017-03-28 21:53:08.136211: step 40, loss = 29.41 (7.2 examples/sec; 0.552 sec/batch)
+2017-03-28 21:53:13.675401: step 50, loss = 25.40 (7.2 examples/sec; 0.553 sec/batch)
+2017-03-28 21:53:20.712029: step 60, loss = 32.53 (7.3 examples/sec; 0.549 sec/batch)
+2017-03-28 21:53:26.226867: step 70, loss = 31.15 (7.2 examples/sec; 0.556 sec/batch)
+2017-03-28 21:53:31.713670: step 80, loss = 20.78 (7.3 examples/sec; 0.547 sec/batch)
+2017-03-28 21:53:37.185656: step 90, loss = 24.06 (7.3 examples/sec; 0.550 sec/batch)
+2017-03-28 21:53:42.652300: step 100, loss = 28.98 (7.3 examples/sec; 0.549 sec/batch)
+2017-03-28 21:53:48.136254: step 110, loss = 48.14 (7.3 examples/sec; 0.549 sec/batch)
+2017-03-28 21:53:53.634165: step 120, loss = 31.38 (7.1 examples/sec; 0.560 sec/batch)
+2017-03-28 21:53:59.113618: step 130, loss = 31.14 (7.3 examples/sec; 0.547 sec/batch)
+2017-03-28 21:54:04.580329: step 140, loss = 28.22 (7.4 examples/sec; 0.544 sec/batch)
+2017-03-28 21:54:10.055195: step 150, loss = 19.24 (7.4 examples/sec; 0.544 sec/batch)
+2017-03-28 21:54:15.537729: step 160, loss = 23.90 (7.3 examples/sec; 0.552 sec/batch)
+2017-03-28 21:54:21.047757: step 170, loss = 20.65 (7.1 examples/sec; 0.563 sec/batch)
+2017-03-28 21:54:26.532422: step 180, loss = 26.76 (7.3 examples/sec; 0.549 sec/batch)
+2017-03-28 21:54:32.012642: step 190, loss = 20.49 (7.3 examples/sec; 0.545 sec/batch)
+2017-03-28 21:54:37.485999: step 200, loss = 29.01 (7.3 examples/sec; 0.547 sec/batch)
+2017-03-28 21:54:42.980982: step 210, loss = 23.97 (7.2 examples/sec; 0.554 sec/batch)
+2017-03-28 21:54:48.457713: step 220, loss = 23.15 (7.3 examples/sec; 0.546 sec/batch)
+2017-03-28 21:54:53.934169: step 230, loss = 23.51 (7.3 examples/sec; 0.545 sec/batch)
+2017-03-28 21:54:59.412910: step 240, loss = 23.87 (7.3 examples/sec; 0.549 sec/batch)
+2017-03-28 21:55:04.890902: step 250, loss = 21.30 (7.3 examples/sec; 0.549 sec/batch)
+2017-03-28 21:55:10.376235: step 260, loss = 24.52 (7.2 examples/sec; 0.555 sec/batch)
+2017-03-28 21:55:15.849373: step 270, loss = 17.90 (7.3 examples/sec; 0.546 sec/batch)
+2017-03-28 21:55:21.316267: step 280, loss = 40.42 (7.3 examples/sec; 0.550 sec/batch)
+2017-03-28 21:55:26.795533: step 290, loss = 34.88 (7.3 examples/sec; 0.546 sec/batch)
+2017-03-28 21:55:32.276237: step 300, loss = 21.58 (7.3 examples/sec; 0.549 sec/batch)
+2017-03-28 21:55:37.768225: step 310, loss = 18.38 (7.3 examples/sec; 0.545 sec/batch)
+2017-03-28 21:55:43.255342: step 320, loss = 21.25 (7.3 examples/sec; 0.550 sec/batch)
+2017-03-28 21:55:48.745937: step 330, loss = 30.78 (7.3 examples/sec; 0.548 sec/batch)
+2017-03-28 21:55:54.270980: step 340, loss = 24.43 (7.1 examples/sec; 0.565 sec/batch)
+2017-03-28 21:55:59.755002: step 350, loss = 68.74 (7.3 examples/sec; 0.546 sec/batch)
+2017-03-28 21:56:05.266060: step 360, loss = 18.00 (7.3 examples/sec; 0.549 sec/batch)
+2017-03-28 21:56:10.757945: step 370, loss = 19.32 (7.4 examples/sec; 0.543 sec/batch)
+2017-03-28 21:56:16.255768: step 380, loss = 18.78 (7.4 examples/sec; 0.544 sec/batch)
+2017-03-28 21:56:21.724951: step 390, loss = 25.32 (7.4 examples/sec; 0.542 sec/batch)
+2017-03-28 21:56:27.215677: step 400, loss = 18.88 (7.3 examples/sec; 0.550 sec/batch)
+2017-03-28 21:56:32.688462: step 410, loss = 49.36 (7.3 examples/sec; 0.550 sec/batch)
+2017-03-28 21:56:38.169852: step 420, loss = 21.60 (7.3 examples/sec; 0.544 sec/batch)
+2017-03-28 21:56:43.638543: step 430, loss = 86.76 (7.2 examples/sec; 0.556 sec/batch)
+2017-03-28 21:56:49.167880: step 440, loss = 23.32 (7.1 examples/sec; 0.567 sec/batch)
+2017-03-28 21:56:54.651006: step 450, loss = 32.32 (7.3 examples/sec; 0.550 sec/batch)
+2017-03-28 21:57:00.153435: step 460, loss = 22.53 (7.3 examples/sec; 0.551 sec/batch)
+2017-03-28 21:57:05.624826: step 470, loss = 21.26 (7.3 examples/sec; 0.550 sec/batch)
+2017-03-28 21:57:11.129032: step 480, loss = 32.62 (7.2 examples/sec; 0.554 sec/batch)
+2017-03-28 21:57:16.628254: step 490, loss = 21.89 (7.3 examples/sec; 0.546 sec/batch)
+2017-03-28 22:11:33.456624: Execute Command: TRAIN-2
+2017-03-30 20:40:21.611886: step 0, loss = 6.88 (6.8 examples/sec; 0.585 sec/batch)
+2017-03-30 20:40:31.500758: step 10, loss = 4.49 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:40:37.177114: step 20, loss = 5.21 (7.2 examples/sec; 0.559 sec/batch)
+2017-03-30 20:40:42.837340: step 30, loss = 3.23 (7.1 examples/sec; 0.562 sec/batch)
+2017-03-30 20:40:48.487242: step 40, loss = 19.02 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:40:54.170758: step 50, loss = 3.33 (7.0 examples/sec; 0.568 sec/batch)
+2017-03-30 20:40:59.807384: step 60, loss = 4.47 (7.2 examples/sec; 0.556 sec/batch)
+2017-03-30 20:41:05.446319: step 70, loss = 4.02 (7.1 examples/sec; 0.560 sec/batch)
+2017-03-30 20:41:11.095167: step 80, loss = 6.25 (7.1 examples/sec; 0.563 sec/batch)
+2017-03-30 20:41:16.749350: step 90, loss = 3.96 (7.0 examples/sec; 0.568 sec/batch)
+2017-03-30 20:41:22.381360: step 100, loss = 5.17 (7.2 examples/sec; 0.557 sec/batch)
+2017-03-30 20:41:28.046069: step 110, loss = 3.24 (7.1 examples/sec; 0.565 sec/batch)
+2017-03-30 20:41:33.681680: step 120, loss = 4.64 (7.2 examples/sec; 0.556 sec/batch)
+2017-03-30 20:41:39.358893: step 130, loss = 5.32 (7.0 examples/sec; 0.573 sec/batch)
+2017-03-30 20:41:45.011032: step 140, loss = 8.33 (7.2 examples/sec; 0.559 sec/batch)
+2017-03-30 20:41:50.649287: step 150, loss = 4.48 (7.0 examples/sec; 0.568 sec/batch)
+2017-03-30 20:41:56.291316: step 160, loss = 4.09 (7.1 examples/sec; 0.560 sec/batch)
+2017-03-30 20:42:01.935178: step 170, loss = 5.04 (7.1 examples/sec; 0.564 sec/batch)
+2017-03-30 20:42:07.602130: step 180, loss = 4.82 (7.1 examples/sec; 0.560 sec/batch)
+2017-03-30 20:42:13.233470: step 190, loss = 4.55 (7.2 examples/sec; 0.558 sec/batch)
+2017-03-30 20:42:18.879832: step 200, loss = 5.06 (7.0 examples/sec; 0.572 sec/batch)
+2017-03-30 20:42:24.510986: step 210, loss = 4.01 (7.2 examples/sec; 0.558 sec/batch)
+2017-03-30 20:42:30.201230: step 220, loss = 6.20 (7.0 examples/sec; 0.571 sec/batch)
+2017-03-30 20:42:35.865900: step 230, loss = 3.67 (7.0 examples/sec; 0.568 sec/batch)
+2017-03-30 20:42:41.500392: step 240, loss = 4.35 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:42:47.181416: step 250, loss = 3.77 (7.1 examples/sec; 0.565 sec/batch)
+2017-03-30 20:42:52.841418: step 260, loss = 4.39 (7.1 examples/sec; 0.564 sec/batch)
+2017-03-30 20:42:58.513879: step 270, loss = 5.43 (7.0 examples/sec; 0.569 sec/batch)
+2017-03-30 20:43:04.170031: step 280, loss = 3.96 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:43:09.814338: step 290, loss = 3.54 (7.2 examples/sec; 0.556 sec/batch)
+2017-03-30 20:43:15.459509: step 300, loss = 4.38 (7.0 examples/sec; 0.570 sec/batch)
+2017-03-30 20:43:21.124798: step 310, loss = 4.15 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:43:26.782459: step 320, loss = 4.38 (7.1 examples/sec; 0.567 sec/batch)
+2017-03-30 20:43:32.432356: step 330, loss = 3.45 (7.0 examples/sec; 0.569 sec/batch)
+2017-03-30 20:43:38.079349: step 340, loss = 4.58 (7.0 examples/sec; 0.570 sec/batch)
+2017-03-30 20:43:43.754858: step 350, loss = 2.95 (7.1 examples/sec; 0.564 sec/batch)
+2017-03-30 20:43:49.408578: step 360, loss = 4.82 (7.1 examples/sec; 0.565 sec/batch)
+2017-03-30 20:43:55.049878: step 370, loss = 6.35 (7.2 examples/sec; 0.555 sec/batch)
+2017-03-30 20:44:00.684081: step 380, loss = 2.81 (7.2 examples/sec; 0.558 sec/batch)
+2017-03-30 20:44:06.354213: step 390, loss = 3.54 (7.2 examples/sec; 0.558 sec/batch)
+2017-03-30 20:44:12.017526: step 400, loss = 4.54 (7.2 examples/sec; 0.557 sec/batch)
+2017-03-30 20:44:17.659252: step 410, loss = 4.34 (7.2 examples/sec; 0.559 sec/batch)
+2017-03-30 20:44:23.307005: step 420, loss = 3.56 (7.2 examples/sec; 0.556 sec/batch)
+2017-03-30 20:44:28.968317: step 430, loss = 3.05 (7.1 examples/sec; 0.563 sec/batch)
+2017-03-30 20:44:34.647592: step 440, loss = 3.88 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:44:40.313185: step 450, loss = 4.58 (7.0 examples/sec; 0.570 sec/batch)
+2017-03-30 20:44:45.959107: step 460, loss = 5.16 (7.0 examples/sec; 0.570 sec/batch)
+2017-03-30 20:44:51.597143: step 470, loss = 4.66 (7.1 examples/sec; 0.564 sec/batch)
+2017-03-30 20:44:57.239568: step 480, loss = 3.91 (7.1 examples/sec; 0.560 sec/batch)
+2017-03-30 20:45:02.858853: step 490, loss = 3.87 (7.0 examples/sec; 0.568 sec/batch)
+2017-03-28 22:11:33.456624: Execute Command: TRAIN-3
+2017-03-30 20:40:21.611886: step 0, loss = 6.88 (6.8 examples/sec; 0.585 sec/batch)
+2017-03-30 20:40:31.500758: step 10, loss = 4.49 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:40:37.177114: step 20, loss = 5.21 (7.2 examples/sec; 0.559 sec/batch)
+2017-03-30 20:40:42.837340: step 30, loss = 3.23 (7.1 examples/sec; 0.562 sec/batch)
+2017-03-30 20:40:48.487242: step 40, loss = 19.02 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:40:54.170758: step 50, loss = 3.33 (7.0 examples/sec; 0.568 sec/batch)
+2017-03-30 20:40:59.807384: step 60, loss = 4.47 (7.2 examples/sec; 0.556 sec/batch)
+2017-03-30 20:41:05.446319: step 70, loss = 4.02 (7.1 examples/sec; 0.560 sec/batch)
+2017-03-30 20:41:11.095167: step 80, loss = 6.25 (7.1 examples/sec; 0.563 sec/batch)
+2017-03-30 20:41:16.749350: step 90, loss = 3.96 (7.0 examples/sec; 0.568 sec/batch)
+2017-03-30 20:41:22.381360: step 100, loss = 5.17 (7.2 examples/sec; 0.557 sec/batch)
+2017-03-30 20:41:28.046069: step 110, loss = 3.24 (7.1 examples/sec; 0.565 sec/batch)
+2017-03-30 20:41:33.681680: step 120, loss = 4.64 (7.2 examples/sec; 0.556 sec/batch)
+2017-03-30 20:41:39.358893: step 130, loss = 5.32 (7.0 examples/sec; 0.573 sec/batch)
+2017-03-30 20:41:45.011032: step 140, loss = 8.33 (7.2 examples/sec; 0.559 sec/batch)
+2017-03-30 20:41:50.649287: step 150, loss = 4.48 (7.0 examples/sec; 0.568 sec/batch)
+2017-03-30 20:41:56.291316: step 160, loss = 4.09 (7.1 examples/sec; 0.560 sec/batch)
+2017-03-30 20:42:01.935178: step 170, loss = 5.04 (7.1 examples/sec; 0.564 sec/batch)
+2017-03-30 20:42:07.602130: step 180, loss = 4.82 (7.1 examples/sec; 0.560 sec/batch)
+2017-03-30 20:42:13.233470: step 190, loss = 4.55 (7.2 examples/sec; 0.558 sec/batch)
+2017-03-30 20:42:18.879832: step 200, loss = 5.06 (7.0 examples/sec; 0.572 sec/batch)
+2017-03-30 20:42:24.510986: step 210, loss = 4.01 (7.2 examples/sec; 0.558 sec/batch)
+2017-03-30 20:42:30.201230: step 220, loss = 6.20 (7.0 examples/sec; 0.571 sec/batch)
+2017-03-30 20:42:35.865900: step 230, loss = 3.67 (7.0 examples/sec; 0.568 sec/batch)
+2017-03-30 20:42:41.500392: step 240, loss = 4.35 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:42:47.181416: step 250, loss = 3.77 (7.1 examples/sec; 0.565 sec/batch)
+2017-03-30 20:42:52.841418: step 260, loss = 4.39 (7.1 examples/sec; 0.564 sec/batch)
+2017-03-30 20:42:58.513879: step 270, loss = 5.43 (7.0 examples/sec; 0.569 sec/batch)
+2017-03-30 20:43:04.170031: step 280, loss = 3.96 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:43:09.814338: step 290, loss = 3.54 (7.2 examples/sec; 0.556 sec/batch)
+2017-03-30 20:43:15.459509: step 300, loss = 4.38 (7.0 examples/sec; 0.570 sec/batch)
+2017-03-30 20:43:21.124798: step 310, loss = 4.15 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:43:26.782459: step 320, loss = 4.38 (7.1 examples/sec; 0.567 sec/batch)
+2017-03-30 20:43:32.432356: step 330, loss = 3.45 (7.0 examples/sec; 0.569 sec/batch)
+2017-03-30 20:43:38.079349: step 340, loss = 4.58 (7.0 examples/sec; 0.570 sec/batch)
+2017-03-30 20:43:43.754858: step 350, loss = 2.95 (7.1 examples/sec; 0.564 sec/batch)
+2017-03-30 20:43:49.408578: step 360, loss = 4.82 (7.1 examples/sec; 0.565 sec/batch)
+2017-03-30 20:43:55.049878: step 370, loss = 6.35 (7.2 examples/sec; 0.555 sec/batch)
+2017-03-30 20:44:00.684081: step 380, loss = 2.81 (7.2 examples/sec; 0.558 sec/batch)
+2017-03-30 20:44:06.354213: step 390, loss = 3.54 (7.2 examples/sec; 0.558 sec/batch)
+2017-03-30 20:44:12.017526: step 400, loss = 4.54 (7.2 examples/sec; 0.557 sec/batch)
+2017-03-30 20:44:17.659252: step 410, loss = 4.34 (7.2 examples/sec; 0.559 sec/batch)
+2017-03-30 20:44:23.307005: step 420, loss = 3.56 (7.2 examples/sec; 0.556 sec/batch)
+2017-03-30 20:44:28.968317: step 430, loss = 3.05 (7.1 examples/sec; 0.563 sec/batch)
+2017-03-30 20:44:34.647592: step 440, loss = 3.88 (7.1 examples/sec; 0.566 sec/batch)
+2017-03-30 20:44:40.313185: step 450, loss = 4.58 (7.0 examples/sec; 0.570 sec/batch)
+2017-03-30 20:44:45.959107: step 460, loss = 5.16 (7.0 examples/sec; 0.570 sec/batch)
+2017-03-30 20:44:51.597143: step 470, loss = 4.66 (7.1 examples/sec; 0.564 sec/batch)
+2017-03-30 20:44:57.239568: step 480, loss = 3.91 (7.1 examples/sec; 0.560 sec/batch)
+2017-03-30 20:45:02.858853: step 490, loss = 3.87 (7.0 examples/sec; 0.568 sec/batch)
