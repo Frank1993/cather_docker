@@ -20,6 +20,8 @@ RUN apt-get -y update && \
       jq \
       openssh-server \
       openssh-client \
+    # No longer in 'minimal set of packages'  
+      sudo \
     # Needed by OpenMPI
       cmake \
       g++ \
@@ -42,3 +44,4 @@ RUN wget -q -O - https://www.open-mpi.org/software/ompi/v${OPENMPI_VERSIONBASE}/
 # Update environment variables
 ENV PATH=/usr/local/mpi/bin:$PATH
 ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/mpi/lib:/usr/local/mpi/lib64:$LD_LIBRARY_PATH
+

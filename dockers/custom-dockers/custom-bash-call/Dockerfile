@@ -1,4 +1,4 @@
-FROM ubuntu.14.04-cuda.8.0-cudnn.5.1-openmpi.1.10.3-devel
+FROM ubuntu.16.04-cuda.8.0-cudnn.5.1-openmpi.1.10.3-devel
 
 # Create the home directory for the custom-docker
 RUN mkdir /home/custom
