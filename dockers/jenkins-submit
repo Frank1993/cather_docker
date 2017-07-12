@@ -134,16 +134,8 @@ encodeURIComponents()
     
     echo "${encoded}"
 }
-    
-CMD="http://$USERNAME:$API_TOKEN@jenkins.ccp.philly.selfhost.corp.microsoft.com/view/All/job/CustomDocker-BuildAndTest/buildWithParameters?"
-CMD+="custom-docker-files.zip=$(encodeURIComponents $CUSTOM_DOCKER_ZIP)&"
-CMD+="CUSTOM_DOCKER_NAME=$(encodeURIComponents $CUSTOM_DOCKER_NAME)&"
-CMD+="REPLACE_CURRENT_DOCKER=$REPLACE&"
-CMD+="BUILD_ONLY=$BUILD_ONLY&"
-CMD+="NO_CACHED=$NO_CACHE&"
-CMD+="DESCRIPTION=$(encodeURIComponents "$DESCRIPTION")"
 
-CMD="http://jenkins.ccp.philly.selfhost.corp.microsoft.com/view/All/job/CustomDocker-BuildAndTest/buildWithParameters? "
+CMD="https://jenkins.ccp.philly.selfhost.corp.microsoft.com/view/All/job/CustomDocker-BuildAndTest/buildWithParameters? "
 CMD+="--user $USERNAME:$API_TOKEN "
 CMD+="--form custom-docker-files.zip=@$CUSTOM_DOCKER_ZIP "
 CMD+="--form CUSTOM_DOCKER_NAME=$CUSTOM_DOCKER_NAME "
