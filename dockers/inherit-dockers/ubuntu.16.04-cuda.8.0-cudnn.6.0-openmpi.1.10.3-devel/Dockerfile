@@ -27,6 +27,8 @@ RUN apt-get -y update && \
       jq \
       openssh-server \
       openssh-client \
+    # No longer in 'minimal set of packages'  
+      sudo \
     # Needed by OpenMPI
       cmake \
       g++ \
