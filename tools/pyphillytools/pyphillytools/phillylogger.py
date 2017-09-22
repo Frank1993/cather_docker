@@ -77,7 +77,7 @@ class phillylogger:
             return None
         
         # Create the two filenames
-        self.log_filename = os.path.join(log_directory, "redirected_stdout.log")
+        self.log_filename = os.path.join(log_directory, "logrank.0.log")
         self.json_filename = os.path.join(log_directory, "progress.json")
         
         # Setup locks for file writing
