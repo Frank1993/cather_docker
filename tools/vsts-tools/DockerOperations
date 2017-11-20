@@ -1,0 +1,89 @@
+#!/bin/bash
+
+exit-script()
+{
+    echo $1
+    exit $2
+}
+
+command-wrapper()
+{
+    if [ $test == "true" ]; then
+        echo "    Simulating: $@"
+    else
+        $@
+    fi
+}
+
+create-tar-filename()
+{
+    dockername=$1
+    tag=${dockername##*/}
+    name=${dockername%/*}
+    name=${name##*/}
+    echo "$docker/$name:$tag.tar"
+}
+
+operation=$1
+
+test=false
+if [ $2 == 'test' ]; then
+    test=true
+fi
+
+if [ "$operation" == "build" ]; then
+    dockerfile="$AGENT_TEMPDIRECTORY/modified_dockers"
+elif [ "$operation" == "push" ]; then
+    dockerfile="$AGENT_TEMPDIRECTORY/modified_dockers"
+elif [ "$operation" == "delete" ]; then
+    dockerfile="$AGENT_TEMPDIRECTORY/deleted_dockers"
+else
+    exit-script "ERROR: $operation is not a valid operation" 1
+fi
+
+echo ""
+echo "************* Performing $operation on Dockers *************"
+
+# Do nothing if there were no dockers to work on
+if [ ! -f "$dockerfile" ]; then
+    exit-script "There are no dockers, no need to perform this operation" 0
+fi
+
+dockers=$(cat "$dockerfile" | tr ";" "\n")
+echo "The following dockers are to be operated on:"
+for docker in $modified_dockers; do
+    echo "    -- $docker"
+done
+
+for docker in $dockers; do
+    
+    full_docker="${docker%/*}:${docker##*/}"
+    full_docker="${full_docker/'dockers/registry-'/'phillyregistry.azurecr.io/philly/'}"
+    small_docker="${full_docker##*/}"
+    
+    if [ "$operation" == "build" ]; then
+        tarfile=$(create-tar-filename)
+        if [ -f "$tarfile" ]; then
+            # Right now this is still in testing phase.  There appears to be large upload times.
+            # The user can use this feature but it is recommended not to use.  For the time 
+            # being we will limit the announcements of this feature.
+            echo "    Found tar file for the image, loading from the file $tarfile."
+            command-wrapper docker load --input "$tarfile" || exit-script "Docker failed, please review the logs" 1
+        else
+            inherits=`grep -i ^FROM $docker/Dockerfile* | awk '{print $2}'`
+            command-wrapper docker pull $inherits
+            command-wrapper docker build -t $full_docker $docker || exit-script "Docker build, please review the logs" 1
+        fi
+    elif [ "$operation" == "push" ]; then
+        command-wrapper docker push $full_docker
+        latest=$(grep "$small_docker" "${docker%/*}/latest" || exit 1)
+        if [ ! -z $latest ]; then
+            command-wrapper docker tag "$full_docker" "${full_docker%:*}:latest"
+            command-wrapper docker push "${full_docker%:*}:latest"
+        fi
+    elif [ "$operation" == "delete" ]; then
+        command-wrapper az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${full_docker%:*} --tag ${docker##*:} --manifest
+    fi
+done
+
+echo "Successfully performed $operation on the dockers"

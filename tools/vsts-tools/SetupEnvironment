@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Make sure the following packages are installed
+if ! pip list | grep 'GitPython'; then
+    pip install gitpython
+fi
+if ! pip list | grep 'mixpanel'; then
+    pip install mixpanel
+fi
+if ! which az; then
+    sudo apt-get update && apt-get install -y libssl-dev libffi-dev python-dev build-essential
+    curl -L https://aka.ms/InstallAzureCliBundled -o azure-cli_bundle.tar.gz
+    tar -xvzf azure-cli_bundle.tar.gz
+    azure-cli_bundle_*/installer
+fi
+
+# Print the environment variables
+env | sort 

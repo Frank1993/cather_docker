@@ -1,0 +1,4 @@
+This directory is mirrored in Jenkins.
+Jenkins uses the files to build your custom docker.
+DO NOT make changes to ANY files in this directory.
+If you do Jenkins might have unexpected results.

@@ -1,0 +1,46 @@
+#!/bin/bash
+
+exit-script()
+{
+    echo $1
+    exit $2
+}
+
+if [ ! -n "$1" ]; then
+    echo "Please provide if you want to test \"build\" or \"publish\" process..."
+    exit 1
+fi
+
+temp_dir=$(mktemp -d)
+export MODIFIED_DOCKERS=""
+
+build_num=$RANDOM
+let 'build_num %= 5000'
+
+export BUILD_REQUESTEDFOR='Philly Service'
+export BUILD_REQUESTEDFOREMAIL='svcphil@microsoft.com'
+export SYSTEM_PULLREQUEST_SOURCEBRANCH='refs/heads/'$(git branch | grep \* | cut -d ' ' -f2)
+export SYSTEM_PULLREQUEST_TARGETBRANCH='refs/heads/master'
+export AGENT_TEMPDIRECTORY=$temp_dir
+export BUILD_BUILDNUMBER=$build_num
+export AZURE_CONTAINER_REGISTRY="phillyregistry"
+export SERVICE_PRINCIPAL_USERNAME="55d372f3-6ca8-4cb4-96ed-06d777ffdf8b"
+export SERVICE_PRINCIPAL_PASSWORD="iKRwnEtCn5/fwahfOAad92OGlty5OfaYFjLt8SN8bj0="
+export SERVICE_PRINCIPAL_PASSWORD="********************************************"
+export SERVICE_PRINCIPAL_TENANT="72f988bf-86f1-41af-91ab-2d7cd011db47"
+export MIX_PANEL_TOKEN="4820569f5a33e95d481ef207a4e769d8"
+export AGENT_JOBSTATUS="testing"
+
+if [ "$1" == "build" ]; then
+    python3 tools/vsts-tools/DiscoverModifiedDockers.py build || exit 1
+    ./tools/vsts-tools/AzureLogin test || exit 1
+    ./tools/vsts-tools/DockerOperations build test || exit 1
+elif [ "$1" == "publish" ]; then
+    python3 tools/vsts-tools/DiscoverModifiedDockers.py publish || exit 1
+    ./tools/vsts-tools/AzureLogin test || exit 1
+    ./tools/vsts-tools/DockerOperations build test || exit 1
+    ./tools/vsts-tools/DockerOperations push test || exit 1
+    ./tools/vsts-tools/DockerOperations delete test || exit 1
+fi
+
+#rm -R $temp_dir
