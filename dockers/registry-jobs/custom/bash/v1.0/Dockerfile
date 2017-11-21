@@ -16,4 +16,4 @@ LABEL description="This docker executes a bash script only" \
 # Add your personalized features below here.
 
 RUN apt-get -y update && \
-    apt-get install -y bc 
+    apt-get install -y bc
