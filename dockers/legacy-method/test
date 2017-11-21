@@ -224,9 +224,9 @@ else
     echo "==================== Performing automatic zip ===================="
     ZIP_FILENAME="$CUSTOM_DOCKER_NAME.zip"
     echo "Zipping the file \"$ZIP_FILENAME\""
-    rm -f "$ZIP_FILENAME" 
     cd $CUSTOM_DOCKER_DIR
     mkdir -p ../../zip-files
+    rm -f ../../zip-files/$ZIP_FILENAME 
     zip -r ../../zip-files/$ZIP_FILENAME *
     cd $SCRIPT_DIR
 fi

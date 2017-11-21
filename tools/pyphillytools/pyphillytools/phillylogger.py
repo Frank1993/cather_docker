@@ -61,7 +61,7 @@ class phillylogger:
                 
         # Setup auto increment for totals
         self.auto_epoch = False
-        if not self.total_epoch:
+        if not total_epoch:
             self.auto_epoch = True
             self.total_epoch = 1.0
         
