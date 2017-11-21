@@ -1,11 +1,11 @@
-# Tag: nvidia/cuda:8.0-cudnn5-devel-ubuntu16.04
-# Created: 2017-08-11T17:05:21.82224742Z
+# Tag: nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
+# Created: 2017-08-11T17:04:54.118571082Z
 # Label: com.nvidia.build.id: 29071360
 # Label: com.nvidia.build.ref: 836d5387f8888c3924aff7a011f9b2cd9956d3db
 # Label: com.nvidia.cuda.version: 8.0.61
-# Label: com.nvidia.cudnn.version: 5.1.10
+# Label: com.nvidia.cudnn.version: 6.0.21
 # Ubuntu 16.04.3
-FROM nvidia/cuda@sha256:f0b9dcced9395dc9e3eb63ed4201715515b201a5c7919d74db5d7601ce65d625
+FROM nvidia/cuda@sha256:238cc73e12c381e1469815f7ee149028a2ee3d557b68ff9b12d907c2d3ea3c04
 
 # Environment variables
 ENV STAGE_DIR=/root/gpu/install \
@@ -50,4 +50,4 @@ RUN wget -q -O - https://www.open-mpi.org/software/ompi/v${OPENMPI_VERSIONBASE}/
 
 # Update environment variables
 ENV PATH=/usr/local/mpi/bin:$PATH \
-    LD_LIBRARY_PATH=/usr/local/lib:/usr/local/mpi/lib:/usr/local/mpi/lib64:$LD_LIBRARY_PATH \
+    LD_LIBRARY_PATH=/usr/local/lib:/usr/local/mpi/lib:/usr/local/mpi/lib64:$LD_LIBRARY_PATH
