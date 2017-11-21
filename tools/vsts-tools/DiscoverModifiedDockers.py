@@ -282,7 +282,7 @@ if __name__ == "__main__":
             exit(0)
         branches = 'remotes/origin/' + target_branch + '..remotes/origin/' + source_branch
     elif args.action == 'publish':
-        branches = 'HEAD..HEAD~1'
+        branches = 'HEAD~1..HEAD'
     else:
         print('ERROR: Improper action (action = ' + args.action + ')')
         exit(1)

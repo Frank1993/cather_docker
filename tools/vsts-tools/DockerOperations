@@ -27,7 +27,7 @@ create-tar-filename()
 operation=$1
 
 test=false
-if [ $2 == 'test' ]; then
+if [ "$2" == "test" ]; then
     test=true
 fi
 
@@ -51,15 +51,17 @@ fi
 
 dockers=$(cat "$dockerfile" | tr ";" "\n")
 echo "The following dockers are to be operated on:"
-for docker in $modified_dockers; do
+for docker in $dockers; do
     echo "    -- $docker"
 done
+echo ""
 
 for docker in $dockers; do
     
     full_docker="${docker%/*}:${docker##*/}"
     full_docker="${full_docker/'dockers/registry-'/'phillyregistry.azurecr.io/philly/'}"
     small_docker="${full_docker##*/}"
+    cache_from=""
     
     if [ "$operation" == "build" ]; then
         tarfile=$(create-tar-filename)
@@ -71,8 +73,17 @@ for docker in $dockers; do
             command-wrapper docker load --input "$tarfile" || exit-script "Docker failed, please review the logs" 1
         else
             inherits=`grep -i ^FROM $docker/Dockerfile* | awk '{print $2}'`
+            echo "Pulling $inherits"
             command-wrapper docker pull $inherits
-            command-wrapper docker build -t $full_docker $docker || exit-script "Docker build, please review the logs" 1
+            echo ""
+            echo "Pulling $full_docker"
+            command-wrapper docker pull $full_docker && cache_from=" --cache-from $full_docker "
+            echo ""
+            echo "Building $docker with name $small_docker with cache: $cache_from"
+            command-wrapper docker build -t $small_docker $cache_from $docker || exit-script "Docker build, please review the logs" 1
+            echo ""
+            echo "Tagging $small_docker to $full_docker"
+            command-wrapper docker tag $small_docker $full_docker
         fi
     elif [ "$operation" == "push" ]; then
         command-wrapper docker push $full_docker
