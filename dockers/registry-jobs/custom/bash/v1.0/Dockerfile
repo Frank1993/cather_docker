@@ -5,10 +5,10 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker executes a bash script only" \ 
-      repository="philly/jobs/custom/base" \ 
-      tag="v1.0" \ 
-      creator="jafrench" tooltype="bash" \ 
+LABEL description="This docker executes a bash script only" \
+      repository="philly/jobs/custom/base" \
+      tag="v1.0" \
+      creator="jafrench" tooltype="bash" \
       tooltypeversion="4.3.11(1)-release" \
       created="4/20/2017 13:56"
 
