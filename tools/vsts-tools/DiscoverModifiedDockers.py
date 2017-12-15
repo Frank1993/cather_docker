@@ -162,20 +162,22 @@ def test_modified_dockers(dockers):
         # Tests for custom dockers only
         if dockerdir.startswith('dockers/registry-jobs/custom/'):
             # Test for the directories and files for the smoke test
-            executable = find_executable(dockerdir)
-            if not executable:
-                print('\nERROR: No "executable*" file found in ' + dockerdir)
-                print('       This is needed for the smoke test within CCP cluster!')
-                exit(1)
-            if not os.path.isdir(os.path.join(dockerdir, 'executableData')):
-                print('\nERROR: No executableData directory found in ' + dockerdir)
-                print('       This is needed for the smoke test within CCP cluster!')
-                exit(1)
-            if os.listdir(os.path.join(dockerdir, 'executableData')) == []:
-                print('\nERROR: The executableData directory empty in ' + dockerdir)
-                print('       Data is needed for the smoke test within CCP cluster!')
-                exit(1)
-            print('    Found directories and files for the smoke test within CCP.')
+            # For now these files are not needed so commenting out this code
+            # If smoke testing in CCP is brought back then these lines need to be uncommented
+            #executable = find_executable(dockerdir)
+            #if not executable:
+                #print('\nERROR: No "executable*" file found in ' + dockerdir)
+                #print('       This is needed for the smoke test within CCP cluster!')
+                #exit(1)
+            #if not os.path.isdir(os.path.join(dockerdir, 'executableData')):
+                #print('\nERROR: No executableData directory found in ' + dockerdir)
+                #print('       This is needed for the smoke test within CCP cluster!')
+                #exit(1)
+            #if os.listdir(os.path.join(dockerdir, 'executableData')) == []:
+                #print('\nERROR: The executableData directory empty in ' + dockerdir)
+                #print('       Data is needed for the smoke test within CCP cluster!')
+                #exit(1)
+            #print('    Found directories and files for the smoke test within CCP.')
             
             # Get the inheritied docker
             fromline = get_from_line(os.path.join(dockerdir, 'Dockerfile'))
