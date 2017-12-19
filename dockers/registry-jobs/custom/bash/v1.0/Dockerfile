@@ -6,11 +6,11 @@ RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
 LABEL description="This docker executes a bash script only" \
-      repository="philly/jobs/custom/base" \
+      repository="philly/jobs/custom/bash" \
       tag="v1.0" \
       creator="jafrench" tooltype="bash" \
       tooltypeversion="4.3.11(1)-release" \
-      created="4/20/2017 13:56"
+      createtime="4/20/2017"
 
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
