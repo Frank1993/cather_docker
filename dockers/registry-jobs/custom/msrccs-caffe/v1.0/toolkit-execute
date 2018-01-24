@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# Default values
+CONFIG_FILE=NONE
+DATA_DIR=NONE
+LOG_DIR=$PWD
+MODEL_DIR=NONE
+PREV_MODEL_PATH=NONE
+IS_MEMCHECK=FALSE
+EXTRA_ARGS=""
+
+# Parsing command line arguments:
+while [[ $# > 0 ]]
+do
+key="$1"
+
+case $key in
+    -h|--help)
+    echo "Usage: toolkit-execute [run_options]"
+    echo "Options:"
+    echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
+    echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
+    echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
+    echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    exit 1
+    ;;
+    -c|--configFile)
+    CONFIG_FILE="$2"
+    shift # pass argument
+    ;;
+    -d|--dataDir)
+    DATA_DIR="$2"
+    shift # pass argument
+    ;;
+    -l|--logDir)
+    LOG_DIR="$2"
+    shift # pass argument
+    ;;
+    -m|--modelDir)
+    MODEL_DIR="$2"
+    shift # pass argument
+    ;;
+    --memCheck)
+    IS_MEMCHECK=TRUE
+    ;;
+    *)
+    EXTRA_ARGS="$EXTRA_ARGS $1"
+    ;;
+esac
+shift # past argument or value
+done
+
+# Prints out the arguments that were passed into the script
+echo "toolkit-execute: CONFIG_FILE=$CONFIG_FILE"
+echo "toolkit-execute: DATA_DIR=$DATA_DIR"
+echo "toolkit-execute: LOG_DIR=$LOG_DIR"
+echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
+echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
+echo "toolkit-execute: EXTRA_ARGS=$EXTRA_ARGS"
+
+set -x # Echo all commands.
+
+# Display node info.
+nvidia-smi || true
+cat /proc/cpuinfo
+
+python -u $CONFIG_FILE --configfile $CONFIG_FILE --datadir $DATA_DIR --outputdir $MODEL_DIR --logdir $LOG_DIR $EXTRA_ARGS
