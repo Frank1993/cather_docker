@@ -68,7 +68,7 @@ cat /proc/cpuinfo
 # Docker's ENV is not set as expected, work around it here
 source /home/job/envs.sh
 
-if [[ ! -f "$CONFIG_FILE".sh ]]; then
+if [[ -f "$CONFIG_FILE".sh ]]; then
     # Running the optional script that can prepare the environment
     source "$CONFIG_FILE".sh
 fi
