@@ -65,4 +65,12 @@ set -x # Echo all commands.
 nvidia-smi || true
 cat /proc/cpuinfo
 
+# Docker's ENV is not set as expected, work around it here
+source /home/job/envs.sh
+
+if [[ ! -f "$CONFIG_FILE".sh ]]; then
+    # Running the optional script that can prepare the environment
+    source "$CONFIG_FILE".sh
+fi
+
 python -u $CONFIG_FILE --configfile $CONFIG_FILE --datadir $DATA_DIR --outputdir $MODEL_DIR --logdir $LOG_DIR $EXTRA_ARGS

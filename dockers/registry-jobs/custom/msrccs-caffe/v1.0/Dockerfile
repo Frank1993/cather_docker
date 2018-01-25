@@ -3,6 +3,7 @@ FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.
 RUN mkdir /home/job
 COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod a+rwx /home/job/toolkit-execute
+COPY envs.sh /home/job/envs.sh
 
 # Labels for the docker
 LABEL description="This docker has MSR CCS Caffe and python2" \
@@ -69,6 +70,9 @@ COPY scripts /home/job/
 # tar -zcvf /src/caffe.tar.gz /caffe_install
 COPY caffe.tar.gz /home/job
 RUN tar --strip-components=1 -C / -xvf /home/job/caffe.tar.gz
+
+# Make it possible to modify this if needed
+RUN chmod -R 777 /opt/
 
 # remove intermediates
 RUN rm -rf /home/job/*.tar.gz

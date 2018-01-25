@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /home/job/envs.sh
+
 export HISTSIZE=10000
 export HISTFILESIZE=100000
 shopt -s histappend

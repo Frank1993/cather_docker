@@ -115,7 +115,7 @@ def main():
 
     parser.add_argument('-configfile', '--configfile', help='Config file currently running',
                         required=False)
-    parser.add_argument('-solver', '--solverfile', help='Prototxt solver file for caffe training',
+    parser.add_argument('-solver', '--solver', help='Prototxt solver file for caffe training',
                         required=True)
     parser.add_argument('-datadir', '--datadir', help='Data directory where the dataset is located',
                         required=True)
@@ -129,20 +129,20 @@ def main():
         print('Extra arguments: "%s" (will be passed to caffe as-is)' % " ".join(extra))
 
     model_path = args['outputdir']
-    if not os.path.isdir(model_path):
+    if not model_path or not os.path.isdir(model_path):
         raise RuntimeError("Output directory %s does not exist" % model_path)
     log_dir = args['logdir']
-    if not os.path.isdir(log_dir):
+    if not log_dir or not os.path.isdir(log_dir):
         raise RuntimeError("Log directory %s does not exist" % log_dir)
     data_path = args['datadir']
-    if not os.path.isdir(data_path):
+    if not data_path or not os.path.isdir(data_path):
         raise RuntimeError("Data directory %s does not exist" % data_path)
-    solverfile = args['solverfile']
-    if not os.path.exists(solverfile):
-        raise RuntimeError("Train solver file %s does not exist" % solverfile)
+    solver = args['solver']
+    if not solver or not os.path.exists(solver):
+        raise RuntimeError("Train solver file %s does not exist" % solver)
 
     # prepare solver file, and parse it
-    solver_path, max_iter = convert_paths(solverfile, model_path)
+    solver_path, max_iter = convert_paths(solver, model_path)
 
     # Config files may assume paths relative to input data path
     with cwd(data_path):
