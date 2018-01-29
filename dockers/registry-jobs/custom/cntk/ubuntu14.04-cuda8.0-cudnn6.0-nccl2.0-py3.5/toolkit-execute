@@ -1,0 +1,211 @@
+#!/bin/bash
+
+function die {
+    echo ""
+    echo EXITCODE_RANK_$MPI_COMM_WORLD_RANK:$1
+    exit $1
+}
+
+function existsExactlyOne {
+    [[ $# -eq 1 && -f $1 ]]
+}
+
+# Default values
+CONFIG_FILE=NONE
+DATA_DIR=NONE
+LOG_DIR=$PWD
+MODEL_DIR=NONE
+PREV_MODEL_PATH=NONE
+IS_MEMCHECK=FALSE
+EXTRA_ARGS=""
+
+WORK_DIR=$PHILLY_HOME
+BIN_BASE_DIR=$WORK_DIR/cntkbin
+BIN_DIR=$BIN_BASE_DIR/bin
+HDFS_DROPS=/hdfs/public/drops
+MINICONDA_PATH=/usr/local/miniconda3/bin
+
+# Parsing command line arguments:
+while [[ $# > 0 ]]
+do
+key="$1"
+
+case $key in
+    -h|--help)
+    echo "Usage: toolkit-execute [run_options]"
+    echo "Options:"
+    echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
+    echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
+    echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
+    echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    exit 1
+    ;;
+    -c|--configFile)
+    CONFIG_FILE="$2"
+    shift # pass argument
+    ;;
+    -d|--dataDir)
+    DATA_DIR="$2"
+    shift # pass argument
+    ;;
+    -l|--logDir)
+    LOG_DIR="$2"
+    shift # pass argument
+    ;;
+    -m|--modelDir)
+    MODEL_DIR="$2"
+    shift # pass argument
+    ;;
+    --memCheck)
+    IS_MEMCHECK=TRUE
+    ;;
+    *)
+    EXTRA_ARGS="$EXTRA_ARGS $1"
+    ;;
+esac
+shift # past argument or value
+done
+
+# Prints out the arguments that were passed into the script
+echo "toolkit-execute: CONFIG_FILE=$CONFIG_FILE"
+echo "toolkit-execute: DATA_DIR=$DATA_DIR"
+echo "toolkit-execute: LOG_DIR=$LOG_DIR"
+echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
+echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
+echo "toolkit-execute: EXTRA_ARGS=$EXTRA_ARGS"
+
+BUILD_ID=""
+EXTRA_JOB_ARGS=""
+IFS=";"
+read -r BUILD_ID EXTRA_JOB_ARGS <<< ${EXTRA_ARGS}
+
+# trim the spaces
+BUILD_ID="${BUILD_ID#"${BUILD_ID%%[![:space:]]*}"}"
+BUILD_ID="${BUILD_ID%"${BUILD_ID##*[![:space:]]}"}"
+
+echo "toolkit-execute: BUILD_ID=$BUILD_ID"
+echo "toolkit-execute: EXTRA_JOB_ARGS=$EXTRA_JOB_ARGS"
+echo "toolkit-execute: WORK_DIR=$WORK_DIR"
+
+# MPI Rank
+MPI_COMM_WORLD_RANK=-1
+MPI_COMM_LOCAL_RANK=-1
+# Determine MPI version by reading link. If failed or mismatch, fall back to OpenMPI as default
+if [[ $(readlink /usr/local/mpi 2>&1) == *mvapich* ]]; then
+    MPI_COMM_WORLD_RANK=$MV2_COMM_WORLD_RANK
+    MPI_COMM_LOCAL_RANK=$MV2_COMM_WORLD_LOCAL_RANK
+else
+    MPI_COMM_WORLD_RANK=$OMPI_COMM_WORLD_RANK
+    MPI_COMM_LOCAL_RANK=$OMPI_COMM_WORLD_LOCAL_RANK
+fi
+
+set -x
+
+# Download or find the build on HDFS
+if [[ -z $BUILD_ID ]]; then
+    echo "BUILD_ID needed for extra parameters. Usage: buildID; extra args"
+fi
+GLOBAL_CNTK_DOWNLOAD_FILE="$WORK_DIR/.cntk-download-done"
+if [[ ! -f "$GLOBAL_CNTK_DOWNLOAD_FILE" ]]; then
+  if [[ "$MPI_COMM_WORLD_RANK" == "0" ]]; then
+      for PREFIX in 1bitsgd gpu cpu;
+      do
+        if [[ -z "$JENKINS_PATH_PREFIX" ]]; then
+          for BUILD_FLAVOR in release debug;
+          do
+            if [[ -z "$JENKINS_BUILD_FLAVOR" ]]; then
+              if [[ -f $HDFS_DROPS/$BUILD_ID/$PREFIX/$BUILD_FLAVOR.zip ]]; then
+                JENKINS_PATH_PREFIX=$PREFIX
+                JENKINS_BUILD_FLAVOR=$BUILD_FLAVOR
+              else
+                wget --spider -q https://jenkins.cntk.selfhost.corp.microsoft.com/job/CNTK-Build-Linux/$BUILD_ID/artifact/build/$PREFIX/$BUILD_FLAVOR/bin/cntk && JENKINS_PATH_PREFIX=$PREFIX && JENKINS_BUILD_FLAVOR=$BUILD_FLAVOR
+              fi
+            fi
+          done
+        fi
+      done
+
+      HDFS_DROP_DIR=$HDFS_DROPS/$BUILD_ID/$JENKINS_PATH_PREFIX
+      HDFS_DROP_ZIP=$HDFS_DROP_DIR/$JENKINS_BUILD_FLAVOR.zip
+      TMP_DROP_ZIP=/tmp/cntkbin.zip
+
+      if [[ "${TOOL_TYPE^^}" == "CNTK" ]]; then
+        UNZIP_PATTERNS=($JENKINS_BUILD_FLAVOR/bin/cntk\* $JENKINS_BUILD_FLAVOR/lib/\*)
+      else # CNTK-PY35
+        UNZIP_PATTERNS=($JENKINS_BUILD_FLAVOR/python/cntk\*35\*35\*.whl)
+      fi
+
+      # Try to reuse existing CNTK binary cache on HDFS if there, if not download from Jenkins on demand
+      unzip -o $HDFS_DROP_ZIP "${UNZIP_PATTERNS[@]}" -d $WORK_DIR ||
+      {
+        echo "Downloading artifacts from folder $JENKINS_PATH_PREFIX/$JENKINS_BUILD_FLAVOR and placing them in HDFS for caching"
+        mkdir -p $HDFS_DROP_DIR || { echo "Philly_Error_RunJobLegacy_Permissions"; die 1; }
+        wget --no-verbose https://jenkins.cntk.selfhost.corp.microsoft.com/job/CNTK-Build-Linux/$BUILD_ID/artifact/build/$JENKINS_PATH_PREFIX/$JENKINS_BUILD_FLAVOR/*zip*/$JENKINS_BUILD_FLAVOR.zip -O $TMP_DROP_ZIP || die $?
+        unzip -o $TMP_DROP_ZIP "${UNZIP_PATTERNS[@]}" -d $WORK_DIR || die $?
+
+        # If there was a race and now HDFS has the valid zip, just leave it there, else upload
+        # the one we just used so we know it works.
+        if unzip -t $HDFS_DROP_ZIP; then
+            rm -f $TMP_DROP_ZIP
+        else
+            mv $TMP_DROP_ZIP $HDFS_DROP_ZIP
+        fi
+      }
+
+      # Original archive will have directory named after build flavor, we need to change it to cntkbin
+      [[ -d $BIN_BASE_DIR ]] &&
+      {
+        rm -rf $BIN_BASE_DIR || die $?
+      }
+
+      mv $WORK_DIR/$JENKINS_BUILD_FLAVOR $BIN_BASE_DIR || die $?
+
+      [[ -f $BIN_DIR/cntk ]] && {
+        chmod +x $BIN_DIR/cntk || die $?
+      }
+
+
+      existsExactlyOne $BIN_BASE_DIR/python/cntk*35*35*whl || die $?
+
+      # Activate the environment to install the CNTK Python wheel.  As we do
+      # not get an exit value from activate, instead we assert that after
+      # activating 'conda' exists in path.
+      #
+      # N.B. need to be careful of not using variables that clash with the
+      # Anaconda scripts (which are source'd).
+      set +x
+      source $MINICONDA_PATH/activate cntk-py35
+      set -x
+      which conda || die $?
+
+      # We do a PIP user install of the CNTK wheel. This goes to ~/.local by
+      # default, which is on scratch. Before that, we clean up from previous
+      # attempts before trying the installs.
+      #
+      # Additional information:
+      #   https://pip.readthedocs.io/en/latest/user_guide/#user-installs
+      #   https://docs.python.org/3/library/site.html#site.USER_BASE
+      [[ -d ~/.local ]] &&
+      {
+        rm -rf ~/.local || die $?
+      }
+      pip install --user $BIN_BASE_DIR/python/cntk*35*35*whl || die $?
+
+      source deactivate # deactivate
+
+      chmod 755 $WORK_DIR
+      chmod -R 777 $WORK_DIR/*
+      touch ${GLOBAL_CNTK_DOWNLOAD_FILE}
+    else
+      echo "$MPI_COMM_WORLD_RANK: Waiting for rank=0"
+      while [[ ! -f "$GLOBAL_DEPLOYMENT_FILE" ]]; do sleep 10; done
+  fi
+fi
+
+source $MINICONDA_PATH/activate cntk-py35
+which conda || die $?
+
+python3 --version
+# Data location is passed in through $EXTRA_ARGS
+python3 $CONFIG_FILE -datadir $DATA_DIR -logdir $LOG_DIR/out -outputdir $MODEL_DIR $EXTRA_JOB_ARGS
