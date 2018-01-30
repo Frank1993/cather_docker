@@ -18,12 +18,18 @@ MODEL_DIR=NONE
 PREV_MODEL_PATH=NONE
 IS_MEMCHECK=FALSE
 EXTRA_ARGS=""
+NUM_GPU=NONE
+STDOUT_DIR=$PWD
+IS_DEBUG=false
+IS_PERF_TRACE=false
+IS_GDB_WRAPPED=false
 
 WORK_DIR=$PHILLY_HOME
 BIN_BASE_DIR=$WORK_DIR/cntkbin
 BIN_DIR=$BIN_BASE_DIR/bin
 HDFS_DROPS=/hdfs/public/drops
 MINICONDA_PATH=/usr/local/miniconda3/bin
+BUILD_ID=NONE
 
 # Parsing command line arguments:
 while [[ $# > 0 ]]
@@ -34,12 +40,23 @@ case $key in
     -h|--help)
     echo "Usage: toolkit-execute [run_options]"
     echo "Options:"
+    echo "  -n|--nGPU <num> - how many GPUs used for this job (default NONE)"
     echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
     echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
     echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
     echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  -s|--stdoutDir <path> - directory path to save the stdout (default \$PWD)"
+    echo "  --debug - job is in debug mode (not used)"
+    echo "  --perfTrace - job should run in perf trace mode (not used)"
+    echo "  --gdbWrapped - job should run with GDB (default FALSE)"
+    echo "  --prevModelDir - the prev model path to copy from (default None)"
     echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    echo "  -b|--buildID <buildID> - CNTK build to be used (defaukt None)"
     exit 1
+    ;;
+    -n|--nGPU)
+    NUM_GPU="$2"
+    shift # pass argument
     ;;
     -c|--configFile)
     CONFIG_FILE="$2"
@@ -57,11 +74,34 @@ case $key in
     MODEL_DIR="$2"
     shift # pass argument
     ;;
+    -s|--stdoutDir)
+    STDOUT_DIR="$2"
+    shift # pass argument
+    ;;
+    --debug)
+    IS_DEBUG=true
+    ;;
+    --perfTrace)
+    IS_PERF_TRACE=true
+    ;;
+    --gdbWrapped)
+    IS_GDB_WRAPPED=true
+    ;;
+    --prevModelDir)
+    PREV_MODEL_PATH="$2"
+    shift # pass argument
+    ;;
     --memCheck)
     IS_MEMCHECK=TRUE
     ;;
-    *)
-    EXTRA_ARGS="$EXTRA_ARGS $1"
+    -b|--buildID)
+    BUILD_ID="$2"
+    shift # pass argument
+    ;;
+    --)
+    shift # pass argument
+    EXTRA_ARGS="$@"
+    break
     ;;
 esac
 shift # past argument or value
@@ -74,18 +114,7 @@ echo "toolkit-execute: LOG_DIR=$LOG_DIR"
 echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
 echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
 echo "toolkit-execute: EXTRA_ARGS=$EXTRA_ARGS"
-
-BUILD_ID=""
-EXTRA_JOB_ARGS=""
-IFS=";"
-read -r BUILD_ID EXTRA_JOB_ARGS <<< ${EXTRA_ARGS}
-
-# trim the spaces
-BUILD_ID="${BUILD_ID#"${BUILD_ID%%[![:space:]]*}"}"
-BUILD_ID="${BUILD_ID%"${BUILD_ID##*[![:space:]]}"}"
-
 echo "toolkit-execute: BUILD_ID=$BUILD_ID"
-echo "toolkit-execute: EXTRA_JOB_ARGS=$EXTRA_JOB_ARGS"
 echo "toolkit-execute: WORK_DIR=$WORK_DIR"
 
 # MPI Rank
@@ -208,4 +237,4 @@ which conda || die $?
 
 python3 --version
 # Data location is passed in through $EXTRA_ARGS
-python3 $CONFIG_FILE -datadir $DATA_DIR -logdir $LOG_DIR/out -outputdir $MODEL_DIR $EXTRA_JOB_ARGS
+python3 $CONFIG_FILE -datadir $DATA_DIR -logdir $LOG_DIR/out -outputdir $MODEL_DIR $EXTRA_ARGS
