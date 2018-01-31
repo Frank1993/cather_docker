@@ -10,3 +10,8 @@ future==0.16.0
 protobuf==2.6.1
 Pillow==4.2.1
 h5py==2.7.0
+pyyaml
+progressbar
+easydict
+ete2
+nltk

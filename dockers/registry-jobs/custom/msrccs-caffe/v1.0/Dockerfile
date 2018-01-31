@@ -37,34 +37,41 @@ RUN apt-get -y install -y \
 RUN pip install --upgrade pip
 
 ## install development requirements
-RUN apt-get install -y \
-        vim \
-        libnccl2=2.1.2-1+cuda8.0 libnccl-dev=2.1.2-1+cuda8.0 \
-        libprotobuf-dev \
-        protobuf-compiler \
-        libatlas-base-dev \
-        libboost-all-dev \
-        libgflags-dev \
-        libgoogle-glog-dev \
-        libhdf5-serial-dev \
-        libleveldb-dev \
-        liblmdb-dev \
-        libopencv-dev \
-        libsnappy-dev \
-        python-dev
+RUN apt-get install -y libprotobuf-dev protobuf-compiler
+RUN apt-get install -y libatlas-base-dev libboost-all-dev
+RUN apt-get install -y libgflags-dev libgoogle-glog-dev
+RUN apt-get install -y libhdf5-serial-dev
+RUN apt-get install -y libleveldb-dev liblmdb-dev
+RUN apt-get install -y libopencv-dev
+RUN apt-get install -y libsnappy-dev
+RUN apt-get install -y python-dev
+RUN apt-get install -y vim
+RUN apt-get install -y git
+RUN apt-get install -y tmux
 
 RUN apt-get autoremove
 
-COPY requirements.txt /home/job 
-RUN pip install -r /home/job/requirements.txt
+# Newer NCCL
+RUN git clone https://github.com/NVIDIA/nccl.git && cd nccl && \
+    git checkout 03d856977ecbaac87e598c0c4bafca96761b9ac7 && \
+    make -j$(nproc) && make install && cd .. && rm -rf nccl
 
-# needed scripts
+#tmux conf
+COPY tmux.conf /etc/
+
+# pip packages
+COPY requirements.txt /home/job
+RUN pip install -r /home/job/requirements.txt
+RUN python -m nltk.downloader all
+
+# example scripts
 COPY scripts /home/job/
 
 # To build in the docker directly (make sure /src/Caffe has the source):
 #RUN mkdir -p /src/Caffe/build
-#RUN cd /src/Caffe/build && cmake -DUSE_OPENMP=1 -DUSE_CUDNN=1 -DUSE_NCCL=1 -DCMAKE_INSTALL_PREFIX=$CAFFE_ROOT .. && \
-#    make install
+#RUN cd /src/Caffe/build && \
+#    cmake -DUSE_OPENMP=1 -DUSE_CUDNN=1 -DUSE_NCCL=1 -DCUDA_ARCH_NAME=All -DCMAKE_INSTALL_PREFIX=$CAFFE_ROOT .. && \
+#    make -j$(nproc) && make install
 # To prebuild .tar.gz file:
 # make DESTDIR=/caffe_install install
 # tar -zcvf /src/caffe.tar.gz /caffe_install
