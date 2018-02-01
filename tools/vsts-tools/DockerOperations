@@ -33,6 +33,7 @@ fi
 
 if [ "$operation" == "build" ]; then
     dockerfile="$AGENT_TEMPDIRECTORY/modified_dockers"
+    deletedDockerfile="$AGENT_TEMPDIRECTORY/deleted_dockers"
 elif [ "$operation" == "push" ]; then
     dockerfile="$AGENT_TEMPDIRECTORY/modified_dockers"
 elif [ "$operation" == "delete" ]; then
@@ -49,7 +50,8 @@ if [ ! -f "$dockerfile" ]; then
     exit-script "There are no dockers, no need to perform this operation" 0
 fi
 
-dockers=$(cat "$dockerfile" | tr ";" "\n")
+# Skip the deleted ones and include only the newly modified ones
+dockers=$(comm -23 <(cat "$dockerfile" | tr ";" "\n") <(cat "$deletedDockerfile" | tr ";" "\n"))
 echo "The following dockers are to be operated on:"
 for docker in $dockers; do
     echo "    -- $docker"
@@ -57,21 +59,23 @@ done
 echo ""
 
 for docker in $dockers; do
-    
+
     full_docker="${docker%/*}:${docker##*/}"
     full_docker="${full_docker/'dockers/registry-'/'phillyregistry.azurecr.io/philly/'}"
+    full_test_docker="${full_docker/'custom'/'test'}"
     small_docker="${full_docker##*/}"
     cache_from=""
-    
+
     if [ "$operation" == "build" ]; then
         tarfile=$(create-tar-filename)
         if [ -f "$tarfile" ]; then
             # Right now this is still in testing phase.  There appears to be large upload times.
-            # The user can use this feature but it is recommended not to use.  For the time 
+            # The user can use this feature but it is recommended not to use.  For the time
             # being we will limit the announcements of this feature.
             echo "    Found tar file for the image, loading from the file $tarfile."
             command-wrapper docker load --input "$tarfile" || exit-script "Docker failed, please review the logs" 1
         else
+            echo "Begin building and pushing images for build"
             inherits=`grep -i ^FROM $docker/Dockerfile* | awk '{print $2}'`
             echo "Pulling $inherits"
             command-wrapper docker pull $inherits
@@ -79,19 +83,30 @@ for docker in $dockers; do
             echo "Pulling $full_docker"
             command-wrapper docker pull $full_docker && cache_from=" --cache-from $full_docker "
             echo ""
+            echo "Pulling $full_test_docker"
+            command-wrapper docker pull $full_test_docker && cache_from=" --cache-from $full_test_docker "
+            echo ""
             echo "Building $docker with name $small_docker with cache: $cache_from"
             command-wrapper docker build -t $small_docker $cache_from $docker || exit-script "Docker build, please review the logs" 1
             echo ""
             echo "Tagging $small_docker to $full_docker"
             command-wrapper docker tag $small_docker $full_docker
+            echo "Tagging $small_docker to $full_test_docker"
+            command-wrapper docker tag $small_docker $full_test_docker
+            echo "Pushing $full_test_docker"
+            command-wrapper docker push $full_test_docker
         fi
     elif [ "$operation" == "push" ]; then
         command-wrapper docker push $full_docker
         latest=$(grep "$small_docker" "${docker%/*}/latest" || exit 1)
         if [ ! -z $latest ]; then
             command-wrapper docker tag "$full_docker" "${full_docker%:*}:latest"
+            echo "Pushing ${full_docker%:*}:latest"
             command-wrapper docker push "${full_docker%:*}:latest"
         fi
+        # Remove the test docker once published to custom repository
+        command-wrapper az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${full_test_docker%:*} --tag ${docker##*:} --manifest
+
     elif [ "$operation" == "delete" ]; then
         command-wrapper az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${full_docker%:*} --tag ${docker##*:} --manifest
     fi
