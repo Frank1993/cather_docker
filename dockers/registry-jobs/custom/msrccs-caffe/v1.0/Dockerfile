@@ -62,7 +62,10 @@ COPY tmux.conf /etc/
 # pip packages
 COPY requirements.txt /home/job
 RUN pip install -r /home/job/requirements.txt
-RUN python -m nltk.downloader all
+
+ENV NLTK_DATA /home/job/nltk_data
+RUN mkdir -p $NLTK_DATA
+RUN python -m nltk.downloader wordnet brown averaged_perceptron_tagger
 
 # example scripts
 COPY scripts /home/job/
