@@ -4,3 +4,7 @@
 
 /.vs
 /dockers/legacy-method/custom-dockers/custom-tf15-py36
+
+# exclude vi backup files
+*~
+
