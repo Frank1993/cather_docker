@@ -11,7 +11,7 @@ command-wrapper()
     if [ $test == "true" ]; then
         echo "    Simulating: $@"
     else
-        $@
+        $@ || exit 1
     fi
 }
 
@@ -29,6 +29,9 @@ operation=$1
 test=false
 if [ "$2" == "test" ]; then
     test=true
+    AGENT_TEMPDIRECTORY="/tmp"
+    AZURE_CONTAINER_REGISTRY="phillyregistry"
+    AZURE_CONTAINER_REGISTRY_URL="phillyregistry.azurecr.io/"
 fi
 
 if [ "$operation" == "build" ]; then
@@ -58,13 +61,30 @@ for docker in $dockers; do
 done
 echo ""
 
+
 for docker in $dockers; do
 
+    docker_type_prefix="custom"
+    docker_name="${docker/'dockers/registry-jobs/'/''}"
+    docker_name_ap=$docker_name
+    if  [[ $docker_name != custom* ]] ; then
+        docker_type_prefix=${docker_name%%/*}
+        docker_name_ap="custom-"$docker_name
+    fi
+
     full_docker="${docker%/*}:${docker##*/}"
-    full_docker="${full_docker/'dockers/registry-'/'phillyregistry.azurecr.io/philly/'}"
-    full_test_docker="${full_docker/'custom'/'test'}"
+    full_docker="${full_docker/'dockers/registry-'/$AZURE_CONTAINER_REGISTRY_URL'philly/'}"
+    full_test_docker="${full_docker/$docker_type_prefix/'test'}"
     small_docker="${full_docker##*/}"
     cache_from=""
+
+    docker_repository="${full_docker#$AZURE_CONTAINER_REGISTRY_URL}"
+    docker_repository="${docker_repository%:*}"
+    test_docker_repository="${docker_repository/$docker_type_prefix/'test'}"
+
+    # Remove this when AP sync is deprecated
+    docker_name_ap="${docker_name_ap//'/'/'-'}"
+    full_docker_ap="phillyonapprod.azurecr.io/philly-prod-cy4/"$docker_name_ap
 
     if [ "$operation" == "build" ]; then
         tarfile=$(create-tar-filename)
@@ -83,32 +103,53 @@ for docker in $dockers; do
             echo "Pulling $full_docker"
             command-wrapper docker pull $full_docker && cache_from=" --cache-from $full_docker "
             echo ""
-            echo "Pulling $full_test_docker"
-            command-wrapper docker pull $full_test_docker && cache_from=" --cache-from $full_test_docker "
-            echo ""
             echo "Building $docker with name $small_docker with cache: $cache_from"
             command-wrapper docker build -t $small_docker $cache_from $docker || exit-script "Docker build, please review the logs" 1
             echo ""
             echo "Tagging $small_docker to $full_docker"
             command-wrapper docker tag $small_docker $full_docker
-            echo "Tagging $small_docker to $full_test_docker"
-            command-wrapper docker tag $small_docker $full_test_docker
+            echo ""
+
+            # Pushing test image
+            echo "******Tagging and pushing images for testing*******"
+            echo "Tagging $full_test_docker to ${full_test_docker%:*}:latest"
+            command-wrapper docker tag $full_test_docker "${full_test_docker%:*}:latest"
+            echo ""
             echo "Pushing $full_test_docker"
-            command-wrapper docker push $full_test_docker
+            command-wrapper docker push "${full_test_docker%:*}:latest"
+            echo ""
+
+            # Remove this when AP sync is deprecated
+            echo "Tagging for AP: $small_docker to $full_docker_ap"
+            command-wrapper docker tag $small_docker $full_docker_ap
+            echo ""
         fi
     elif [ "$operation" == "push" ]; then
+        echo "Pushing ${full_docker}"
         command-wrapper docker push $full_docker
         latest=$(grep "$small_docker" "${docker%/*}/latest" || exit 1)
         if [ ! -z $latest ]; then
-            command-wrapper docker tag "$full_docker" "${full_docker%:*}:latest"
             echo "Pushing ${full_docker%:*}:latest"
+            command-wrapper docker tag "$full_docker" "${full_docker%:*}:latest"
             command-wrapper docker push "${full_docker%:*}:latest"
-        fi
-        # Remove the test docker once published to custom repository
-        command-wrapper az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${full_test_docker%:*} --tag ${docker##*:} --manifest
 
+            # Remove this when AP sync is deprecated
+            echo "Pushing ${full_docker_ap%:*}:latest"
+            command-wrapper az account set --subscription PhillyInt
+            command-wrapper az acr login --name phillyonapprod
+
+            command-wrapper az account set --subscription PhillyInt
+            command-wrapper docker push "${full_docker_ap%:*}:latest"
+
+            command-wrapper az account set --subscription PhillyExt
+            command-wrapper az acr login --name phillyregistry
+        fi
+
+        # Remove the test docker once published to custom repository
+        echo "Deleting ${full_test_docker%:*}:${full_test_docker##*:}"
+        command-wrapper az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${test_docker_repository} -y
     elif [ "$operation" == "delete" ]; then
-        command-wrapper az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${full_docker%:*} --tag ${docker##*:} --manifest
+        command-wrapper az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${docker_repository} --tag ${docker##*:} --manifest -y
     fi
 done
 

@@ -86,16 +86,16 @@ def save_dockers(dockers, filename):
 
 # Find Modified Dockers
 def find_modified_dockers(repo, branches):
-    dockers = []    
+    dockers = []
     response = repo.git.diff('--name-status', branches)
     print('\nResponse to git diff:\n' + response)
-    
+
     for line in response.splitlines():
         split = line.split()
         split[1] = os.path.dirname(split[1])
         if split[1].startswith('dockers/registry-jobs/') and os.path.isfile(os.path.join(split[1], 'Dockerfile')) and split not in dockers:
             dockers.append(split)
-    
+
     return dockers
 
 # Sort Modified Dockers
@@ -109,7 +109,7 @@ def find_modified_dockers(repo, branches):
 def sort_modified_dockers(dockers):
     modified_dockers = []
     deleted_dockers = []
-    
+
     # Find the deleted dockers
     templist = []
     for docker in dockers:
@@ -118,7 +118,7 @@ def sort_modified_dockers(dockers):
         else:
             templist.append(docker)
     dockers = templist
-    
+
     # Add the dockers from base directory
     subdirs = ['base', 'toolkit', 'custom']
     for subdir in subdirs:
@@ -129,7 +129,7 @@ def sort_modified_dockers(dockers):
             else:
                 templist.append(docker)
         dockers = templist
-    
+
     return modified_dockers, deleted_dockers
 
 def inherited_docker_modified(dockerdir, dockers):
@@ -146,19 +146,19 @@ def inherited_docker_modified(dockerdir, dockers):
 def test_modified_dockers(dockers):
     for dockerdir in dockers:
         print('\nTesting Docker: ' + dockerdir)
-        
+
         # Declare variables
         test_for_toolkit_execute = False
-        
+
         # No special tests needed for base dockers
         if dockerdir.startswith('dockers/registry-jobs/base/'):
             print('    No special tests needed for base dockers.')
             continue
-        
+
         # Tests for toolkit dockers only
         if dockerdir.startswith('dockers/registry-jobs/toolkit/'):
             test_for_toolkit_execute = True
-        
+
         # Tests for custom dockers only
         if dockerdir.startswith('dockers/registry-jobs/custom/'):
             # Test for the directories and files for the smoke test
@@ -178,18 +178,18 @@ def test_modified_dockers(dockers):
                 #print('       Data is needed for the smoke test within CCP cluster!')
                 #exit(1)
             #print('    Found directories and files for the smoke test within CCP.')
-            
+
             # Get the inheritied docker
             fromline = get_from_line(os.path.join(dockerdir, 'Dockerfile'))
             inherit_docker = fromline.split()[1]
-            
+
             # If not inheriting from toolkit, toolkit-execute must be present
             if not inherit_docker.startswith('phillyreg.azurecr.io/philly/jobs/toolkit'):
                 print('    WARNING: You are not inheriting from a toolkit docker, extra requirements must be met...')
                 test_for_toolkit_execute = True
-        
+
         # The following must be tested for all docker that are not base
-        
+
         # Test for required LABELS
         required_labels_regex = {}
         required_labels_regex['description'] = r'.+'
@@ -198,7 +198,7 @@ def test_modified_dockers(dockers):
         required_labels_regex['creator'] = r'.+'
         required_labels_regex['tooltype'] = r'[a-z]+'
         required_labels_regex['created'] = r'\d{1,2}/\d{1,2}/\d{4} \d{1,2}:\d{2}'
-        
+
         labels = get_labels(os.path.join(dockerdir, 'Dockerfile'))
         for label in labels:
             if label[0] not in required_labels_regex:
@@ -208,7 +208,7 @@ def test_modified_dockers(dockers):
             else:
                 print('\nERROR: Label ' + label[0] + ' did not matach regex: ' + required_labels_regex[label[0]])
                 exit(1)
-       
+
         # Testing for toolkit-execute
         if test_for_toolkit_execute:
             # Test for the toolkit-execute bash script
@@ -217,21 +217,21 @@ def test_modified_dockers(dockers):
                 exit(1)
             else:
                 print('    Found "COPY toolkit-execute /home/job/toolkit-execute" found in ' + os.path.join(dockerdir, 'Dockerfile'))
-                
+
             # Test for the toolkit-execute bash script
             if not os.path.isfile(os.path.join(dockerdir, 'toolkit-execute')):
                 print('\nERROR: No "toolkit-execute" file found in ' + dockerdir)
                 exit(1)
             else:
                 print('    Found toolkit-execute file in ' + dockerdir)
-            
+
             # Test that the file is executable
             if not os.access(os.path.join(dockerdir, 'toolkit-execute'), os.X_OK):
                 print('\nERROR: "toolkit-execute" file is not executable')
                 exit(1)
             else:
                 print('    Found that toolkit-execute is executable')
-        
+
         # Test the inheritance of the docker.  A inherited docker cannot be built
         # at the same time has the child docker.  The script currently defaults to pull
         # the inherited docker to the local registry.  If demand is high for building
@@ -244,7 +244,7 @@ def test_modified_dockers(dockers):
             print('       the inherited docker before modifing:')
             print('       ' + dockerdir)
             exit(2)
-    
+
     return True
 
 # main: where all the magic happens
@@ -253,13 +253,27 @@ if __name__ == "__main__":
     # parse the command line
     parser = argparse.ArgumentParser(description='Discover the dockers that have been modified', formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('action', help='action type for this script (build|publish)', default='build')
+    parser.add_argument('-t', '--test', help='Runs a test iteration', default=False, required=False, action='store_true')
     args = parser.parse_args()
-    
+
+    # Check that the repository is not empty
+    repo = Repo(os.getcwd())
+    assert not repo.bare
+
+    if args.test:
+        os.environ['BUILD_REQUESTEDFOR'] = "test"
+        os.environ['BUILD_REQUESTEDFOREMAIL'] = "test_script@microsoft.com"
+        os.environ['AGENT_TEMPDIRECTORY'] = "/tmp"
+        os.environ['BUILD_BUILDNUMBER'] = "1"
+        os.environ["SYSTEM_PULLREQUEST_SOURCEBRANCH"] = "refs/heads/" + repo.head.ref.name
+        os.environ['SYSTEM_PULLREQUEST_TARGETBRANCH'] = "master"
+
     # Get environment variables
     user = os.environ['BUILD_REQUESTEDFOR']
     user_email = os.environ['BUILD_REQUESTEDFOREMAIL']
     temp_directory = os.environ['AGENT_TEMPDIRECTORY']
     build_number = os.environ['BUILD_BUILDNUMBER']
+
 
     # Print the environment variables
     print('\nBuild Information:')
@@ -267,7 +281,7 @@ if __name__ == "__main__":
     print('    User Email = ' + user_email)
     print('    Temp directory = ' + temp_directory)
     print('    Build Number = ' + build_number)
-    
+
     if args.action == 'build':
         try:
             source_branch = os.environ['SYSTEM_PULLREQUEST_SOURCEBRANCH'].replace('refs/heads/', '')
@@ -278,7 +292,7 @@ if __name__ == "__main__":
             source_branch = os.environ['BUILD_SOURCEBRANCH'].replace('refs/heads/', '')
             target_branch = 'master'
             print('    Source Branch = ' + source_branch)
-            print('    Target Branch = ' + target_branch)        
+            print('    Target Branch = ' + target_branch)
         if target_branch != 'master':
             print('\nPR is not for master, no work is needed...')
             exit(0)
@@ -289,10 +303,6 @@ if __name__ == "__main__":
         print('ERROR: Improper action (action = ' + args.action + ')')
         exit(1)
 
-    # Check that the repository is not empty
-    repo = Repo(os.getcwd())
-    assert not repo.bare
-
     # Find the dockers that were modified
     dockers = find_modified_dockers(repo, branches)
     modified_dockers, deleted_dockers = sort_modified_dockers(dockers)
@@ -302,11 +312,11 @@ if __name__ == "__main__":
     pprint(deleted_dockers)
     print('\nModified Dockers:')
     pprint(modified_dockers)
-    
+
     if args.action == 'build':
         # Test the modified dockers
         test_modified_dockers(modified_dockers)
-    
+
     # Add the dockers to the environment variables
     modified = deleted = ""
     for docker in modified_dockers:
