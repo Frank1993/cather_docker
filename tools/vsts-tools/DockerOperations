@@ -15,6 +15,15 @@ command-wrapper()
     fi
 }
 
+command-wrapper-safe()
+{
+    if [ $test == "true" ]; then
+        echo "    Simulating safe: $@"
+    else
+        $@
+    fi
+}
+
 create-tar-filename()
 {
     dockername=$1
@@ -93,18 +102,18 @@ for docker in $dockers; do
             # The user can use this feature but it is recommended not to use.  For the time
             # being we will limit the announcements of this feature.
             echo "    Found tar file for the image, loading from the file $tarfile."
-            command-wrapper docker load --input "$tarfile" || exit-script "Docker failed, please review the logs" 1
+            command-wrapper docker load --input "$tarfile"
         else
             echo "Begin building and pushing images for build"
             inherits=`grep -i ^FROM $docker/Dockerfile* | awk '{print $2}'`
             echo "Pulling $inherits"
-            command-wrapper docker pull $inherits
+            command-wrapper-safe docker pull $inherits
             echo ""
             echo "Pulling $full_docker"
-            command-wrapper docker pull $full_docker && cache_from=" --cache-from $full_docker "
+            command-wrapper-safe docker pull $full_docker && cache_from=" --cache-from $full_docker "
             echo ""
             echo "Building $docker with name $small_docker with cache: $cache_from"
-            command-wrapper docker build -t $small_docker $cache_from $docker || exit-script "Docker build, please review the logs" 1
+            command-wrapper docker build -t $small_docker $cache_from $docker
             echo ""
             echo "Tagging $small_docker to $full_docker"
             command-wrapper docker tag $small_docker $full_docker
@@ -112,11 +121,14 @@ for docker in $dockers; do
 
             # Pushing test image
             echo "******Tagging and pushing images for testing*******"
-            echo "Tagging $full_test_docker to ${full_test_docker%:*}:latest"
-            command-wrapper docker tag $full_test_docker "${full_test_docker%:*}:latest"
+            echo "Pulling $full_test_docker"
+            command-wrapper-safe docker pull $full_test_docker && cache_from=" --cache-from $full_test_docker"
+            echo ""
+            echo "Tagging $small_docker to ${full_test_docker}"
+            command-wrapper docker tag $small_docker ${full_test_docker}
             echo ""
             echo "Pushing $full_test_docker"
-            command-wrapper docker push "${full_test_docker%:*}:latest"
+            command-wrapper docker push ${full_test_docker}
             echo ""
 
             # Remove this when AP sync is deprecated
