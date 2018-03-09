@@ -134,7 +134,7 @@ do
     else
         CMD+=" $key=$value"
     fi
-done <<< "$(echo "$EXTRA_ARGS" | sed 's/ /\n/g')"
+done <<< "$(echo "$EXTRA_ARGS" | xargs | sed 's/ /\n/g')"
 
 if [ "$WORK_DIR" == "NONE" ]; then
     echo "workdir: $(pwd)"
