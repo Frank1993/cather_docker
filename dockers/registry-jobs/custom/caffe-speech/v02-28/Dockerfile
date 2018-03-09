@@ -6,17 +6,19 @@ RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
 LABEL description="caffe-lstm-ctc" \
-      repository="philly/jobs/custom/caffe-lstm-v2" \
-      tag="v02.28" \
-      creator="v-haidin" tooltype="caffe-lstm-v2" \
+      repository="philly/jobs/custom/caffe-speech" \
+      tag="v02-28" \
+      creator="v-haidin" tooltype="caffe-speech" \
       tooltypeversion="1.0" \
       createtime="2/28/2018"
 
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
+RUN ompi_info
 
 #############  RDMA #################
 RUN apt-get update
+
 
 RUN apt-get -y install build-essential cmake gcc libudev-dev libnl-3-dev libnl-route-3-dev ninja-build pkg-config valgrind git
 WORKDIR /usr/local
@@ -27,7 +29,7 @@ RUN git clone https://github.com/linux-rdma/rdma-core.git && \
 
 ENV LD_LIBRARY_PATH=/usr/local/rdma-core/build/lib:$LD_LIBRARY_PATH
 
-#############  Rebuild OpenMPI with RDMA ######
+############  Rebuild OpenMPI with RDMA ######
 # Environment variables
 ENV STAGE_DIR=/root/gpu/install \
     CUDNN_DIR=/usr/local/cudnn \
