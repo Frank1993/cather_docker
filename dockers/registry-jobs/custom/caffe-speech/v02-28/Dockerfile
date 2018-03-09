@@ -127,3 +127,8 @@ ENV LD_LIBRARY_PATH=/usr/local/caffe/lib:$LD_LIBRARY_PATH
 # Suppress libdc1394 error
 RUN ln -s /dev/null /dev/raw1394
 RUN echo 'ln -s /dev/null /dev/raw1394' >> ~/.bashrc
+
+# Copy toolkit-execute to /home/custom/runCust in order to run at Philly@AP
+RUN mkdir /home/custom
+COPY /toolkit-execute /home/custom/runCust
+RUN chmod u+x /home/custom/runCust
