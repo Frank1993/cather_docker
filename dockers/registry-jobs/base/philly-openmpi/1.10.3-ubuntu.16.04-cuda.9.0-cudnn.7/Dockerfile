@@ -32,7 +32,9 @@ RUN apt-get -y update && \
     # Needed by OpenMPI
       cmake \
       g++ \
-      gcc && \
+      gcc \
+    # ifconfig
+      net-tools && \
     apt-get autoremove
 
 WORKDIR $STAGE_DIR

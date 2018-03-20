@@ -32,7 +32,9 @@ RUN mkdir -p $STAGE_DIR && \
     # Needed by OpenMPI
       cmake \
       g++ \
-      gcc && \
+      gcc \
+    # ifconfig
+      net-tools && \
     apt-get autoremove
 
 WORKDIR $STAGE_DIR
