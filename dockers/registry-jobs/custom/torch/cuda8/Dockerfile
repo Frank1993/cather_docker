@@ -21,6 +21,7 @@ RUN git clone https://github.com/torch/distro.git ~/torch --recursive
 RUN cd ~/torch; bash install-deps;
 ENV TORCH_NVCC_FLAGS "-D__CUDA_NO_HALF_OPERATORS__"
 RUN cd ~/torch; ./install.sh
+RUN cd ~/; chmod 777 .
 ENV PATH $PATH:/root/torch/install/bin
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/root/torch/install/lib
 RUN luarocks install tds
