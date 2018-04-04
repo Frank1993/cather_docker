@@ -7,7 +7,7 @@ RUN chmod u+x /home/job/toolkit-execute
 # Labels for the docker
 LABEL description="This docker has torch 7 with tds and bit32, where OpenNMT can be run." \
       repository="philly/jobs/custom/torch" \
-      tag="torch7" \
+      tag="cuda9" \
       creator="tage" tooltype="torch" \
       tooltypeversion="torch7" \
       createtime="3/29/2018"
