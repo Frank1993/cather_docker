@@ -226,7 +226,7 @@ if [[ ! -f "$GLOBAL_CNTK_DOWNLOAD_FILE" ]]; then
       touch ${GLOBAL_CNTK_DOWNLOAD_FILE}
     else
       echo "$MPI_COMM_WORLD_RANK: Waiting for rank=0"
-      while [[ ! -f "$GLOBAL_DEPLOYMENT_FILE" ]]; do sleep 10; done
+      while [[ ! -f "$GLOBAL_CNTK_DOWNLOAD_FILE" ]]; do sleep 10; done
   fi
 fi
 
@@ -235,4 +235,5 @@ which conda || die $?
 
 python3 --version
 # Data location is passed in through $EXTRA_ARGS
+echo "$MPI_COMM_WORLD_RANK: python3 $CONFIG_FILE -datadir $DATA_DIR -logdir $LOG_DIR/out -outputdir $MODEL_DIR $EXTRA_ARGS"
 python3 $CONFIG_FILE -datadir $DATA_DIR -logdir $LOG_DIR/out -outputdir $MODEL_DIR $EXTRA_ARGS
