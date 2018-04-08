@@ -17,11 +17,15 @@ ENV PYTHON_VERSION=3.6
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		 python3-pip \
+		 libsndfile1 \
 		 git &&\
          rm -rf /var/lib/apt/lists/*
 RUN pip3 install --upgrade pip
 RUN pip3 install setuptools
-RUN pip3 install numpy h5py scikit-learn soundfile
+RUN pip3 install numpy
+RUN pip3 install h5py
+RUN pip3 install scikit-learn
+RUN pip3 install soundfile
 RUN pip3 install http://download.pytorch.org/whl/cu90/torch-0.3.1-cp35-cp35m-linux_x86_64.whl 
 RUN pip3 install torchvision
 RUN pip3 install python-dateutil
