@@ -19,7 +19,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		 python3-pip \
 		 git &&\
          rm -rf /var/lib/apt/lists/*
-RUN echo " "
 RUN pip3 install --upgrade pip
 RUN pip3 install setuptools
 RUN pip3 install numpy h5py scikit-learn soundfile
