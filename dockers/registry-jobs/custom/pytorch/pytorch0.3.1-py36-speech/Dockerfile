@@ -18,8 +18,10 @@ ENV PYTHON_VERSION=3.6
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		 python3-pip \
 		 libsndfile1 \
+		 libsndfile1-dev \
 		 git &&\
          rm -rf /var/lib/apt/lists/*
+ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 RUN pip3 install --upgrade pip
 RUN pip3 install setuptools
 RUN pip3 install numpy
