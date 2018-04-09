@@ -10,7 +10,7 @@ LABEL description="This docker has torch 7 with tds and bit32 with cuda9 and cud
       tag="cuda9" \
       creator="tage" tooltype="torch" \
       tooltypeversion="torch7" \
-      createtime="4/4/2018"
+      createtime="4/7/2018"
 
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
