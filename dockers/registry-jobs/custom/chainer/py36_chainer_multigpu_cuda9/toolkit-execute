@@ -20,7 +20,6 @@ STDOUT_DIR=$PWD
 IS_DEBUG=false
 IS_PERF_TRACE=false
 IS_GDB_WRAPPED=false
-GPU=0
 
 # parsing command line arguments:
 while [[ $# > 0 ]]
@@ -109,8 +108,17 @@ CONFIG_DIR=$(dirname "$CONFIG_FILE")
 CONFIG_EXT="${CONFIGB##*.}"
 CONFIG_NAME="${CONFIGB%.*}"
 if [[ ${CONFIG_EXT} == "py" ]] ; then
-    cd ${CONFIG_DIR} && python3.6 ${CONFIGB} --gpu ${GPU} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS} || exit 1
+    if [[ ${NUM_GPU} == 1 ]]; then
+        cd ${CONFIG_DIR} && python ${CONFIGB} --gpu 0 --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS} || exit 1
+    else
+        cd ${CONFIG_DIR} && python ${CONFIGB} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS} || exit 1
+    fi 
 else
-    cmd="${CONFIG_FILE} --gpu ${GPU} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS}"
-    ${cmd} || exit 1
+    if [[ ${NUM_GPU} == 1 ]]; then
+        cmd="${CONFIG_FILE} --gpu 0 --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS}"
+        ${cmd} || exit 1
+    else
+        cmd="${CONFIG_FILE} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS}"
+        ${cmd} || exit 1
+    fi 
 fi

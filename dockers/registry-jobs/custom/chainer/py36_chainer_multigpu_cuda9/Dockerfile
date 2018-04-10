@@ -13,10 +13,10 @@ LABEL description="This docker has multigpu chainermn and 4.0.0rc1 versions of c
       createtime="2/23/2018"
 # Everything above this line is required for the docker.
 
-ENV NCCL_VERSION="2.1.15-1+cuda9.0"
-ENV CUPY_VERSION="4.0.0rc1"
-ENV CHAINER_VERSION="4.0.0rc1"
-ENV CHAINERMN_VERSION="1.2.0"
+ENV NCCL_VERSION="2.1.15-1+cuda9.0" \
+    CUPY_VERSION="4.0.0rc1" \
+    CHAINER_VERSION="4.0.0rc1" \
+    CHAINERMN_VERSION="1.2.0"
 
 ##################### OPENMPI #####################
 
