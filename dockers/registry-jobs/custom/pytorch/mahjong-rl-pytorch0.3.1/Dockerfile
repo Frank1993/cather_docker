@@ -6,11 +6,11 @@ RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
 LABEL description="This docker has pytorch 0.3.1 in anaconda python36 with cuda 9.0, and cudnn 7.0." \
-      repository="philly/jobs/custom/pytorch" \
-      tag="Mahjong-rl-pytorch0.3.1" \
+      repository="philly/jobs/custom/mahjong-rl" \
+      tag="mahjong-rl-pytorch0.3.1" \
       creator="qiwye" tooltype="pytorch" \
       tooltypeversion="0.3.1" \
-      createtime="4/4/2018"
+      createtime="4/10/2018"
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
 
