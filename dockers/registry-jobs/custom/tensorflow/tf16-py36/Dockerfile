@@ -15,7 +15,7 @@ LABEL description="This docker has tensorflow 1.6 using python36, with numpy, sc
 # Add your personalized features below here.
 
 RUN apt-get update
-RUN apt-get -y install software-properties-common
+RUN apt-get -y install software-properties-common libcupti-dev
 
 RUN add-apt-repository ppa:deadsnakes/ppa
 
@@ -25,3 +25,4 @@ RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
 
 RUN python3.6 -m pip install --upgrade numpy scipy h5py https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.6.0-cp36-cp36m-linux_x86_64.whl
 
+ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
