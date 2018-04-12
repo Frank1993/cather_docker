@@ -6,7 +6,7 @@ RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
 LABEL description="This docker has pytorch 0.3.1 in anaconda python36 with cuda 9.0, and cudnn 7.0." \
-      repository="philly/jobs/custom/mahjong-rl" \
+      repository="philly/jobs/custom/pytorch" \
       tag="mahjong-rl-pytorch0.3.1" \
       creator="qiwye" tooltype="pytorch" \
       tooltypeversion="0.3.1" \
