@@ -81,14 +81,16 @@ RUN cd /caffe2 && mkdir build && cd build \
     && make clean \
     && cd .. \
 
-ENV PYTHONPATH /caffe2/build
-
 
 # detectron install
 ENV Caffe2_DIR /caffe2/build
+ENV Caffe2_DIR=/caffe2/build
 
 ENV PYTHONPATH /caffe2/build:${PYTHONPATH}
+ENV PYTHONPATH=/caffe2/build:${PYTHONPATH}
+
 ENV LD_LIBRARY_PATH /caffe2/build/lib:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH=/caffe2/build/lib:${LD_LIBRARY_PATH}
 
 RUN pip install numpy>=1.13 pyyaml>=3.12 matplotlib opencv-python>=3.2 setuptools Cython mock scipy
 
@@ -102,6 +104,11 @@ RUN make clean
 RUN make
 
 ENV PYTHONPATH /detectron/lib:${PYTHONPATH}
+ENV PYTHONPATH=/detectron/lib:${PYTHONPATH}
+
+ENV LD_LIBRARY_PATH /detectron/lib:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH=/detectron/lib:${LD_LIBRARY_PATH}
 
 # Go to Detectron root
+RUN chmod -R 777 /detectron
 WORKDIR /detectron
