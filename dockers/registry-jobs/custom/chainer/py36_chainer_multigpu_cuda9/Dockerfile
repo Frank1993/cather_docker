@@ -10,7 +10,7 @@ LABEL description="This docker has multigpu chainermn and 4.0.0rc1 versions of c
       tag="py36_chainer_multigpu_cuda9" \
       creator="haerdoga" tooltype="chainer" \
       tooltypeversion="1.0" \
-      createtime="2/23/2018"
+      createtime="4/11/2018"
 # Everything above this line is required for the docker.
 
 ENV NCCL_VERSION="2.1.15-1+cuda9.0" \
