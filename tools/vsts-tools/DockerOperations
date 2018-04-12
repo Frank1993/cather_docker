@@ -159,9 +159,9 @@ for docker in $dockers; do
 
         # Remove the test docker once published to custom repository
         echo "Deleting ${full_test_docker%:*}:${full_test_docker##*:}"
-        command-wrapper az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${test_docker_repository} -y
+        command-wrapper-safe az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${test_docker_repository} -y
     elif [ "$operation" == "delete" ]; then
-        command-wrapper az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${docker_repository} --tag ${docker##*:} --manifest -y
+        command-wrapper-safe az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${docker_repository} --tag ${docker##*:} --manifest -y
     fi
 done
 
