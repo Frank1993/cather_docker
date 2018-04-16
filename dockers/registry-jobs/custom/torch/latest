@@ -1,1 +1,1 @@
-torch:cuda9
+torch:luajit-cuda9

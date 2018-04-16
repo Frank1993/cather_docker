@@ -5,9 +5,9 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has torch 7 with tds and bit32 with cuda9 and cudnn7, where OpenNMT can be run." \
+LABEL description="This docker has torch 7 (luajit) with tds and bit32 with cuda9 and cudnn7, where OpenNMT can be run." \
       repository="philly/jobs/custom/torch" \
-      tag="cuda9" \
+      tag="luajit-cuda9" \
       creator="tage" tooltype="torch" \
       tooltypeversion="torch7" \
       createtime="4/7/2018"
@@ -15,8 +15,7 @@ LABEL description="This docker has torch 7 with tds and bit32 with cuda9 and cud
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
 
-RUN apt-get -y update
-RUN apt-get install -y git
+RUN apt-get -y update && apt-get install -y git
 RUN git clone https://github.com/torch/distro.git ~/torch --recursive
 RUN cd ~/torch; bash install-deps;
 ENV TORCH_NVCC_FLAGS "-D__CUDA_NO_HALF_OPERATORS__"
