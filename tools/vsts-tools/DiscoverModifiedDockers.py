@@ -85,9 +85,12 @@ def save_dockers(dockers, filename):
             f.write(dockers)
 
 # Find Modified Dockers
-def find_modified_dockers(repo, branches):
+def find_modified_dockers(repo, source_branch, compare_target):
     dockers = []
-    response = repo.git.diff('--name-status', branches)
+    print 'Getting common ancestor of', source_branch, 'and', compare_target
+    common_ancestor = str(repo.merge_base(source_branch, compare_target)[0])
+    print 'Finding modified docker using diff between', common_ancestor, 'and', source_branch
+    response = repo.git.diff('--name-status', common_ancestor, source_branch)
     print('\nResponse to git diff:\n' + response)
 
     for line in response.splitlines():
@@ -285,26 +288,41 @@ if __name__ == "__main__":
     if args.action == 'build':
         try:
             source_branch = os.environ['SYSTEM_PULLREQUEST_SOURCEBRANCH'].replace('refs/heads/', '')
-            target_branch = os.environ['SYSTEM_PULLREQUEST_TARGETBRANCH'].replace('refs/heads/', '')
+            compare_target = os.environ['SYSTEM_PULLREQUEST_TARGETBRANCH'].replace('refs/heads/', '')
             print('    Source Branch = ' + source_branch)
-            print('    Target Branch = ' + target_branch)
+            print('    Target Branch = ' + compare_target)
         except:
             source_branch = os.environ['BUILD_SOURCEBRANCH'].replace('refs/heads/', '')
-            target_branch = 'master'
+            compare_target = 'master'
             print('    Source Branch = ' + source_branch)
-            print('    Target Branch = ' + target_branch)
-        if target_branch != 'master':
+            print('    Target Branch = ' + compare_target)
+        if compare_target != 'master':
             print('\nPR is not for master, no work is needed...')
             exit(0)
-        branches = 'remotes/origin/' + target_branch + '..remotes/origin/' + source_branch
+        source_branch = 'remotes/origin/' + source_branch
+        compare_target = 'remotes/origin/' + compare_target
     elif args.action == 'publish':
-        branches = 'HEAD~1..HEAD'
+        # We trigger this either via continuous integration, in which case we rely on all changes to be in the last commit (squash merge
+        # on master), or manual in which case we take a diff with master.
+        reason = os.getenv('BUILD_REASON', None)
+        if reason == 'IndividualCI':
+            source_branch = 'HEAD'    # Here we assume a squash merge, so we would have all the changes in the last commit.
+            compare_target = 'HEAD~1'
+        elif reason == 'Manual':
+            source_branch = os.getenv('BUILD_SOURCEVERSION')
+            print source_branch
+            if not source_branch:
+                raise Exception('ERROR: Couldn\'t find a source version to compare against.')
+                exit(1)
+            compare_target = 'master'
+        else:
+            raise Exception('Error: Unsupported BUILD_REASON "' + reason + '".')
     else:
         print('ERROR: Improper action (action = ' + args.action + ')')
         exit(1)
 
     # Find the dockers that were modified
-    dockers = find_modified_dockers(repo, branches)
+    dockers = find_modified_dockers(repo, source_branch, compare_target)
     modified_dockers, deleted_dockers = sort_modified_dockers(dockers)
 
     # Print the found dockers
