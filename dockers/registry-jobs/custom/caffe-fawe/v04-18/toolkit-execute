@@ -108,6 +108,6 @@ nvidia-smi || true
 nvidia-smi --query-gpu=name --format=csv,noheader || true
 cat /proc/cpuinfo
 
-sh $CONFIG_FILE $DATA_DIR
+sh $CONFIG_FILE $DATA_DIR $MODEL_DIR $CONFIG_FILE
 
 exit $RETURN_CODE
