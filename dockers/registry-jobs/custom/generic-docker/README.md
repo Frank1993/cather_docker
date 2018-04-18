@@ -4,9 +4,9 @@ General Dockers for Philly-Tools.
 =================================
 
 These are "all-dressed" dockers with all the main deep learning tools.
-They come in two versions: python 2.7, python 3.6.
+They come in two versions: python 2.7 and python 3.6.
 
-The python 3.6 version contains:
+The dockers contain:
     - pytorch 0.3.1
     - torchvision-0.2.0 
     - tensorflow 1.7
