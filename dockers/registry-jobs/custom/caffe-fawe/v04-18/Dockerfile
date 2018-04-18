@@ -7,6 +7,7 @@ RUN chmod a+rwx /home/job/toolkit-execute
 #New-Copy caffe
 RUN mkdir /home/caffe
 COPY caffe_src.zip /home/caffe/caffe_src.zip
+RUN mkdir /home/ncclv1
 
 # Labels for the docker
 LABEL description="This docker has BVLC Caffe and python2" \
@@ -53,9 +54,12 @@ RUN apt-get install -y libprotobuf-dev \
 RUN apt-get autoremove
 
 # Newer NCCL
-RUN git clone https://github.com/NVIDIA/nccl.git && cd nccl && \
+RUN cd /home/ncclv1 && git clone https://github.com/NVIDIA/nccl.git && cd nccl && \
     git checkout 03d856977ecbaac87e598c0c4bafca96761b9ac7 && \
-    make -j$(nproc) && make install && cd .. && rm -rf nccl
+    make -j$(nproc) && make install
+
+ENV LD_LIBRARY_PATH /home/ncclv1/nccl/build/lib:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH=/home/ncclv1/nccl/build/lib:${LD_LIBRARY_PATH}
 
 #tmux conf
 COPY tmux.conf /etc/
