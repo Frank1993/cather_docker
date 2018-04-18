@@ -8,7 +8,7 @@ RUN chmod u+x /home/job/toolkit-execute
 LABEL description="This docker contains all the main frameworks with python v3.6 from anaconda" \
       repository="philly/jobs/custom/generic-docker" \
       tag="py36" \
-      creator="alsordon" tooltype="generic-docker" \
+      creator="retachet" tooltype="generic-docker" \
       tooltypeversion="1.0" \
       createtime="4/12/2018"
 # Everything above this line is required for the docker.
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       cmake \
       git \
       wget \
-      unzip \ 
+      unzip \
       tmux \
       curl \
       libjpeg-dev \
@@ -30,27 +30,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       mesa-common-dev
 # Install Anaconda for python 3.6
 RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
-      wget --quiet https://repo.continuum.io/archive/Anaconda3-5.0.0-Linux-x86_64.sh -O ~/anaconda.sh && \
-      /bin/bash ~/anaconda.sh -b -p /opt/conda && \
-      rm ~/anaconda.sh
+      wget --quiet http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+      /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+      rm ~/miniconda.sh
 ENV PATH /opt/conda/bin:$PATH
 RUN conda install -y python=3.6 \
-        bcolz \
-        h5py \
-        matplotlib \
-        mkl \
-        nose \
-        notebook \
-        Pillow \
-        pandas \
-        pygpu \
-        pyyaml \
-        scikit-learn \
-        six \
-        mkl-service
+      bcolz \
+      h5py \
+      matplotlib \
+      mkl \
+      nose \
+      notebook \
+      Pillow \
+      pandas \
+      pygpu \
+      pyyaml \
+      scikit-learn \
+      six \
+      mkl-service
 RUN conda install -c conda-forge tensorboardx
 RUN conda install pytorch torchvision -c pytorch
-RUN pip install --upgrade tensorflow_gpu
+RUN pip install --upgrade --ignore-installed tensorflow_gpu
 RUN pip install --upgrade dm-sonnet
 RUN pip install --upgrade Theano==0.9.0
 RUN pip install --upgrade numpy scipy nltk click tqdm tables pyprind joblib gym mako cached_property pygame cloudpickle
