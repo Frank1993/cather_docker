@@ -11,10 +11,10 @@ COPY caffe_src.zip /home/caffe/caffe_src.zip
 # Labels for the docker
 LABEL description="This docker has BVLC Caffe and python2" \
       repository="philly/jobs/custom/caffe-fawe" \
-      tag="rc5-py2" \
+      tag="v04-18" \
       creator="fawe" tooltype="caffe" \
       tooltypeversion="1.0" \
-      createtime="4/16/2018"
+      createtime="4/18/2018"
 
 # sane bash defaults
 COPY bashrc.sh /etc/
@@ -29,24 +29,26 @@ RUN apt-get -y install -y \
 RUN pip install --upgrade pip
 
 ## install development requirements
-RUN apt-get install -y libprotobuf-dev protobuf-compiler
-RUN apt-get install -y libatlas-base-dev libboost-all-dev
-RUN apt-get install -y libgflags-dev libgoogle-glog-dev
-RUN apt-get install -y libhdf5-serial-dev
-RUN apt-get install -y libleveldb-dev liblmdb-dev
-RUN apt-get install -y libopencv-dev
-RUN apt-get install -y libsnappy-dev
-RUN apt-get install -y python-dev
-RUN apt-get install -y vim
-RUN apt-get install -y git
-RUN apt-get install -y tmux
-RUN apt-get install -y cmake
-
-#New-install extra dependence
-RUN apt-get install -y libopenblas-dev
-RUN apt-get install -y zip
-RUN apt-get install -y unzip
-RUN apt-get install -y gcc
+RUN apt-get install -y libprotobuf-dev \
+    protobuf-compiler \
+    libatlas-base-dev \
+    libboost-all-dev \
+    libgflags-dev \
+    libgoogle-glog-dev \
+    libhdf5-serial-dev \
+    libleveldb-dev \
+    liblmdb-dev \
+    libopencv-dev \
+    libsnappy-dev \
+    python-dev \
+    vim \
+    git \
+    tmux \
+    cmake \
+    libopenblas-dev \
+    zip \
+    unzip \
+    gcc
 
 RUN apt-get autoremove
 
@@ -64,6 +66,5 @@ RUN pip install -r /home/job/requirements.txt
 
 #New-Make Caffe
 RUN chmod -R 777 /home/
-RUN unzip /home/caffe/caffe_src.zip && cd /home/caffe
-RUN make clean
-RUN make -j$(nproc)
+RUN unzip -d /home/caffe /home/caffe/caffe_src.zip
+RUN cd /home/caffe && make clean && make -j$(nproc)
