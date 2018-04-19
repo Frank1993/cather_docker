@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       cmake \
       git \
       wget \
-      unzip \ 
+      unzip \
       tmux \
       curl \
       libjpeg-dev \
@@ -56,7 +56,7 @@ RUN pip install --upgrade Theano==0.9.0
 RUN pip install --upgrade numpy scipy nltk click tqdm tables pyprind joblib gym mako cached_property pygame cloudpickle
 RUN git clone https://github.com/Lasagne/Lasagne.git
 RUN pip install --editable Lasagne
-RUN pip install chainer cupy
+RUN pip install chainer cupy-cuda90
 RUN pip install dask==0.17.2
 ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 RUN env | grep _ >> /etc/environment
