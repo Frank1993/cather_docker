@@ -4,9 +4,11 @@ General Dockers for Philly-Tools.
 =================================
 
 These are "all-dressed" dockers with all the main deep learning tools.
-They come in two versions: python 2.7 and python 3.6.
+They come in four versions:
+    - python 2.7 and python 3.6 with cuda 8 (only for chainer)
+    - python 2.7 and python 3.6 with cuda 9.
 
-The dockers contain:
+The py27 and py36 versions contain:
     - pytorch 0.3.1
     - torchvision-0.2.0
     - tensorflow 1.7
@@ -14,6 +16,10 @@ The dockers contain:
     - Lasagne 0.2
     - Chainer 3.5
     - cupy-cuda90
+
+The cuda8-py27 and cuda8-py36 dockers contain:
+    - Chainer 5.0
+    - cupy-cuda80
 
 In each docker, model directory and data directories are stored in environment variables
 PT_OUTPUT_DIR and PT_DATA_DIR.
