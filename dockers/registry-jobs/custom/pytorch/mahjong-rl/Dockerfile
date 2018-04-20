@@ -34,12 +34,16 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
 
 ENV PATH /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 
-RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION cuda90 pytorch=0.3.1 -c pytorch
+RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION cuda90 pytorch=0.3.1 torchvision -c pytorch
 
 RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION pydot graphviz 
 
-# RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION pyro4 -c conda-forge && \
-    # /opt/conda/bin/conda clean -ya
+RUN /opt/conda/bin/conda update -n base conda
+
+RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION graphviz -c anaconda
+
+RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION pyro4 -c conda-forge && \
+    /opt/conda/bin/conda clean -ya
 
 COPY sparse_data_parser-3.5/* /home/data_parser/
 
