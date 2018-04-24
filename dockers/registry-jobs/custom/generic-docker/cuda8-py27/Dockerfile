@@ -5,7 +5,7 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker contains chainer on cuda8 with python v2.7 from anaconda" \
+LABEL description="This docker contains chainer 1.24 on cuda8 with python v2.7 from anaconda" \
       repository="philly/jobs/custom/generic-docker" \
       tag="cuda8-py27" \
       creator="retachet" tooltype="generic-docker" \
@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Anaconda for python 2.7
 RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
       wget --quiet http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-      /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+      /bin/bash ~/miniconda.sh -b -p /opt/conda && chmod -R ugo+rw /opt/conda && \
       rm ~/miniconda.sh
 ENV PATH /opt/conda/bin:$PATH
 RUN conda install -y python=2.7 \
@@ -50,9 +50,17 @@ RUN conda install -y python=2.7 \
       mkl-service
 RUN conda install -c conda-forge tensorboardx
 RUN pip install --upgrade numpy scipy nltk click tqdm tables pyprind joblib gym mako cached_property pygame cloudpickle
-RUN export CUDA_PATH=/usr/local/cuda
-RUN export CUDA_HOME=/usr/local/cuda
-RUN export PATH=${CUDA_HOME}/bin:${PATH}
-RUN export LD_LIBRARY_PATH=${CUDA_HOME}/lib64:$LD_LIBRARY_PATH
-RUN pip install --no-cache-dir cupy-cuda80 chainer==5.0.0a1
+RUN pip install --no-cache-dir filelock pillow cython cupy-cuda80
+
+ENV CUDA_PATH /usr/local/cuda
+ENV CUDA_HOME /usr/local/cuda
+ENV PATH /usr/local/cuda/bin:${PATH}
+ENV CPATH /usr/include:/usr/local/cuda/bin:$CPATH
+ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:/usr/lib/x86_64-linux-gnu/:$LD_LIBRARY_PATH
+ENV CFLAGS -I/usr/local/cuda/include/
+ENV LDFLAGS -L/usr/local/cuda/lib64/
+
+RUN cd ~
+RUN git clone https://github.com/chainer/chainer.git && cd chainer && git checkout tags/v1.24.0
+RUN cd chainer && python setup.py install
 RUN env | grep _ >> /etc/environment

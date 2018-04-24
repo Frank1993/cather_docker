@@ -17,9 +17,14 @@ The py27 and py36 versions contain:
     - Chainer 3.5
     - cupy-cuda90
 
-The cuda8-py27 and cuda8-py36 dockers contain:
+The cuda8-py27 dockers contain:
+    - Chainer 1.24
+    - cupy-cuda80
+
+The cuda8-py36 docker contain:
     - Chainer 5.0
     - cupy-cuda80
+
 
 In each docker, model directory and data directories are stored in environment variables
 PT_OUTPUT_DIR and PT_DATA_DIR.
