@@ -10,7 +10,7 @@ LABEL description="This docker contains chainer on cuda8 with python v3.6 from a
       tag="cuda8-py36" \
       creator="retachet" tooltype="generic-docker" \
       tooltypeversion="1.0" \
-      createtime="4/18/2018"
+      createtime="4/24/2018"
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
 
@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Anaconda for python 3.6
 RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
       wget --quiet http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-      /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+      /bin/bash ~/miniconda.sh -b -p /opt/conda && chmod -R ugo+rw /opt/conda && \
       rm ~/miniconda.sh
 ENV PATH /opt/conda/bin:$PATH
 RUN conda install -y python=3.6 \
@@ -50,9 +50,9 @@ RUN conda install -y python=3.6 \
       mkl-service
 RUN conda install -c conda-forge tensorboardx
 RUN pip install --upgrade numpy scipy nltk click tqdm tables pyprind joblib gym mako cached_property pygame cloudpickle
-RUN export CUDA_PATH=/usr/local/cuda
-RUN export CUDA_HOME=/usr/local/cuda
-RUN export PATH=${CUDA_HOME}/bin:${PATH}
-RUN export LD_LIBRARY_PATH=${CUDA_HOME}/lib64:$LD_LIBRARY_PATH
+ENV CUDA_PATH /usr/local/cuda
+ENV CUDA_HOME /usr/local/cuda
+ENV PATH ${CUDA_HOME}/bin:${PATH}
+ENV LD_LIBRARY_PATH ${CUDA_HOME}/lib64:$LD_LIBRARY_PATH
 RUN pip install --no-cache-dir cupy-cuda80 chainer==5.0.0a1
 RUN env | grep _ >> /etc/environment
