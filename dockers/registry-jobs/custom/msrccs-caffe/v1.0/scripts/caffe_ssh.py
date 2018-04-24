@@ -58,24 +58,23 @@ def main():
         max_iter = None
         progress = 1
         loss = 1
-        # Pipe caffe output like `| tee ~/stdout.txt` for Philly to see the progress
-        base_path = os.path.expanduser('~')
-        stdout_file = os.path.join(base_path, 'stdout.txt')
+        # Pipe caffe output `2>&1 | tee ~/logs/${PHILLY_ATTEMPT_ID:-1}/logrank.0.log` for Philly to see the progress
+        stdout_file = os.path.join(log_dir, 'logrank.0.log')
         # ignore if any leftover from previous try
         if os.path.exists(stdout_file):
             # noinspection PyBroadException
             try:
                 f = open(stdout_file)
                 f.seek(0, os.SEEK_END)
-            except:
+            except Exception:
                 print("stdout removed")
         # `touch ~/exit` to exit the job
-        exit_file = os.path.join(base_path, 'exit')
+        exit_file = os.path.expanduser('~/exit')
         while not os.path.exists(exit_file):
             # noinspection PyBroadException
             try:
                 st = os.stat(stdout_file)
-            except:
+            except Exception:
                 st = None
             # if appended to log file
             if st and (not st_ino or st.st_ino == st_ino) and st.st_size >= st_size:

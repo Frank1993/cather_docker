@@ -13,5 +13,7 @@ h5py==2.7.0
 pyyaml
 progressbar
 easydict
+pandas
 ete2
 nltk
+mpi4py

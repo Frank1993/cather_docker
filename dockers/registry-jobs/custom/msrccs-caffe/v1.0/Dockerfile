@@ -45,6 +45,8 @@ RUN apt-get install -y libleveldb-dev liblmdb-dev
 RUN apt-get install -y libopencv-dev
 RUN apt-get install -y libsnappy-dev
 RUN apt-get install -y python-dev
+RUN apt-get install -y python-qt4
+RUN apt-get install -y libyaml-dev
 RUN apt-get install -y vim
 RUN apt-get install -y git
 RUN apt-get install -y tmux
@@ -66,9 +68,6 @@ RUN pip install -r /home/job/requirements.txt
 ENV NLTK_DATA /home/job/nltk_data
 RUN mkdir -p $NLTK_DATA
 RUN python -m nltk.downloader wordnet brown averaged_perceptron_tagger
-
-# example scripts
-COPY scripts /home/job/
 
 # To build in the docker directly (make sure /src/Caffe has the source):
 #RUN mkdir -p /src/Caffe/build

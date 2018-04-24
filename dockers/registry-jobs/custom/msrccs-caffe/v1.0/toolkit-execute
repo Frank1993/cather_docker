@@ -104,9 +104,12 @@ export IS_MEMCHECK
 export IS_GDB_WRAPPED
 
 # Display node info.
-nvidia-smi || true
-nvidia-smi --query-gpu=name --format=csv,noheader || true
-cat /proc/cpuinfo
+OMPI_COMM_WORLD_LOCAL_RANK=${OMPI_COMM_WORLD_LOCAL_RANK:-0}
+if [[ $OMPI_COMM_WORLD_LOCAL_RANK == 0 ]]; then
+    nvidia-smi || true
+    nvidia-smi --query-gpu=name --format=csv,noheader || true
+    cat /proc/cpuinfo
+fi
 
 # Docker's ENV is not set as expected, work around it here
 source /home/job/envs.sh
