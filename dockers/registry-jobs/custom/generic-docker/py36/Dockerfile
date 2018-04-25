@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Anaconda for python 3.6
 RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
       wget --quiet http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-      /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+      /bin/bash ~/miniconda.sh -b -p /opt/conda && chmod -R ugo+rw /opt/conda && \
       rm ~/miniconda.sh
 ENV PATH /opt/conda/bin:$PATH
 RUN conda install -y python=3.6 \
