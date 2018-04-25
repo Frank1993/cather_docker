@@ -23,7 +23,9 @@ RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learn
 RUN wget -q -O - https://cntk.ai/BinaryDrop/CNTK-2-3-Linux-64bit-GPU.tar.gz | tar -xzf - && \
     cd cntk/Scripts/install/linux && \
     sed -i "s:PACKAGES+=\" openmpi-bin\"::" ./install-cntk.sh  && \
-    ./install-cntk.sh --py-version 35 --anaconda-basepath /usr/local/miniconda3 --docker
+    ./install-cntk.sh --py-version 35 --anaconda-basepath /usr/local/miniconda3 --docker && \
+    # In the current setup /etc/environment explicitly overrides the PATH variable. Hence setting it explicitly based on current PATH value.
+    echo "PATH=$PATH" >> /etc/environment
 
 WORKDIR /root/
 COPY toolkit-execute /home/job/toolkit-execute
