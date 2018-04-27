@@ -81,5 +81,5 @@ echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
 echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
 echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
 
-echo python3.6 $CONFIG_FILE --model_dir $MODEL_DIR --data_dir $DATA_DIR --log_dir $LOG_DIR $EXTRA_ARGS
-python3.6 $CONFIG_FILE --model_dir $MODEL_DIR --data_dir $DATA_DIR --log_dir $LOG_DIR $EXTRA_ARGS
+echo python3.6 $CONFIG_FILE $EXTRA_ARGS --model_dir $MODEL_DIR --data_dir $DATA_DIR --log_dir $LOG_DIR 
+python3.6 $CONFIG_FILE $EXTRA_ARGS --model_dir $MODEL_DIR --data_dir $DATA_DIR --log_dir $LOG_DIR
