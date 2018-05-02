@@ -1,0 +1,101 @@
+#!/bin/bash
+
+function die {
+    echo ""
+    echo EXITCODE $1
+    exit $1
+}
+
+# Default values
+CONFIG_FILE=NONE
+DATA_DIR=NONE
+LOG_DIR=$PWD
+MODEL_DIR=NONE
+IS_MEMCHECK=FALSE
+EXTRA_ARGS=""
+NUM_GPU=NONE
+IS_DEBUG=false
+IS_PERF_TRACE=false
+
+HDFS_DROPS=/hdfs/public/drops
+MINICONDA_PATH=/usr/local/miniconda3/bin
+
+# Parsing command line arguments:
+while [[ $# > 0 ]]
+do
+key="$1"
+
+case $key in
+    -h|--help)
+    echo "Usage: toolkit-execute [run_options]"
+    echo "Options:"
+    echo "  -n|--nGPU <num> - how many GPUs used for this job (default NONE)"
+    echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
+    echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
+    echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
+    echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  --debug - job is in debug mode (not used)"
+    echo "  --perfTrace - job should run in perf trace mode (not used)"
+    echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    echo "  --gdbWrapped - job should run with GDB (default FALSE)"
+    exit 1
+    ;;
+    -n|--nGPU)
+    NUM_GPU="$2"
+    shift # pass argument
+    ;;
+    -c|--configFile)
+    CONFIG_FILE="$2"
+    shift # pass argument
+    ;;
+    -d|--dataDir)
+    DATA_DIR="$2"
+    shift # pass argument
+    ;;
+    -l|--logDir)
+    LOG_DIR="$2"
+    shift # pass argument
+    ;;
+    -m|--modelDir)
+    MODEL_DIR="$2"
+    shift # pass argument
+    ;;
+    --debug)
+    IS_DEBUG=true
+    ;;
+    --memCheck)
+    IS_MEMCHECK=TRUE
+    ;;
+     --perfTrace)
+    IS_PERF_TRACE=true
+    ;;
+    --gdbWrapped)
+    IS_GDB_WRAPPED=true
+    ;;
+    --)
+    shift # pass argument
+    EXTRA_ARGS="$@"
+    break
+    ;;
+esac
+shift # past argument or value
+done
+
+# Prints out the arguments that were passed into the script
+echo "toolkit-execute: CONFIG_FILE=$CONFIG_FILE"
+echo "toolkit-execute: DATA_DIR=$DATA_DIR"
+echo "toolkit-execute: LOG_DIR=$LOG_DIR"
+echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
+echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
+echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
+echo "toolkit-execute: IS_PERF_TRACE=$IS_PERF_TRACE"
+echo "toolkit-execute: IS_GDB_WRAPPED=$IS_GDB_WRAPPED"
+echo "toolkit-execute: EXTRA_ARGS=$EXTRA_ARGS"
+
+python3 --version
+
+source /usr/local/cntk/activate-cntk
+
+# Data location is passed in through $EXTRA_ARGS
+echo "python3 $CONFIG_FILE -datadir $DATA_DIR -logdir $LOG_DIR/out -outputdir $MODEL_DIR $EXTRA_ARGS"
+python3 $CONFIG_FILE -datadir $DATA_DIR -logdir $LOG_DIR/out -outputdir $MODEL_DIR $EXTRA_ARGS
