@@ -12,10 +12,10 @@ RUN mkdir /home/ncclv1
 # Labels for the docker
 LABEL description="This docker has BVLC Caffe and python2" \
       repository="philly/jobs/custom/caffe-fawe" \
-      tag="v04-25" \
+      tag="v05-02" \
       creator="fawe" tooltype="caffe" \
       tooltypeversion="1.0" \
-      createtime="4/25/2018"
+      createtime="5/2/2018"
 
 RUN apt-get -y update
 RUN apt-get -y install -y \ 
