@@ -32,9 +32,11 @@ def find_executable(directory):
 
 # Find if a line exists in a file
 def line_exists_in_file(search_line, filename):
-    lines = [line.rstrip('\n') for line in open(filename)]
+    lines = []
+    with open(filename) as file:
+        lines = file.readlines()
     for line in lines:
-        if line == search_line:
+        if line.strip() == search_line:
             return True
     return False
 
@@ -87,9 +89,9 @@ def save_dockers(dockers, filename):
 # Find Modified Dockers
 def find_modified_dockers(repo, source_branch, compare_target):
     dockers = []
-    print 'Getting common ancestor of', source_branch, 'and', compare_target
+    print('Getting common ancestor of', source_branch, 'and', compare_target)
     common_ancestor = str(repo.merge_base(source_branch, compare_target)[0])
-    print 'Finding modified docker using diff between', common_ancestor, 'and', source_branch
+    print('Finding modified docker using diff between', common_ancestor, 'and', source_branch)
     response = repo.git.diff('--name-status', common_ancestor, source_branch)
     print('\nResponse to git diff:\n' + response)
 
@@ -310,7 +312,7 @@ if __name__ == "__main__":
             compare_target = 'HEAD~1'
         elif reason == 'Manual':
             source_branch = os.getenv('BUILD_SOURCEVERSION')
-            print source_branch
+            print(source_branch)
             if not source_branch:
                 raise Exception('ERROR: Couldn\'t find a source version to compare against.')
                 exit(1)
