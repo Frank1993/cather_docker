@@ -5,7 +5,7 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has pytorch 0.4.0 in anaconda python36 with cuda 9.0, and cudnn 7.0." \
+LABEL description="This docker has pytorch 0.4.0 in python36 with cuda 9.0, and cudnn 7.0." \
       repository="philly/jobs/custom/pytorch" \
       tag="pytorch0.4.0-py36-speech" \
       creator="v-wanke" tooltype="pytorch" \
@@ -16,22 +16,17 @@ LABEL description="This docker has pytorch 0.4.0 in anaconda python36 with cuda 
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
          git \
+         python3-pip \
          octave &&\
          rm -rf /var/lib/apt/lists/*
 
-ENV PYTHON_VERSION 3.6
+ENV PYTHON_VERSION=3.6
 
-RUN curl -o ~/anaconda.sh -O https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh && \
-    chmod +x ~/anaconda.sh && ~/anaconda.sh -b -p /opt/conda && rm ~/anaconda.sh
-
-ENV PATH /opt/conda/bin/:/opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
-
-RUN conda create -y --name pytorch-py$PYTHON_VERSION python=$PYTHON_VERSION && \
-    conda clean -ya
-RUN conda install numpy scipy scikit-learn
-
-RUN conda install --name pytorch-py$PYTHON_VERSION torchvision cuda90 pytorch=0.4.0 -c pytorch && \
-    conda clean -ya
+ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+RUN pip3 install --upgrade pip
+RUN pip3 install setuptools numpy scipy scikit-learn
+RUN pip3 install http://download.pytorch.org/whl/cu90/torch-0.3.1-cp35-cp35m-linux_x86_64.whl
+RUN pip3 install torchvision
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
