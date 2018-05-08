@@ -28,7 +28,8 @@ ENV PATH /opt/conda/bin/:/opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 
 RUN conda create -y --name pytorch-py$PYTHON_VERSION python=$PYTHON_VERSION && \
     conda clean -ya
-RUN conda install numpy scipy scikit-learn
+RUN conda install --name pytorch-py$PYTHON_VERSION numpy scipy scikit-learn && \
+    conda clean -ya
 
 RUN conda install --name pytorch-py$PYTHON_VERSION torchvision cuda90 pytorch=0.4.0 -c pytorch && \
     conda clean -ya
