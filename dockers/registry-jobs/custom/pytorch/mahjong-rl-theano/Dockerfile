@@ -39,7 +39,7 @@ ENV PATH /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 
 RUN /opt/conda/bin/conda update -n base conda
 
-RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION cuda90 pytorch=0.3.1 torchvision -c pytorch
+RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION pytorch=0.3.1 torchvision -c pytorch
 
 RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION pydot graphviz 
 
