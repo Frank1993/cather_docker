@@ -100,9 +100,11 @@ CONFIG_DIR=$(dirname "$CONFIG_FILE")
 CONFIG_EXT="${CONFIGB##*.}"
 CONFIG_NAME="${CONFIGB%.*}"
 
+export PYTHONPATH=/usr/local/caffe2/lib/python2.7/dist-packages:/detectron/lib
+
 if [[ ${CONFIG_EXT} == "py" ]] ; then
-    cd ${CONFIG_DIR} && python ${CONFIGB} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS} || exit 1
+    cd ${CONFIG_DIR} && python ${CONFIGB} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --prevModelPath ${PREV_MODEL_PATH} --logDir ${LOG_DIR} ${EXTRA_ARGS} || exit 1
 else
-    cmd="${CONFIG_FILE} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS}"
+    cmd="${CONFIG_FILE} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --prevModelPath ${PREV_MODEL_PATH} --logDir ${LOG_DIR} ${EXTRA_ARGS}"
     ${cmd} || exit 1
 fi
