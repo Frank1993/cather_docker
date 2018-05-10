@@ -31,28 +31,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Anaconda for python 2.7
 RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
       wget --quiet http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-      /bin/bash ~/miniconda.sh -b -p /opt/conda && chmod -R ugo+rw /opt/conda && \
+      /bin/bash ~/miniconda.sh -b -p /opt/conda && \
       rm ~/miniconda.sh
 ENV PATH /opt/conda/bin:$PATH
 RUN conda install -y python=2.7 \
-        bcolz \
-        h5py \
-        matplotlib \
-        mkl \
-        nose \
-        notebook \
-        Pillow \
-        pandas \
-        pygpu \
-        pyyaml \
-        scikit-learn \
-        six \
-        mkl-service
+      bcolz \
+      h5py \
+      matplotlib \
+      mkl \
+      nose \
+      notebook \
+      Pillow \
+      pandas \
+      pygpu \
+      pyyaml \
+      scikit-learn \
+      six \
+      mkl-service
 RUN conda install -c conda-forge tensorboardx
-RUN conda install pytorch torchvision -c pytorch
+RUN conda install pytorch torchvision cuda90 -c pytorch
 RUN pip install --upgrade --ignore-installed tensorflow_gpu
 RUN pip install --upgrade dm-sonnet
 RUN pip install --upgrade Theano==0.9.0
+RUN pip install --upgrade keras
 RUN pip install --upgrade numpy scipy nltk click tqdm tables pyprind joblib gym mako cached_property pygame cloudpickle
 RUN git clone https://github.com/Lasagne/Lasagne.git
 RUN pip install --editable Lasagne
@@ -60,3 +61,4 @@ RUN pip install chainer cupy-cuda90
 RUN pip install dask==0.17.2
 ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 RUN env | grep _ >> /etc/environment
+RUN sudo chmod -R ugo+rw /opt/conda

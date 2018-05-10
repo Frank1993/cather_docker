@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Anaconda for python 3.6
 RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
       wget --quiet http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-      /bin/bash ~/miniconda.sh -b -p /opt/conda && chmod -R ugo+rw /opt/conda && \
+      /bin/bash ~/miniconda.sh -b -p /opt/conda && \
       rm ~/miniconda.sh
 ENV PATH /opt/conda/bin:$PATH
 RUN conda install -y python=3.6 \
@@ -56,3 +56,4 @@ ENV PATH ${CUDA_HOME}/bin:${PATH}
 ENV LD_LIBRARY_PATH ${CUDA_HOME}/lib64:$LD_LIBRARY_PATH
 RUN pip install --no-cache-dir cupy-cuda80 chainer==5.0.0a1
 RUN env | grep _ >> /etc/environment
+RUN sudo chmod -R ugo+rw /opt/conda
