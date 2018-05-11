@@ -50,10 +50,10 @@ RUN conda install -y python=2.7 \
       mkl-service
 RUN conda install -c conda-forge tensorboardx
 RUN conda install pytorch torchvision cuda90 -c pytorch
+RUN conda install keras
 RUN pip install --upgrade --ignore-installed tensorflow_gpu
 RUN pip install --upgrade dm-sonnet
 RUN pip install --upgrade Theano==0.9.0
-RUN pip install --upgrade keras
 RUN pip install --upgrade numpy scipy nltk click tqdm tables pyprind joblib gym mako cached_property pygame cloudpickle
 RUN git clone https://github.com/Lasagne/Lasagne.git
 RUN pip install --editable Lasagne
