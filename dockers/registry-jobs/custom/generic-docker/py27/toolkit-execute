@@ -75,6 +75,9 @@ echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
 
 CONFIG_DIRNAME=$(dirname $CONFIG_FILE)
 
+export PT_OUTPUT_DIR=$MODEL_DIR
+export PT_DATA_DIR=$DATA_DIR
+
 if [ -f "$CONFIG_DIRNAME/requirements.txt" ]; then
     echo "Installing custom requirements..."
     pip install -r $CONFIG_DIRNAME/requirements.txt --user
@@ -82,11 +85,8 @@ fi
 
 if [ -f "$CONFIG_DIRNAME/setup.sh" ]; then
     echo "Executing custom script..."
-    bash $CONFIG_DIRNAME/setup.sh
+    source $CONFIG_DIRNAME/setup.sh
 fi
-
-export PT_OUTPUT_DIR=$MODEL_DIR
-export PT_DATA_DIR=$DATA_DIR
 
 echo python $CONFIG_FILE $EXTRA_ARGS
 python -B $CONFIG_FILE $EXTRA_ARGS
