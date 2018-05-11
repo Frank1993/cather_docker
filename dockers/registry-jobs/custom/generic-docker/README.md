@@ -16,6 +16,7 @@ The py27 and py36 versions contain:
     - Lasagne 0.2
     - Chainer 3.5
     - cupy-cuda90
+    - keras
 
 The cuda8-py27 dockers contain:
     - Chainer 1.24
