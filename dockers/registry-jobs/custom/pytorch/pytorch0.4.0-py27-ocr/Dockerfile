@@ -1,0 +1,65 @@
+FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.8.0-cudnn.6
+
+# Copy the files to the necessary folder
+COPY toolkit-execute /home/job/toolkit-execute
+RUN chmod u+x /home/job/toolkit-execute
+
+# Labels for the docker
+LABEL description="This docker has pytorch 0.4.0 in anaconda python27 with cuda 8.0, and cudnn 6.0." \
+      repository="philly/jobs/custom/pytorch" \
+      tag="pytorch0.4.0-py27-ocr" \
+      creator="v-fucong" tooltype="pytorch" \
+      tooltypeversion="0.4.0" \
+      createtime="05/09/2018"
+# Everything above this line is required for the docker.
+# Add your personalized features below here.
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+         git \
+         octave &&\
+         rm -rf /var/lib/apt/lists/*
+
+ENV PYTHON_VERSION=2.7
+
+RUN curl -o ~/anaconda.sh -O  https://repo.anaconda.com/archive/Anaconda2-5.1.0-Linux-x86_64.sh  && \
+     chmod +x ~/anaconda.sh && \
+     ~/anaconda.sh -b -p /opt/conda && \
+     rm ~/anaconda.sh 
+
+ENV PATH /opt/conda/bin/:/opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
+   
+
+
+RUN conda create -y --name pytorch-py$PYTHON_VERSION python=$PYTHON_VERSION 
+
+RUN conda install --name pytorch-py$PYTHON_VERSION numpy scipy scikit-learn cffi pyyaml ipython opencv cython
+
+RUN conda install --name pytorch-py$PYTHON_VERSION torchvision pytorch=0.4.0 -c pytorch
+
+RUN /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python -c "import torch ; print(torch.cuda.is_available())"
+
+RUN /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python -c "import torch ; print(torch.version.cuda)"
+
+RUN git clone https://github.com/Fuzesunshine/warp-ctc.git ~/warp-ctc
+RUN mkdir ~/warp-ctc/build
+RUN cd ~/warp-ctc/build && cmake ..
+RUN cd ~/warp-ctc/build && make
+RUN export CUDA_HOME="/usr/local/cuda"
+RUN cd ~/warp-ctc/pytorch_binding && /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python setup.py install
+# RUN cmake ~/warp-ctc/
+# RUN make 
+# ENV WARP_CTC_PATH ./
+
+# RUN ls ~/warp-ctc/build
+# RUN ls
+
+# RUN cp libwarpctc.so ~/warp-ctc/build
+# RUN cp -r ~/warp-ctc/build
+
+# RUN pwd
+
+# RUN /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python -c "import torch ; print(torch.version.cuda)"
+# RUN cd ~/warp-ctc/build && /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python ~/warp-ctc/pytorch_binding/setup.py install
+
+WORKDIR /workspace
+RUN chmod -R a+w /workspace
