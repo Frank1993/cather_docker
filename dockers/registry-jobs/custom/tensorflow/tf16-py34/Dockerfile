@@ -20,9 +20,9 @@ RUN apt-get -y update && \
 RUN add-apt-repository ppa:deadsnakes/ppa
 
 RUN apt-get -y update && \
-    apt-get -y install python3.6
+    apt-get -y install python3.4
 
-RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
+RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.4
 
-RUN python3.6 -m pip install --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.6.0-cp36-cp36m-linux_x86_64.whl
-RUN python3.6 -m pip install --upgrade numpy scipy
+RUN python3.4 -m pip install --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.6.0-cp34-cp34m-linux_x86_64.whl
+RUN python3.4 -m pip install --upgrade numpy scipy
