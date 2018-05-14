@@ -42,12 +42,19 @@ RUN /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python -c "import torch ; prin
 
 RUN df -h
 
-RUN git clone https://github.com/Fuzesunshine/warp-ctc.git ~/warp-ctc
-RUN mkdir ~/warp-ctc/build
-RUN cd ~/warp-ctc/build && cmake ..
-RUN cd ~/warp-ctc/build && make
+RUN git clone https://github.com/Fuzesunshine/warp-ctc.git /usr/local/warp-ctc
+RUN mkdir /usr/local/warp-ctc/build
+RUN cd /usr/local/warp-ctc/build && cmake ..
+RUN cd /usr/local/warp-ctc/build && make
+RUN cd /usr/local/warp-ctc/build && make install
 RUN export CUDA_HOME="/usr/local/cuda"
-RUN cd ~/warp-ctc/pytorch_binding && /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python setup.py install
+RUN cd /usr/local/warp-ctc/pytorch_binding && /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python setup.py install
+
+RUN chmod 777 /usr/local/warp-ctc/build
+
+RUN /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python -c "from warpctc_pytorch import CTCLoss"
+RUN cd /usr/local/warp-ctc/build && pwd
+RUN ls /usr/local/warp-ctc/build
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
