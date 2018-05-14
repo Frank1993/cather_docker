@@ -16,7 +16,7 @@ The py27 and py36 versions contain:
     - Lasagne 0.2
     - Chainer 3.5
     - cupy-cuda90
-    - keras
+    - Keras
 
 The cuda8-py27 dockers contain:
     - Chainer 1.24
@@ -33,5 +33,7 @@ PT_OUTPUT_DIR and PT_DATA_DIR.
 Users can install their run-time dependencies in various ways:
 - by adding a requirements.txt in the folder which contains their configFile (script to launch)
 - by adding a setup.sh in the folder which contains their configFile
+
+They can also define environment variables in that same setup.sh file.
 
 Python is ran with the -B flag in order not to create the __pycache__ folders.
