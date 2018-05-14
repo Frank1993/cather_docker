@@ -88,5 +88,5 @@ if [ -f "$CONFIG_DIRNAME/setup.sh" ]; then
     source $CONFIG_DIRNAME/setup.sh
 fi
 
-echo python2.7 -B $CONFIG_FILE $EXTRA_ARGS
+echo Running: python2.7 -B $CONFIG_FILE $EXTRA_ARGS
 python2.7 -B $CONFIG_FILE $EXTRA_ARGS
