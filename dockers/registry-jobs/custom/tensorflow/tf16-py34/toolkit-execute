@@ -63,5 +63,5 @@ echo "toolkit-execute: EXTRA_ARGS=$EXTRA_ARGS"
 DIRECTORY="$(dirname $CONFIG_FILE)"
 echo "runCust: DIRECTORY=$DIRECTORY"
 
-python3 $CONFIG_FILE -d $DATA_DIR -l $LOG_DIR -p $DIRECTORY -m $MODEL_DIR
+python $CONFIG_FILE -d $DATA_DIR -l $LOG_DIR -p $DIRECTORY -m $MODEL_DIR
 
