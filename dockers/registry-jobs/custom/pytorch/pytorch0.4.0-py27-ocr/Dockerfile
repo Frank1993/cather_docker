@@ -32,15 +32,9 @@ ENV PATH /opt/conda/bin/:/opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 
 RUN conda create -y --name pytorch-py$PYTHON_VERSION python=$PYTHON_VERSION 
 
-RUN conda install --name pytorch-py$PYTHON_VERSION numpy scipy scikit-learn cffi pyyaml ipython opencv cython lmdb && conda clean -ya
+RUN conda install --name pytorch-py$PYTHON_VERSION numpy scipy scikit-learn cffi pyyaml ipython opencv cython python-lmdb && conda clean -ya
 
 RUN conda install --name pytorch-py$PYTHON_VERSION torchvision pytorch=0.4.0 -c pytorch && conda clean -ya
-
-RUN /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python -c "import torch ; print(torch.cuda.is_available())"
-
-RUN /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python -c "import torch ; print(torch.version.cuda)"
-
-RUN df -h
 
 RUN git clone https://github.com/Fuzesunshine/warp-ctc.git /usr/local/warp-ctc
 RUN mkdir /usr/local/warp-ctc/build
@@ -51,10 +45,6 @@ RUN export CUDA_HOME="/usr/local/cuda"
 RUN cd /usr/local/warp-ctc/pytorch_binding && /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python setup.py install
 
 RUN chmod 777 /usr/local/warp-ctc/build
-
-RUN /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin/python -c "from warpctc_pytorch import CTCLoss"
-RUN cd /usr/local/warp-ctc/build && pwd
-RUN ls /usr/local/warp-ctc/build
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
