@@ -202,6 +202,9 @@ if [[ ! -f "$GLOBAL_CNTK_DOWNLOAD_FILE" ]]; then
   fi
 fi
 
+# Load the libs
+sudo ldconfig
+
 source $MINICONDA_PATH/activate cntk-py35
 
 python3 --version
