@@ -73,20 +73,22 @@ echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
 echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
 echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
 
-CONFIG_DIRNAME=$(dirname $CONFIG_FILE)
+CODE_DIR=$(dirname $CONFIG_FILE)
 
+export PT_CODE_DIR=$CODE_DIR
 export PT_OUTPUT_DIR=$MODEL_DIR
 export PT_DATA_DIR=$DATA_DIR
 
-if [ -f "$CONFIG_DIRNAME/requirements.txt" ]; then
+if [ -f "$CODE_DIR/requirements.txt" ]; then
     echo "Installing custom requirements..."
-    pip install -r $CONFIG_DIRNAME/requirements.txt --user
+    pip install -r $CODE_DIR/requirements.txt --user
 fi
 
-if [ -f "$CONFIG_DIRNAME/setup.sh" ]; then
+if [ -f "$CODE_DIR/setup.sh" ]; then
     echo "Executing custom script..."
-    source $CONFIG_DIRNAME/setup.sh
+    source $CODE_DIR/setup.sh
 fi
 
+cd $CODE_DIR
 echo Running: python2.7 -B $CONFIG_FILE $EXTRA_ARGS
 python2.7 -B $CONFIG_FILE $EXTRA_ARGS
