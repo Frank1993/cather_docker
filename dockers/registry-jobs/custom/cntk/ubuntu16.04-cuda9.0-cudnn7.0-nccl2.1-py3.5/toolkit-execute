@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 function die {
     echo ""
@@ -11,25 +12,21 @@ function existsExactlyOne {
 }
 
 # Default values
-CONFIG_FILE=NONE
-DATA_DIR=NONE
+BUILD_ID=
+BUILD_TYPE=gpu
+BUILD_FLAVOR=release
+
 LOG_DIR=$PWD
-MODEL_DIR=NONE
-PREV_MODEL_PATH=NONE
 IS_MEMCHECK=FALSE
 EXTRA_ARGS=""
-NUM_GPU=NONE
-STDOUT_DIR=$PWD
 IS_DEBUG=false
 IS_PERF_TRACE=false
-IS_GDB_WRAPPED=false
 
 WORK_DIR=$PHILLY_HOME
 BIN_BASE_DIR=$WORK_DIR/cntkbin
 BIN_DIR=$BIN_BASE_DIR/bin
 HDFS_DROPS=/hdfs/public/drops
 MINICONDA_PATH=/usr/local/miniconda3/bin
-BUILD_ID=NONE
 
 # Parsing command line arguments:
 while [[ $# > 0 ]]
@@ -45,13 +42,13 @@ case $key in
     echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
     echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
     echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
-    echo "  -s|--stdoutDir <path> - directory path to save the stdout (default \$PWD)"
+    echo "  -b|--buildID <buildID> - CNTK build to use (default None)"
+    echo "  -f|--flavor <flavor> - CNTK build flavor to use (default Release)"
+    echo "  -t|--buildType <buildType> - CNTK build type to use (default gpu. Other options: cpu, ...)"
     echo "  --debug - job is in debug mode (not used)"
     echo "  --perfTrace - job should run in perf trace mode (not used)"
-    echo "  --gdbWrapped - job should run with GDB (default FALSE)"
-    echo "  --prevModelDir - the prev model path to copy from (default None)"
     echo "  --memCheck - start job in memcheck mode (default FALSE)"
-    echo "  -b|--buildID <buildID> - CNTK build to be used (defaukt None)"
+    echo "  --gdbWrapped - job should run with GDB (default FALSE)"
     exit 1
     ;;
     -n|--nGPU)
@@ -74,29 +71,29 @@ case $key in
     MODEL_DIR="$2"
     shift # pass argument
     ;;
-    -s|--stdoutDir)
-    STDOUT_DIR="$2"
+    -b|--buildID)
+    BUILD_ID="$2"
+    shift # pass argument
+    ;;
+    -t|--buildType)
+    BUILD_TYPE="$2"
+    shift # pass argument
+    ;;
+    -f|--buildFlavor)
+    BUILD_FLAVOR="$2"
     shift # pass argument
     ;;
     --debug)
     IS_DEBUG=true
     ;;
-    --perfTrace)
+    --memCheck)
+    IS_MEMCHECK=TRUE
+    ;;
+     --perfTrace)
     IS_PERF_TRACE=true
     ;;
     --gdbWrapped)
     IS_GDB_WRAPPED=true
-    ;;
-    --prevModelDir)
-    PREV_MODEL_PATH="$2"
-    shift # pass argument
-    ;;
-    --memCheck)
-    IS_MEMCHECK=TRUE
-    ;;
-    -b|--buildID)
-    BUILD_ID="$2"
-    shift # pass argument
     ;;
     --)
     shift # pass argument
@@ -112,10 +109,13 @@ echo "toolkit-execute: CONFIG_FILE=$CONFIG_FILE"
 echo "toolkit-execute: DATA_DIR=$DATA_DIR"
 echo "toolkit-execute: LOG_DIR=$LOG_DIR"
 echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
-echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
-echo "toolkit-execute: EXTRA_ARGS=$EXTRA_ARGS"
 echo "toolkit-execute: BUILD_ID=$BUILD_ID"
-echo "toolkit-execute: WORK_DIR=$WORK_DIR"
+echo "toolkit-execute: BUILD_TYPE=$BUILD_TYPE"
+echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
+echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
+echo "toolkit-execute: IS_PERF_TRACE=$IS_PERF_TRACE"
+echo "toolkit-execute: IS_GDB_WRAPPED=$IS_GDB_WRAPPED"
+echo "toolkit-execute: EXTRA_ARGS=$EXTRA_ARGS"
 
 # MPI Rank
 MPI_COMM_WORLD_RANK=-1
@@ -129,71 +129,43 @@ else
     MPI_COMM_LOCAL_RANK=$OMPI_COMM_WORLD_LOCAL_RANK
 fi
 
+# TODO Remove this
+MPI_COMM_WORLD_RANK=0
+
 # Download or find the build on HDFS
 if [[ -z $BUILD_ID ]]; then
-    echo "BUILD_ID needed for extra parameters. Usage: buildID; extra args"
+    echo "BUILD_ID is a required parameter. Usage: --buildId buildID; extra args"
 fi
 GLOBAL_CNTK_DOWNLOAD_FILE="$WORK_DIR/.cntk-download-done"
 if [[ ! -f "$GLOBAL_CNTK_DOWNLOAD_FILE" ]]; then
   if [[ "$MPI_COMM_WORLD_RANK" == "0" ]]; then
-      for PREFIX in 1bitsgd gpu cpu;
-      do
-        if [[ -z "$JENKINS_PATH_PREFIX" ]]; then
-          for BUILD_FLAVOR in release debug;
-          do
-            if [[ -z "$JENKINS_BUILD_FLAVOR" ]]; then
-              if [[ -f $HDFS_DROPS/$BUILD_ID/$PREFIX/$BUILD_FLAVOR.zip ]]; then
-                JENKINS_PATH_PREFIX=$PREFIX
-                JENKINS_BUILD_FLAVOR=$BUILD_FLAVOR
-              else
-                wget --spider -q https://jenkins.cntk.selfhost.corp.microsoft.com/job/CNTK-Build-Linux/$BUILD_ID/artifact/build/$PREFIX/$BUILD_FLAVOR/bin/cntk && JENKINS_PATH_PREFIX=$PREFIX && JENKINS_BUILD_FLAVOR=$BUILD_FLAVOR
-              fi
-            fi
-          done
-        fi
-      done
+      HDFS_DROP_DIR=$HDFS_DROPS/$BUILD_ID/$BUILD_TYPE
 
-      HDFS_DROP_DIR=$HDFS_DROPS/$BUILD_ID/$JENKINS_PATH_PREFIX
-      HDFS_DROP_ZIP=$HDFS_DROP_DIR/$JENKINS_BUILD_FLAVOR.zip
-      TMP_DROP_ZIP=/tmp/cntkbin.zip
+      # Check if the script exists in the local box
+      existsExactlyOne $BIN_BASE_DIR/python/cntk*35*35*whl ||
+      # Check if the script exists in HDFS
+      existsExactlyOne $HDFS_DROP_DIR/python/cntk*35*35*whl ||
+      {
+        echo "Downloading artifacts from folder $BUILD_TYPE/$BUILD_FLAVOR and placing them in HDFS for caching"
+        mkdir -p $HDFS_DROP_DIR/python || { echo "Philly_Error_RunJob_Permissions"; die 1; }
+        azcopy --source https://phillycntkstorage.blob.core.windows.net/builds/$BUILD_ID/$BUILD_TYPE/$BUILD_FLAVOR/python/ --destination /tmp/cntk-python-whl/ --recursive --quiet --verbose
+        # Copy to HDFS for caching
+        mkdir -p $HDFS_DROP_DIR/python/
+        cp /tmp/cntk-python-whl/cntk*35*35*whl $HDFS_DROP_DIR/python/
+        # Copy to local folder
+        mkdir -p $BIN_BASE_DIR/python/
+        cp /tmp/cntk-python-whl/cntk*35*35*whl $BIN_BASE_DIR/python/
 
-      if [[ "${TOOL_TYPE^^}" == "CNTK" ]]; then
-        UNZIP_PATTERNS=($JENKINS_BUILD_FLAVOR/bin/cntk\* $JENKINS_BUILD_FLAVOR/lib/\*)
-      else # CNTK-PY35
-        UNZIP_PATTERNS=($JENKINS_BUILD_FLAVOR/python/cntk\*35\*35\*.whl)
+        # Remove the temporarily copied over wheels from local temp
+        rm -rf /tmp/cntk-python-whl
+      }
+
+      if [[ ! -d $BIN_BASE_DIR/python/ ]]; then
+        mkdir -p $BIN_BASE_DIR/python/ || die $?
+        cp $HDFS_DROP_DIR/python/* $BIN_BASE_DIR/python/
       fi
 
-      # Try to reuse existing CNTK binary cache on HDFS if there, if not download from Jenkins on demand
-      unzip -o $HDFS_DROP_ZIP "${UNZIP_PATTERNS[@]}" -d $WORK_DIR ||
-      {
-        echo "Downloading artifacts from folder $JENKINS_PATH_PREFIX/$JENKINS_BUILD_FLAVOR and placing them in HDFS for caching"
-        mkdir -p $HDFS_DROP_DIR || { echo "Philly_Error_RunJobLegacy_Permissions"; die 1; }
-        wget --no-verbose https://jenkins.cntk.selfhost.corp.microsoft.com/job/CNTK-Build-Linux/$BUILD_ID/artifact/build/$JENKINS_PATH_PREFIX/$JENKINS_BUILD_FLAVOR/*zip*/$JENKINS_BUILD_FLAVOR.zip -O $TMP_DROP_ZIP || die $?
-        unzip -o $TMP_DROP_ZIP "${UNZIP_PATTERNS[@]}" -d $WORK_DIR || die $?
-
-        # If there was a race and now HDFS has the valid zip, just leave it there, else upload
-        # the one we just used so we know it works.
-        if unzip -t $HDFS_DROP_ZIP; then
-            rm -f $TMP_DROP_ZIP
-        else
-            mv $TMP_DROP_ZIP $HDFS_DROP_ZIP
-        fi
-      }
-
-      # Original archive will have directory named after build flavor, we need to change it to cntkbin
-      [[ -d $BIN_BASE_DIR ]] &&
-      {
-        rm -rf $BIN_BASE_DIR || die $?
-      }
-
-      mv $WORK_DIR/$JENKINS_BUILD_FLAVOR $BIN_BASE_DIR || die $?
-
-      [[ -f $BIN_DIR/cntk ]] && {
-        chmod +x $BIN_DIR/cntk || die $?
-      }
-
-
-      existsExactlyOne $BIN_BASE_DIR/python/cntk*35*35*whl || die $?
+      existsExactlyOne $BIN_BASE_DIR/python/cntk*35*35*whl || (echo "Cannot find the CNTK wheel" && die 1)
 
       # Activate the environment to install the CNTK Python wheel.  As we do
       # not get an exit value from activate, instead we assert that after
@@ -230,8 +202,10 @@ if [[ ! -f "$GLOBAL_CNTK_DOWNLOAD_FILE" ]]; then
   fi
 fi
 
+# Load the libs
+sudo ldconfig
+
 source $MINICONDA_PATH/activate cntk-py35
-which conda || die $?
 
 python3 --version
 # Data location is passed in through $EXTRA_ARGS
