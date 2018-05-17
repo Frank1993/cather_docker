@@ -7,7 +7,7 @@ RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
 LABEL description="This docker has cntk 2.5 using anaconda python35 with other toolkits required by the ATL-Brazil team" \
-repository="philly/jobs/custom/atl-brazil-cntk" \
+repository="philly/jobs/custom/atl-brazil" \
 tag="cntk2.5-py3.5" \
 creator="v-rodemo" tooltype="cntk" \
 tooltypeversion="2.5" \
