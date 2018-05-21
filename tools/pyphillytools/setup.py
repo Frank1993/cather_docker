@@ -28,6 +28,5 @@ setup(
         'Operating System :: POSIX :: Linux',
     ],
     keywords='pyphillytools philly microsoft',
-    packages=find_packages(exclude=['tests']),
-    install_requires=['mixpanel'],
+    packages=find_packages(exclude=['tests'])
 )

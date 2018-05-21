@@ -30,6 +30,7 @@ export SERVICE_PRINCIPAL_PASSWORD="********************************************"
 export SERVICE_PRINCIPAL_TENANT="72f988bf-86f1-41af-91ab-2d7cd011db47"
 export MIX_PANEL_TOKEN="4820569f5a33e95d481ef207a4e769d8"
 export AGENT_JOBSTATUS="testing"
+export BUILD_REASON="IndividualCI"
 
 if [ "$1" == "build" ]; then
     python3 tools/vsts-tools/DiscoverModifiedDockers.py build || exit 1

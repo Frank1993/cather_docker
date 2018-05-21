@@ -88,7 +88,6 @@ for docker in $dockers; do
     cache_from=""
 
     docker_repository="${full_docker#$AZURE_CONTAINER_REGISTRY_URL}"
-    docker_repository="${docker_repository%:*}"
     test_docker_repository="${docker_repository/$docker_type_prefix/'test'}"
 
     # Remove this when AP sync is deprecated
@@ -158,10 +157,10 @@ for docker in $dockers; do
         fi
 
         # Remove the test docker once published to custom repository
-        echo "Deleting ${full_test_docker%:*}:${full_test_docker##*:}"
-        command-wrapper-safe az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${test_docker_repository} -y
+        echo "Deleting ${test_docker_repository}"
+        command-wrapper-safe az acr repository delete --name $AZURE_CONTAINER_REGISTRY --image ${test_docker_repository} -y
     elif [ "$operation" == "delete" ]; then
-        command-wrapper-safe az acr repository delete --name $AZURE_CONTAINER_REGISTRY --repository ${docker_repository} --tag ${docker##*:} --manifest -y
+        command-wrapper-safe az acr repository delete --name $AZURE_CONTAINER_REGISTRY --image ${docker_repository} -y
     fi
 done
 
