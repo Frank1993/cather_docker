@@ -1,0 +1,241 @@
+#!/bin/bash
+
+# This script file is where you setup and execute your job inside your docker.  The following
+# is the parsing of all available arguements that you can receive from the process that 
+# runs this script.  They are take directly from the values you supply when you submit a
+# custom job. It is recommended not to change the following and to continue to the end of the
+# file to add your script code.  Refer to the --help for a description of the arguements.
+
+
+### Hack code
+# deel with 'libdc1394 error: Failed to initialize libdc1394' of OpenCV
+sudo ln /dev/null /dev/raw1394
+
+
+### Parsing Opeionts
+# Default values
+export CONFIG_FILE=NONE
+export DATA_DIR=NONE
+export LOG_DIR=NONE
+export MODEL_DIR=NONE
+export PREV_MODEL_DIR=NONE
+export IS_MEMCHECK=FALSE
+export NUM_GPU=NONE
+export STDOUT_DIR=$PWD
+export IS_DEBUG=FALSE
+export IS_PERF_TRACE=FALSE
+export IS_GDB_WRAPPED=FALSE
+
+# Parsing command line arguments:
+stub=()
+stubValue=()
+while [[ $# > 0 ]]
+do
+key="$1"
+
+case $key in
+    -h|--help)
+    echo "Usage: toolkit-execute [run_options]"
+    echo "Options:"
+    echo "  -n|--nGPU <num> - how many GPUs used for this job (default NONE)"
+    echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
+    echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
+    echo "  -l|--logDir <path> - directory path to save the log files (default NONE)"
+    echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  -s|--stdoutDir <path> - directory path to save the stdout (default \$PWD)"
+    echo "  --debug - job is in debug mode (not used)"
+    echo "  --perfTrace - job should run in perf trace mode (not used)"
+    echo "  --gdbWrapped - job should run with GDB (default FALSE)"
+    echo "  -p|--prevModelDir <path> - directory w/ filename which holds models to start with (default NONE)"
+    echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    exit 1
+    ;;
+    -n|--nGPU)
+    NUM_GPU="$2"
+    shift # pass argument
+    ;;
+    -c|--configFile)
+    export CONFIG_FILE="$2"
+    shift # pass argument
+    ;;
+    -d|--dataDir)
+    export DATA_DIR="$2"
+    shift # pass argument
+    ;;
+    -l|--logDir)
+    export LOG_DIR="$2"
+    shift # pass argument
+    ;;
+    -m|--modelDir)
+    export MODEL_DIR="$2"
+    shift # pass argument
+    ;;
+    -s|--stdoutDir)
+    export STDOUT_DIR="$2"
+    shift # pass argument
+    ;;
+    --debug)
+    IS_DEBUG=true
+    ;;
+    --perfTrace)
+    IS_PERF_TRACE=true
+    ;;
+    --gdbWrapped)
+    IS_GDB_WRAPPED=true
+    ;;
+    -p|--prevModelDir)
+    export PREV_MODEL_DIR="$2"
+    shift # pass argument
+    ;;
+    --memCheck)
+    export IS_MEMCHECK=TRUE
+    ;;
+    *)
+    export EXTRA_PARAMS="$EXTRA_PARAMS $1 $2"
+    stub+=("${key:2}")
+    stubValue+=("$2")
+    shift # pass argument
+    ;;
+esac
+shift # past argument or value
+done
+
+set -x # Forcing bash to echo all commands
+
+# For easily debugging
+if [ -f "$(dirname $CONFIG_FILE)/run.sh" ] && [ "$(basename $0)" != "run.sh" ] ; then
+  bash $(dirname $CONFIG_FILE)/run.sh -c $CONFIG_FILE -d $DATA_DIR -l $LOG_DIR -m $MODEL_DIR -s $STDOUT_DIR -p $PREV_MODEL_DIR $EXTRA_PARAMS
+  exit $?
+fi
+
+if [ "$OMPI_COMM_WORLD_SIZE" -gt "1" ]; then
+  echo "There are $OMPI_COMM_WORLD_SIZE mpi processes. Current custom Philly Caffe IU jobs support only one mpi process. Select the option 'One process per instance' and use no more than 8 gpus"
+  exit 1
+fi
+
+export MODEL_DIR=`readlink -f $MODEL_DIR` # caffe solverstate need to use absolute path to address caffemodel
+
+# Prints out the arguments that were passed into the script
+echo "toolkit-execute: NUM_GPU=$NUM_GPU"
+echo "toolkit-execute: CONFIG_FILE=$CONFIG_FILE"
+echo "toolkit-execute: DATA_DIR=$DATA_DIR"
+echo "toolkit-execute: LOG_DIR=$LOG_DIR"
+echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
+echo "toolkit-execute: STDOUT_DIR=$STDOUT_DIR"
+echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
+echo "toolkit-execute: IS_PERF_TRACE=$IS_PERF_TRACE"
+echo "toolkit-execute: IS_GDB_WRAPPED=$IS_GDB_WRAPPED"
+echo "toolkit-execute: PREV_MODEL_DIR=$PREV_MODEL_DIR"
+echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
+echo "toolkit-execute: EXTRA_ARGS=$EXTRA_ARGS"
+
+mkdir -p $LOG_DIR
+mkdir -p $STDOUT_DIR
+mkdir -p $MODEL_DIR
+
+export GLOG_stderrthreshold=0
+export GLOG_log_dir=$LOG_DIR
+
+pushd `dirname $CONFIG_FILE` > /dev/null
+CONFIG_DIR=`pwd`
+popd > /dev/null
+
+if [ ! -d /config ]; then
+  sudo mkdir -p /config
+  sudo cp -rf $CONFIG_DIR/* /config/
+  sudo chmod -R o+rw /config
+fi
+
+export CONFIG_DIR=/config
+export CONFIG_FILE=/config/${CONFIG_FILE##*/}
+
+find $CONFIG_DIR -name *.prototxt | xargs -i chmod -R 755 {}
+find $CONFIG_DIR -name *.prototxt | xargs -i sed -i -r 's~\$ConfigDir\$~'"$CONFIG_DIR"'~g; s~\$DataDir\$~'"$DATA_DIR"'~g; s~\$ModelDir\$~'"$MODEL_DIR"'~g' {}
+
+### Print out information for debugging
+echo "[INFO]: All environment settings"
+printenv
+
+echo "[INFO]: System"
+nvidia-smi
+free -m
+echo `cat /proc/cpuinfo | grep 'processor' | wc -l` cpus of  `cat /proc/cpuinfo | grep 'model name' | tail -1`
+df -h
+cat /proc/version
+caffe -version
+ls -lh /home/custom/
+ls -lh /usr/local/
+echo "DATA_DIR $DATA_DIR"
+ls -lh $DATA_DIR
+echo "CONFIG_DIR $CONFIG_DIR"
+ls -lh $CONFIG_DIR
+
+
+### Set up job command
+# find the second-latest solverstate or caffemodel as a start point for training
+prevModelDir="/hdfs/$PHILLY_HDFS_VC_DIRECTORY/$PREV_MODEL_DIR/"
+latestIter="$(ls -t $prevModelDir/*.solverstate* 2>/dev/null | sed 's:.*_\([0-9]\+\)\.solverstate\(.*\)\?:\1:g' | sort -n | tail -2 | head -1)"
+nSavedModel="$(ls -t $prevModelDir/*.solverstate* 2>/dev/null | wc -l)"
+modelPrefix="$(ls -t $prevModelDir/*.solverstate* 2>/dev/null | sed 's:.*/\(.*_\)\([0-9]\+\)\.solverstate\(.*\)\?:\1:g' | tail -1)"
+modelSuffix="$(ls -t $prevModelDir/*.solverstate* 2>/dev/null | sed 's:\(.*_\)\([0-9]\+\)\.solverstate\(.*\)\?:\3:g' | tail -1)"
+PreState="$MODEL_DIR/$modelPrefix""$latestIter"".solverstate""$modelSuffix"
+FTWeight="$(ls -t $CONFIG_DIR/*.caffemodel* | head -1)"
+if [ "$latestIter" != "" ] && [ "$nSavedModel" != "1" ]; then     # make sure there are at least two solverstates
+  for modelIter in `ls -t $prevModelDir/*.solverstate* 2>/dev/null | sed 's:.*_\([0-9]\+\)\.solverstate\(.*\)\?:\1:g' | sort -n | tail -2 `; do
+    cp "$prevModelDir/$modelPrefix$modelIter.solverstate$modelSuffix" $MODEL_DIR
+  done
+  export PREV_MODEL="-snapshot=$PreState"
+elif [ "$FTWeight" != "" ]; then
+  export PREV_MODEL="-weights=$FTWeight"
+fi
+
+PYTHON_CMD=python
+export PYTHONPATH=$CONFIG_DIR:$CONFIG_DIR/lib:/usr/local/caffe_src/python:/usr/local/caffe/python
+
+# print out progress and error. It is required by philly
+PROGRESS_LOGGER="awk 'BEGIN{max_iter=100000000}  /^max_iter: [0-9]+$/{max_iter=\$2}  /Iteration [0-9]+.*loss = [0-9.]+/ { for(i=1;i<=NF;i=i+1){ if(\$i == \"Iteration\"){cur_iter=\$(i+1);} else if (\$i == \"loss\"){loss=\$( i+2);} } print \"PROGRESS: \"cur_iter*100/max_iter\"%\"; print \"EVALERR: \"loss\"%\"}  {print}'"
+if [ -f "$CONFIG_DIR/progress.sh" ] ; then
+  PROGRESS_LOGGER="$CONFIG_DIR/progress.sh"
+elif [ -f "$CONFIG_DIR/progress.py" ] ; then
+  PROGRESS_LOGGER="$PYTHON_CMD $CONFIG_DIR/progress.py"
+fi
+
+LOG_PARAMS=-log_dir=$LOG_DIR
+
+CAFFE_CMD="/usr/local/caffe/build/tools/caffe"
+if [ -f "$CONFIG_DIR/caffe_bin.zip" ] ; then
+  sudo unzip -q $CONFIG_DIR/caffe_bin.zip -d /usr/local/caffe_bin
+  sudo chmod -R 755 /usr/local/caffe_bin
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/caffe_bin/lib
+  CAFFE_CMD="/usr/local/caffe_bin/build/tools/caffe"
+elif [ -f "$CONFIG_DIR/caffe_src.zip" ] ; then
+  sudo unzip -q $CONFIG_DIR/caffe_src.zip -d /usr/local/caffe_src
+  sudo chmod -R 755 /usr/local/caffe_src
+  cd /usr/local/caffe_src
+  sudo make -j"$(($(nproc)*4))" all
+  sudo make pycaffe
+  CAFFE_CMD="/usr/local/caffe_src/build/tools/caffe"
+fi
+
+if [ "${DATA_DIR: -4}" == ".zip" ] ; then
+  sudo unzip -q $DATA_DIR -d /data/
+  sudo chmod -R o+rw /data/
+  export DATA_DIR=/data/
+fi
+
+if [ "${CONFIG_FILE: -3}" == ".sh" ] ; then
+  chmod 755 $CONFIG_FILE
+  bash $CONFIG_FILE $EXTRA_PARAMS
+elif [ "${CONFIG_FILE: -3}" == ".py" ] ; then
+  $PYTHON_CMD $CONFIG_FILE $EXTRA_PARAMS
+elif [ "${CONFIG_FILE: -5}" == ".pass" ] ; then
+  echo pass $CONFIG_FILE
+else
+  for ((i=0;i<${#stub[@]};++i)); do
+    find $CONFIG_DIR -name *.prototxt | xargs -i sed -i -r 's~\$'"${stub[$i]}"'\$~'"${stubValue[$i]}"'~g' {}
+  done
+  $CAFFE_CMD -version
+  $CAFFE_CMD train -gpu=all -solver=$CONFIG_FILE $PREV_MODEL $LOG_PARAMS 2>&1 | eval $PROGRESS_LOGGER
+fi
+
+exit ${PIPESTATUS[0]}
