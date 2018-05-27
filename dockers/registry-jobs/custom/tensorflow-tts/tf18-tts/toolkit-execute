@@ -73,5 +73,5 @@ echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
 echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
 echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
 
-echo python3 $CONFIG_FILE $EXTRA_ARGS
-python3 $CONFIG_FILE $EXTRA_ARGS
+echo bash $CONFIG_FILE $EXTRA_ARGS
+bash $CONFIG_FILE $EXTRA_ARGS

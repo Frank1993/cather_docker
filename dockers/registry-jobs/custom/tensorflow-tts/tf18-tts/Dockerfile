@@ -19,5 +19,3 @@ RUN apt-get -y install git
 RUN python3 -m pip install tensorflow==1.8.0
 RUN python3 -m pip install --upgrade opencv-python h5py six termcolor zmq tabulate
 RUN python3 -m pip install --upgrade falcon==1.2.0 inflect==0.2.5 librosa==0.5.1 matplotlib==2.0.2 numpy==1.14.3 scipy==0.19.0 tqdm==4.11.2 Unidecode==0.4.20
-
-RUN git clone https://github.com/hhguo/g2p.git && cd g2p && python3 setup.py install
