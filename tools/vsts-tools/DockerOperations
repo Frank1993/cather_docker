@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -x
+
 exit-script()
 {
     echo $1
@@ -103,6 +106,9 @@ for docker in $dockers; do
             echo "    Found tar file for the image, loading from the file $tarfile."
             command-wrapper docker load --input "$tarfile"
         else
+            echo "Logging in before pulling the images"
+            command-wrapper-safe az acr login --name $AZURE_CONTAINER_REGISTRY
+
             echo "Begin building and pushing images for build"
             inherits=`grep -i ^FROM $docker/Dockerfile* | awk '{print $2}'`
             echo "Pulling $inherits"
@@ -117,6 +123,9 @@ for docker in $dockers; do
             echo "Tagging $small_docker to $full_docker"
             command-wrapper docker tag $small_docker $full_docker
             echo ""
+
+            echo "Logging in before tagging and pushing the images"
+            command-wrapper-safe az acr login --name $AZURE_CONTAINER_REGISTRY
 
             # Pushing test image
             echo "******Tagging and pushing images for testing*******"
@@ -136,6 +145,9 @@ for docker in $dockers; do
             echo ""
         fi
     elif [ "$operation" == "push" ]; then
+        echo "Logging in before pushing the image"
+        command-wrapper-safe az acr login --name $AZURE_CONTAINER_REGISTRY
+
         echo "Pushing ${full_docker}"
         command-wrapper docker push $full_docker
         latest=$(grep "$small_docker" "${docker%/*}/latest" || exit 1)
