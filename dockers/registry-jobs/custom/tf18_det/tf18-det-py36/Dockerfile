@@ -15,6 +15,9 @@ LABEL description="This docker has tensorflow 1.8 using python36, with numpy, sc
 # Add your personalized features below here.
 
 RUN apt-get update
+
+RUN apt-get install -y --no-install-recommends libcudnn7=7.0.5.15-1+cuda9.0
+
 RUN apt-get -y install software-properties-common libcupti-dev
 
 RUN add-apt-repository ppa:deadsnakes/ppa
