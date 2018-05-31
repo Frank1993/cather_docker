@@ -150,8 +150,9 @@ for docker in $dockers; do
 
         echo "Pushing ${full_docker}"
         command-wrapper docker push $full_docker
-        latest=$(grep "$small_docker" "${docker%/*}/latest" || exit 1)
-        if [ ! -z $latest ]; then
+
+        echo "Checking if latest tag should be added"
+        if grep -q "$small_docker" "${docker%/*}/latest"; then
             echo "Pushing ${full_docker%:*}:latest"
             command-wrapper docker tag "$full_docker" "${full_docker%:*}:latest"
             command-wrapper docker push "${full_docker%:*}:latest"
@@ -166,6 +167,8 @@ for docker in $dockers; do
 
             command-wrapper az account set --subscription PhillyExt
             command-wrapper az acr login --name phillyregistry
+        else
+            echo "Not tagging the image with latest"
         fi
 
         # Remove the test docker once published to custom repository
