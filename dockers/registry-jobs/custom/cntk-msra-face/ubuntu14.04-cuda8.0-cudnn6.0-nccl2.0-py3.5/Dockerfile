@@ -265,3 +265,16 @@ RUN MINICONDA=Miniconda3-$MINICONDA_VERSION-Linux-x86_64.sh && \
 
 
 RUN apt-get update && apt-get install -y python3-setuptools
+
+RUN chmod -R 777 /home/
+
+RUN cd /home/ && \
+    git clone -b lewlu/AM-Softmax https://github.com/Microsoft/CNTK.git && \
+    mkdir CNTK/build/release -p && \
+    cd CNTK/build/release && \
+    ../../configure --asgd=no && \
+    make clean && make -j 2 && \
+    cd bin && \
+    chmod 777 cntk
+
+ENV PATH /home/CNTK/build/release/bin:$PATH

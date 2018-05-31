@@ -129,19 +129,12 @@ else
     MPI_COMM_LOCAL_RANK=$OMPI_COMM_WORLD_LOCAL_RANK
 fi
 
-git clone -b lewlu/AM-Softmax https://github.com/Microsoft/CNTK.git
-mkdir CNTK/build/release -p
-cd CNTK/build/release
-../../configure --asgd=no
-make -j all
-cd bin
-chmod 777 cntk
-./cntk configFile=$CONFIG_FILE \
-	  WorkDir=$WORK_DIR \
-	  datadir=$DATA_DIR \
-	  ModelDir=$MODEL_DIR \
-	  stderr=$STDOUT_DIR \
-	  progressTracing=true \
-	  timestamping=true \
-	  makeMode=true \
-          excludedDevices=-1
+cntk configFile=$CONFIG_FILE \
+     WorkDir=$WORK_DIR \
+     datadir=$DATA_DIR \
+     ModelDir=$MODEL_DIR \
+     stderr=$STDOUT_DIR \
+     progressTracing=true \
+     timestamping=true \
+     makeMode=true \
+     excludedDevices=-1
