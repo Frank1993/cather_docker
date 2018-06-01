@@ -17,7 +17,7 @@ RUN chmod u+x /home/job/toolkit-execute
 
 LABEL description="custom cntk for face team" \
       repository="philly/jobs/custom/cntk-msra-face" \
-      tag="ubuntu14.04-cuda8.0-cudnn6.0-nccl2.0-py3.5" \
+      tag="2018-06-01" \
       creator="lewlu" \
       tooltype="cntk"
 
