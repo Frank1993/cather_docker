@@ -10,7 +10,7 @@ LABEL description="This docker has pytorch 0.4.0 torchvision in anaconda python3
       tag="pytorch-0.4.0-mpi-py36" \
       creator="v-shuzhe" tooltype="pytorch" \
       tooltypeversion="0.4.0" \
-      createtime="2/6/2018"
+      createtime="3/6/2018"
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
