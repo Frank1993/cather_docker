@@ -1,4 +1,5 @@
-FROM p0jeff/pytorch@sha256:d9992f7d50cb099a8eec55ce29eedfb0b362074c8aa26ceb33cfed2337dfb882
+FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
+
 # This docker file inherit from base philly-openmpi and install cuda-aware mpi & pytorch & torchvision & nltk & gym
 # Copy the files to the necessary folder
 COPY toolkit-execute /home/job/toolkit-execute
@@ -12,6 +13,35 @@ LABEL description="This docker has pytorch 0.4.0 torchvision in anaconda python3
       tooltypeversion="0.4.0" \
       createtime="4/6/2018"
 
-WORKDIR /workspace
-RUN chmod -R a+w /workspace
+RUN apt-get update && apt-get install -y --no-install-recommends \
+         git \
+         vim \
+         ca-certificates \
+         libnccl2 \
+         libnccl-dev \
+         libjpeg-dev \
+         libpng-dev &&\
+         rm -rf /var/lib/apt/lists/*
+
+ENV PYTHON_VERSION=3.6
+
+RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh  && \
+     chmod +x ~/miniconda.sh && \
+     ~/miniconda.sh -b -p /opt/conda && \
+     rm ~/miniconda.sh
+
+ENV PATH /opt/conda/bin:$PATH \
+    CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
+
+RUN cd ~ &&\
+    conda install -y numpy pyyaml scipy ipython mkl mkl-include setuptools cmake cffi typing && \
+    conda install -y cuda91 -c pytorch&& \
+    conda install -y -c mingfeima mkldnn &&\
+    conda install -y -c pytorch magma-cuda91 &&\
+    #conda install -y cuda90 pytorch=0.4.0 torchvision nltk -c pytorch && \
+    conda install -y opencv matplotlib && \
+    conda install -y -c conda-forge openmpi &&\
+    conda install -y -c pytorch pytorch=0.4.0 torchvision nltk && \
+    conda clean -ya 
+
 
