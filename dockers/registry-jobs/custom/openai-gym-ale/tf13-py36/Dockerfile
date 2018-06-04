@@ -5,7 +5,7 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="GYM and ALE for Python 3.6 and TensorFlow 1.3" \
+LABEL description="GYM and ALE for Python 3.6 and TensorFlow 1.3 with Keras too" \
       repository="philly/jobs/custom/openai-gym-ale" \
       tag="tf13-py36" \
       creator="retachet" \
@@ -52,7 +52,8 @@ RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
   libopenblas-dev \
   libglib2.0-0 libxext6 libsm6 libxrender1 \
   software-properties-common \
-  libgtk2.0-0
+  libgtk2.0-0 \
+  libhdf5-serial-dev
 
 # Add all environment variables available to the user
 RUN env | grep _ >> /etc/environment
@@ -94,3 +95,5 @@ RUN git clone https://github.com/pybox2d/pybox2d && \
     cd pybox2d && \
     python setup.py build && \
     python setup.py install
+
+RUN pip install keras==1.2.0
