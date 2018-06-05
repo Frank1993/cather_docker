@@ -2,7 +2,10 @@ FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.
 # This docker file inherit from pytorch0.3.1-py36
 # Copy the files to the necessary folder
 COPY toolkit-execute /home/job/toolkit-execute
-RUN chmod u+x /home/job/toolkit-execute
+COPY config.py /home/job/config.py
+COPY train_net.py /home/job/train_net.py
+RUN chmod a+rw /home/job/config.py /home/job/train_net.py \
+    && chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker 
 LABEL description="This docker has caffe2 0.8.1 in python27 with cuda 9.0, and cudnn 7.0." \
@@ -73,9 +76,13 @@ RUN cd caffe2/third_party \
     && cd aten \
     && git checkout 642baf51c5b7e13ad814542c0b47ab03a14f8c92 \
     && cd .. \
-    && git add aten
+    && git add aten \
+    && git clone https://github.com/eigenteam/eigen-git-mirror eigen \
+    && cd eigen \
+    && git checkout 8b2c28cc4e52c62cbfd457fd94bdf1e91b4f9603 \
+    && cd .. \
+    && git add eigen
 
-# We currently disable NCCL to pass building
 RUN cd caffe2 && git submodule update --init --recursive \
     && mkdir build && cd build \
     && cmake .. \
@@ -97,16 +104,17 @@ RUN git clone https://github.com/cocodataset/cocoapi.git \
     && make install
 
 RUN git clone https://github.com/harrysummer/Detectron.git /detectron \
-    && cd /detectron/lib \
-    && make
+    && cd /detectron \
+    && make \
+    && chmod -R a+w /detectron
 
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/usr/local/caffe2/lib
 
 # Use different method to ensure PYTHONPATH is set properly
-ENV PYTHONPATH $PYTHONPATH:/usr/local/caffe2/lib/python2.7/dist-packages:/detectron/lib
-ENV PYTHONPATH=$PYTHONPATH:/usr/local/caffe2/lib/python2.7/dist-packages:/detectron/lib
-RUN echo "export PYTHONPATH=/usr/local/caffe2/lib/python2.7/dist-packages:/detectron/lib" > /etc/profile.d/pythonpath.sh
-RUN mkdir ~/.ssh && echo "export PYTHONPATH=/usr/local/caffe2/lib/python2.7/dist-packages:/detectron/lib" >> ~/.ssh/environment
+ENV PYTHONPATH $PYTHONPATH:/usr/local/caffe2/lib/python2.7/dist-packages:/detectron
+ENV PYTHONPATH=$PYTHONPATH:/usr/local/caffe2/lib/python2.7/dist-packages:/detectron
+RUN echo "export PYTHONPATH=/usr/local/caffe2/lib/python2.7/dist-packages:/detectron" > /etc/profile.d/pythonpath.sh
+RUN mkdir ~/.ssh && echo "export PYTHONPATH=/usr/local/caffe2/lib/python2.7/dist-packages:/detectron" >> ~/.ssh/environment
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
