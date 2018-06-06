@@ -37,10 +37,18 @@ ENV PATH /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION cuda90 pytorch=0.4.0 torchvision -c pytorch  && \
     /opt/conda/bin/conda clean -ya
 
-RUN pip install gym[all]
-RUN pip install opencv-python
-RUN pip install tqdm
-RUN pip install tensorboardX
+RUN pip install gym[all] && \
+    pip install opencv-python && \ 
+    pip install tqdm   && \
+    pip install tensorboardX
+
+Run pip uninstall -y  Box2D-kengz && \  
+    git clone https://github.com/pybox2d/pybox2d.git && \ 
+    cd pybox2d && ls && \ 
+    python setup.py build && \ 
+    python setup.py install && \ 
+    cd .. && rm -rf pybox2d  
+
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
