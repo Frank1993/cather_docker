@@ -53,10 +53,9 @@ RUN apt-get install -y tmux
 
 RUN apt-get autoremove
 
-# Newer NCCL
-RUN git clone https://github.com/NVIDIA/nccl.git && cd nccl && \
-    git checkout 286916a1a37ca1fe8cd43e280f5c42ec29569fc5 && \
-    make -j$(nproc) && make install && cd .. && rm -rf nccl
+# NCCL2
+COPY nccl-repo-ubuntu1604-2.1.15-ga-cuda9.0_1-1_amd64.deb /home/job
+RUN dpkg -i /home/job/nccl-repo-ubuntu1604-2.1.15-ga-cuda9.0_1-1_amd64.deb
 
 #tmux conf
 COPY tmux.conf /etc/
@@ -72,7 +71,7 @@ RUN python -m nltk.downloader wordnet brown averaged_perceptron_tagger
 # To build in the docker directly (make sure /src/Caffe has the source):
 #RUN mkdir -p /src/Caffe/build
 #RUN cd /src/Caffe/build && \
-#    cmake -DUSE_OPENMP=1 -DUSE_CUDNN=1 -DUSE_NCCL=1 -DCUDA_ARCH_NAME=All -DCMAKE_INSTALL_PREFIX=$CAFFE_ROOT .. && \
+#    cmake -DUSE_MPI=1 -DUSE_OPENMP=1 -DUSE_CUDNN=1 -DUSE_NCCL=1 -DCUDA_ARCH_NAME=All -DCMAKE_INSTALL_PREFIX=$CAFFE_ROOT -DBLAS=atlas .. && \
 #    make -j$(nproc) && make install
 # To prebuild .tar.gz file:
 # make DESTDIR=/caffe_install install
@@ -85,6 +84,7 @@ RUN chmod -R 777 /opt/
 
 # remove intermediates
 RUN rm -rf /home/job/*.tar.gz
+RUN rm -rf /home/job/*.deb
 
 # To Build:
 # docker build -t msrccs-caffe .
