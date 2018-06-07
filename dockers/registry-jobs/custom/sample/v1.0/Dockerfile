@@ -10,7 +10,7 @@ LABEL description="This docker executes a bash script only" \
       tag="v1.0" \
       creator="jafrench" tooltype="sample" \
       tooltypeversion="4.3.11(1)-release" \
-      createtime="4/20/2017"
+      createtime="4/21/2017"
 
 # Everything above this line is required for the docker.
 # Add your personalized features below here.

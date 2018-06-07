@@ -4,9 +4,9 @@ echo ""
 echo "Attempting to login to Azure Container Registry: $AZURE_CONTAINER_REGISTRY"
 
 if [ "$1" == "test" ]; then
-    echo "Simulated: az login --service-principal -u $SERVICE_PRINCIPAL_USERNAME -p $1 --tenant $SERVICE_PRINCIPAL_TENANT &>/dev/null"
-    echo "Simulated: az acr login --name $AZURE_CONTAINER_REGISTRY"
+    echo "Simulated: az login --service-principal -u $SERVICE_PRINCIPAL_USERNAME -p $1 --tenant $SERVICE_PRINCIPAL_TENANT"
+    echo "Simulated: docker login $AZURE_CONTAINER_REGISTRY_URL  -u $SERVICE_PRINCIPAL_USERNAME -p $1"
 else
     az login --service-principal -u $SERVICE_PRINCIPAL_USERNAME -p $1 --tenant $SERVICE_PRINCIPAL_TENANT
-    az acr login --name $AZURE_CONTAINER_REGISTRY
+    docker login $AZURE_CONTAINER_REGISTRY_URL -u $SERVICE_PRINCIPAL_USERNAME -p $1
 fi
