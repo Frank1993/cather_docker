@@ -109,7 +109,7 @@ CONFIG_EXT="${CONFIGB##*.}"
 CONFIG_NAME="${CONFIGB%.*}"
 source activate pytorch-py3.6
 if [[ ${CONFIG_EXT} == "py" ]] ; then
-    cd ${CONFIG_DIR} && python ${CONFIGB} --gpu ${GPU} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS} || exit 1
+    cd ${CONFIG_DIR} && python -u ${CONFIGB} --gpu ${GPU} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS} || exit 1
 else
     cmd="${CONFIG_FILE} --gpu ${GPU} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS}"
     ${cmd} || exit 1

@@ -21,14 +21,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ENV PYTHON_VERSION 3.6
 
-RUN curl -o ~/anaconda.sh -O https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh && \
-    chmod +x ~/anaconda.sh && ~/anaconda.sh -b -p /opt/conda && rm ~/anaconda.sh
+RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    chmod +x ~/miniconda.sh && \
+    ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh
+
+# RUN curl -o ~/anaconda.sh -O https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh && \
+#     chmod +x ~/anaconda.sh && ~/anaconda.sh -b -p /opt/conda && rm ~/anaconda.sh
 
 ENV PATH /opt/conda/bin/:/opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 
 RUN conda create -y --name pytorch-py$PYTHON_VERSION python=$PYTHON_VERSION && \
     conda clean -ya
 RUN conda install --name pytorch-py$PYTHON_VERSION numpy scipy scikit-learn && \
+    conda clean -ya
+RUN conda install --name pytorch-py$PYTHON_VERSION -c conda-forge toml && \
     conda clean -ya
 
 RUN conda install --name pytorch-py$PYTHON_VERSION torchvision cuda90 pytorch=0.4.0 -c pytorch && \
