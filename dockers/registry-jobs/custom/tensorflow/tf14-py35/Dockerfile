@@ -8,7 +8,7 @@ RUN chmod u+x /home/job/toolkit-execute
 LABEL description="This docker has tensorflow 14 using python35, with numpy, scipy, h5py, opencv, six, termcolor, tqdm, zmq, tabulate, pandas, unidecode, inflect" \
       repository="philly/jobs/custom/tensorflow" \
       tag="tf14-py35" \
-      creator="dedey" tooltype="tensorflow" \
+      creator="shujliu" tooltype="tensorflow" \
       tooltypeversion="1.4" \
       createtime="6/4/2018"
 # Everything above this line is required for the docker.
