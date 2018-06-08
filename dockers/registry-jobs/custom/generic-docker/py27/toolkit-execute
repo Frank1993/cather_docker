@@ -79,6 +79,8 @@ export PT_CODE_DIR=$CODE_DIR
 export PT_OUTPUT_DIR=$MODEL_DIR
 export PT_DATA_DIR=$DATA_DIR
 
+cd $CODE_DIR
+
 if [ -f "$CODE_DIR/requirements.txt" ]; then
     echo "Installing custom requirements..."
     pip install -r $CODE_DIR/requirements.txt --user
@@ -89,6 +91,5 @@ if [ -f "$CODE_DIR/setup.sh" ]; then
     source $CODE_DIR/setup.sh
 fi
 
-cd $CODE_DIR
 echo Running: python $CONFIG_FILE $EXTRA_ARGS
 python -B $CONFIG_FILE $EXTRA_ARGS
