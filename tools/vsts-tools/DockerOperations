@@ -151,9 +151,6 @@ for docker in $dockers; do
             # Remove this when AP sync is deprecated
             echo "Pushing ${full_docker_ap%:*}:latest"
             command-wrapper az account set --subscription PhillyInt
-            command-wrapper az acr login --name phillyonapprod
-
-            command-wrapper az account set --subscription PhillyInt
             command-wrapper docker push "${full_docker_ap%:*}:latest"
 
             command-wrapper az account set --subscription PhillyExt
