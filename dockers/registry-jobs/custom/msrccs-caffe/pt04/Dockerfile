@@ -28,7 +28,7 @@ RUN chmod 655 /etc/bashrc.sh
 RUN echo "source /etc/bashrc.sh" >> /etc/bash.bashrc
 
 # Make it possible to modify this if needed (/opt will be shared fo users)
-RUN chmod -R 755 /opt
+RUN chmod -R 777 /opt
 RUN chgrp -Rv users /opt
 RUN find /opt -type d -exec chmod g+s '{}' \;
 
