@@ -107,6 +107,8 @@ export IS_GDB_WRAPPED
 OMPI_COMM_WORLD_LOCAL_RANK=${OMPI_COMM_WORLD_LOCAL_RANK:-0}
 if [[ $OMPI_COMM_WORLD_LOCAL_RANK == 0 ]]; then
     nvidia-smi --query-gpu=name --format=csv,noheader || true
+    # Add this user to "users" which already has proper permissions inside
+    sudo usermod -aG users ${USER:-$PHILLY_USER} || true
 fi
 
 # Docker's ENV is not set as expected, work around it here

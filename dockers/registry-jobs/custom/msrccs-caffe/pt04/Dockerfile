@@ -27,8 +27,10 @@ COPY bashrc.sh /etc/
 RUN chmod 655 /etc/bashrc.sh
 RUN echo "source /etc/bashrc.sh" >> /etc/bash.bashrc
 
-# Make it possible to modify this if needed
-RUN chmod ugo+w /opt/
+# Make it possible to modify this if needed (/opt will be shared fo users)
+RUN chmod -R 755 /opt
+RUN chgrp -Rv users /opt
+RUN find /opt -type d -exec chmod g+s '{}' \;
 
 # Install Anaconda for python 2.7
 RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
@@ -72,9 +74,14 @@ RUN tar --strip-components=1 -C / -xvf /home/job/caffe.tar.gz
 # Created with: tar cfz mtorch.tar.gz mtorch
 # Install our extensions (they can be updated later through pre-run)
 ADD mtorch.tar.gz /home/job
-#RUN  cd /home/job/mtorch/rt && /opt/conda/bin/python2.7 setup.py install
-#RUN  cd /home/job/mtorch/smt && /opt/conda/bin/python2.7 setup.py install
-#RUN  cd /home/job/mtorch/smtl && /opt/conda/bin/python2.7 setup.py install
+RUN chmod -R 777 /home/job
+
+# Fixed in upstream
+RUN sed -i 's/CUDA_HOME = _find_cuda_home()/CUDA_HOME = _find_cuda_home()#/g' /opt/conda/lib/python2.7/site-packages/torch/utils/cpp_extension.py
+
+RUN  cd /home/job/mtorch/rt && /opt/conda/bin/python2.7 setup.py install
+RUN  cd /home/job/mtorch/smt && /opt/conda/bin/python2.7 setup.py install
+RUN  cd /home/job/mtorch/smtl && /opt/conda/bin/python2.7 setup.py install
 
 # remove intermediates
 #RUN rm -rf /home/job/mtorch
