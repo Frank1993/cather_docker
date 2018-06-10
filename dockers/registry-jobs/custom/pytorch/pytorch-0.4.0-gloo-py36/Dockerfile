@@ -38,7 +38,7 @@ RUN cd ~ &&\
     conda install -y cuda91 -c pytorch&& \
     conda install -y -c mingfeima mkldnn &&\
     conda install -y -c pytorch magma-cuda91 &&\
-    #conda install -y cuda90 pytorch=0.4.0 torchvision nltk -c pytorch && \
+    conda install -y cffi tqdm &&\
     conda install -y opencv matplotlib && \
     conda install -y -c conda-forge openmpi &&\
     conda install -y -c pytorch pytorch=0.4.0 torchvision nltk && \
