@@ -29,3 +29,4 @@ RUN wget -q -O - https://cntk.ai/BinaryDrop/CNTK-2-3-Linux-64bit-GPU.tar.gz | ta
 
 WORKDIR /root/
 COPY toolkit-execute /home/job/toolkit-execute
+

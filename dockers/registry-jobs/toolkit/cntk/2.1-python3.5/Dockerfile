@@ -41,3 +41,4 @@ RUN wget -q -O - https://cntk.ai/BinaryDrop/CNTK-2-1-Linux-64bit-GPU.tar.gz | ta
 
 COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod a+x /home/job/toolkit-execute
+

@@ -1,4 +1,4 @@
-FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.8.0-cudnn.6
+FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
 
 # Labels for the docker
 LABEL description="This docker has cntk 2.4 and python3.5" \
@@ -23,14 +23,6 @@ RUN MINICONDA=Miniconda3-$MINICONDA_VERSION-Linux-x86_64.sh && \
     ./$MINICONDA -b -p $MINICONDA_PREFIX && \
     rm ./$MINICONDA
 
-# Install NCCL.
-ARG NCCL_VERSION=2.0.5-2
-RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/libnccl2_${NCCL_VERSION}+cuda8.0_amd64.deb && \
-    wget --no-verbose http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/libnccl-dev_${NCCL_VERSION}+cuda8.0_amd64.deb && \
-    dpkg -i libnccl2_${NCCL_VERSION}+cuda8.0_amd64.deb && \
-    dpkg -i libnccl-dev_${NCCL_VERSION}+cuda8.0_amd64.deb && \
-    rm libnccl*
-
 # Install CNTK, skipping the openmpi installation and anaconda installation.
 RUN wget -q -O - https://cntk.ai/BinaryDrop/CNTK-2-4-Linux-64bit-GPU.tar.gz | tar -xzf - && \
     cd cntk/Scripts/install/linux && \
@@ -41,3 +33,4 @@ RUN wget -q -O - https://cntk.ai/BinaryDrop/CNTK-2-4-Linux-64bit-GPU.tar.gz | ta
 
 COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod a+x /home/job/toolkit-execute
+
