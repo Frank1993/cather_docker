@@ -5,18 +5,18 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has multigpu chainermn and 4.0.0rc1 versions of cupy and chainer ubuntu 16.04 version of python36 with other toolkits" \
+LABEL description="This docker has multigpu chainermn 1.3.0 and 4.1.0 versions of cupy and chainer ubuntu 16.04 version of python36 with other toolkits" \
       repository="philly/jobs/custom/chainer" \
       tag="py36_chainer_multigpu_cuda9" \
       creator="haerdoga" tooltype="chainer" \
       tooltypeversion="1.0" \
-      createtime="4/12/2018"
+      createtime="6/11/2018"
 # Everything above this line is required for the docker.
 
 ENV NCCL_VERSION="2.1.15-1+cuda9.0" \
-    CUPY_VERSION="4.0.0rc1" \
-    CHAINER_VERSION="4.0.0rc1" \
-    CHAINERMN_VERSION="1.2.0"
+    CUPY_VERSION="4.1.0" \
+    CHAINER_VERSION="4.1.0" \
+    CHAINERMN_VERSION="1.3.0"
 
 ##################### OPENMPI #####################
 
@@ -59,6 +59,6 @@ RUN conda update conda && \
     conda install -y python=3 && \
     conda install -y pip && \
     pip install --upgrade pip && \
-    pip install pandas h5py soundfile librosa mir_eval pathos pymongo monk resampy \
+    pip install pandas h5py soundfile librosa==0.5.1 mir_eval pathos pymongo monk resampy \
                 cupy==${CUPY_VERSION} chainer==${CHAINER_VERSION} chainermn==${CHAINERMN_VERSION}
 
