@@ -42,6 +42,7 @@ RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
 COPY requirements.txt /home/job
 RUN /opt/conda/bin/pip install -r /home/job/requirements.txt
 
+
 # Prepare environment (Caffe, Cuda)
 ENV CAFFE_ROOT=/opt/caffe
 RUN mkdir -p $CAFFE_ROOT/lib
@@ -60,17 +61,6 @@ RUN conda install pytorch=0.4.0 torchvision -c pytorch
 ENV PYTHONPATH $PYCAFFE_ROOT:$PYTHONPATH
 RUN echo "$CAFFE_ROOT/lib" >> /etc/ld.so.conf.d/caffe.conf
 
-# To build in the docker directly (make sure /src/Caffe has the source):
-#RUN mkdir -p /src/Caffe/build
-#RUN cd /src/Caffe/build && \
-#    cmake -DUSE_OPENMP=1 -DUSE_CUDNN=1 -DUSE_NCCL=1 -DCUDA_ARCH_NAME=All -DCMAKE_INSTALL_PREFIX=$CAFFE_ROOT -DBLAS=atlas .. && \
-#    make -j$(nproc) && make install
-# To prebuild .tar.gz file:
-# make DESTDIR=/caffe_install install
-# tar -zcvf /src/caffe.tar.gz /caffe_install
-COPY caffe.tar.gz /home/job
-RUN tar --strip-components=1 -C / -xvf /home/job/caffe.tar.gz
-
 # Created with: tar cfz mtorch.tar.gz mtorch
 # Install our extensions (they can be updated later through pre-run)
 ADD mtorch.tar.gz /home/job
@@ -78,6 +68,37 @@ RUN chmod -R 777 /home/job
 
 # Fixed in upstream
 RUN sed -i 's/CUDA_HOME = _find_cuda_home()/CUDA_HOME = _find_cuda_home()#/g' /opt/conda/lib/python2.7/site-packages/torch/utils/cpp_extension.py
+
+# install just for caffe and its opencv
+RUN apt-get install -y libprotobuf-dev protobuf-compiler
+RUN apt-get install -y libatlas-base-dev libboost-all-dev
+RUN apt-get install -y libgflags-dev libgoogle-glog-dev
+RUN apt-get install -y libhdf5-serial-dev
+RUN apt-get install -y libleveldb-dev liblmdb-dev
+
+# build opencv
+RUN apt-get install -y unzip
+RUN wget https://github.com/Itseez/opencv/archive/3.3.0.zip -O /home/job/ocv.zip && \
+  unzip /home/job/ocv.zip && cd opencv-3.3.0 && mkdir build && cd build && \
+  cmake -DWITH_CUDA=OFF -DBUILD_TIFF=ON -DBUILD_opencv_java=OFF -DENABLE_AVX=ON -DWITH_OPENGL=OFF -DWITH_OPENCL=OFF -DWITH_IPP=ON \
+  -DWITH_TBB=ON -DWITH_EIGEN=ON -DWITH_V4L=ON -DWITH_VTK=OFF -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF -DCMAKE_BUILD_TYPE=RELEASE \
+  -DBUILD_opencv_python3=OFF -DBUILD_opencv_python2=ON -DPYTHON_EXECUTABLE=/opt/conda/bin/python2.7 -DPYTHON_LIBRARY=/opt/conda/lib/libpython2.7.so \
+  -DPYTHON_INCLUDE_DIR=/opt/conda/include/python2.7 -DPYTHON_PACKAGES_PATH=/opt/conda/lib/python2.7/site-packages \
+  -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/opt/conda -DINSTALL_PYTHON_EXAMPLES=OFF -DINSTALL_C_EXAMPLES=OFF \
+  -DBUILD_EXAMPLES=OFF .. && \
+  make -j$(nproc) && make install && \
+  cd ../../ && rm -rf opencv-3.3.0
+
+# To build in the docker directly (make sure /src/Caffe has the source):
+#RUN mkdir -p /src/Caffe/build
+#RUN cd /src/Caffe/build && \
+#    cmake -DUSE_OPENMP=1 -DPYTHON_LIBRARY=/opt/conda/lib/libpython2.7.so -DPYTHON_EXECUTABLE:FILEPATH=/opt/conda/bin/python2.7 -DUSE_CUDNN=0 -DUSE_NCCL=0 -DBLAS=atlas -DCMAKE_INSTALL_PREFIX=$CAFFE_ROOT .. \
+#    make -j$(nproc) && make install
+# To prebuild .tar.gz file:
+# make DESTDIR=/caffe_install install
+# tar -zcvf /src/caffe.tar.gz /caffe_install
+COPY caffe.tar.gz /home/job
+RUN tar --strip-components=1 -C / -xvf /home/job/caffe.tar.gz
 
 RUN  cd /home/job/mtorch/rt && /opt/conda/bin/python2.7 setup.py install
 RUN  cd /home/job/mtorch/smt && /opt/conda/bin/python2.7 setup.py install
@@ -87,6 +108,7 @@ RUN  cd /home/job/mtorch/smtl && /opt/conda/bin/python2.7 setup.py install
 #RUN rm -rf /home/job/mtorch
 RUN rm -rf /home/job/*.tar.gz
 RUN rm -rf /home/job/*.deb
+RUN rm -rf /home/job/*.zip
 
 # To Build:
 # docker build -t msrccs-caffe .
