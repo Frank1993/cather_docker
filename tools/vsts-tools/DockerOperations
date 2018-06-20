@@ -66,7 +66,7 @@ if [ ! -f "$dockerfile" ]; then
 fi
 
 # Skip the deleted ones and include only the newly modified ones
-dockers=$(comm -23 <(cat "$dockerfile" | tr ";" "\n") <(cat "$deletedDockerfile" | tr ";" "\n"))
+dockers=$(comm -23 <(cat "$dockerfile" | tr ";" "\n" | sort -i) <(cat "$deletedDockerfile" | tr ";" "\n" | sort -i))
 echo "The following dockers are to be operated on:"
 for docker in $dockers; do
     echo "    -- $docker"
