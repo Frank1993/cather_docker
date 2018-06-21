@@ -16,14 +16,19 @@ LABEL description="This docker contains TF 1.3 using python 3.6 from anaconda, w
 
 # Install Anaconda for python 3.6
 RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
-    wget --quiet https://repo.continuum.io/archive/Anaconda3-5.0.0-Linux-x86_64.sh -O ~/anaconda.sh && \
-    /bin/bash ~/anaconda.sh -b -p /opt/conda && \
-    rm ~/anaconda.sh
+      wget --quiet http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+      /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+      rm ~/miniconda.sh
 ENV PATH /opt/conda/bin:$PATH
 
 # Set CUDA_ROOT
 ENV CUDA_ROOT /usr/local/cuda/bin
 
+RUN conda install -y python=3.6 \
+      h5py \
+      mkl \
+      mkl-service \
+      numpy \
+      scipy
 # Install TensorFlow GPU version.
-RUN pip --no-cache-dir install numpy h5py \
-          https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.3.0-cp36-cp36m-linux_x86_64.whl
+RUN pip --no-cache-dir install https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.3.0-cp36-cp36m-linux_x86_64.whl
