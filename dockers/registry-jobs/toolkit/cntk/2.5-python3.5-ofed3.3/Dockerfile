@@ -35,3 +35,4 @@ RUN /bin/bash -c "source /usr/local/cntk/activate-cntk; pip install --upgrade sc
 
 COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod a+x /home/job/toolkit-execute
+
