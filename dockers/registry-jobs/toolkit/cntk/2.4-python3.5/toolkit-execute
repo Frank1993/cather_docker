@@ -72,8 +72,10 @@ case $key in
     --gdbWrapped)
     IS_GDB_WRAPPED=true
     ;;
-    *)
-    EXTRA_ARGS="$EXTRA_ARGS $1"
+    --)
+    shift # pass argument
+    EXTRA_ARGS="$@"
+    break
     ;;
 esac
 shift # past argument or value
