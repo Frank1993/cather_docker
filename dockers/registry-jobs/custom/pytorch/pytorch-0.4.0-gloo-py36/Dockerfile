@@ -30,7 +30,7 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      ~/miniconda.sh -b -p /opt/conda && \
      rm ~/miniconda.sh
 
-ENV PATH /opt/conda/bin:$PATH \
+ENV PATH /opt/conda/bin:$PATH &&\
     CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
 
 RUN cd ~ &&\
