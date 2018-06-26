@@ -26,7 +26,7 @@ def main(argv):
             s = os.path.join(args.prevModelPath, item)
             d = os.path.join(args.modelDir, item)
             if os.path.isdir(s):
-                shutil.copytree(s, d, symlinks, ignore)
+                shutil.copytree(s, d, symlinks=False, ignore=None)
             else:
                 shutil.copy2(s, d)
 
