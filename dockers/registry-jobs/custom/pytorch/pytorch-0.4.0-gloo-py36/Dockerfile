@@ -30,8 +30,8 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      ~/miniconda.sh -b -p /opt/conda && \
      rm ~/miniconda.sh
 
-ENV PATH /opt/conda/bin:$PATH &&\
-    CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
+ENV PATH /opt/conda/bin:$PATH 
+ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
 
 RUN cd ~ &&\
     conda install -y numpy pyyaml scipy ipython mkl mkl-include setuptools cmake cffi typing && \
