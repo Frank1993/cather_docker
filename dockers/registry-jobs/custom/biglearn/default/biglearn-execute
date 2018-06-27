@@ -1,0 +1,183 @@
+#!/bin/bash
+ENTRY=BigLearn.CLI.exe
+SUBCMD=train
+script_dir=$(cd $(dirname $0); pwd)
+#PHILLY_SCRATCH_DIR
+#[ ! -z "$PHILLY_SCRATCH_DIR" ] || PHILLY_SCRATCH_DIR=/var/scratch
+WORKING__DIR=/home/job/scratch
+CACHED_INTERMEDIATE_PATH=
+[ -d $WORKING__DIR ] || mkdir -p $WORKING__DIR
+
+# parsing command line arguments:
+while [[ $# > 0 ]]
+do
+key="$1"
+
+case $key in
+    -h|--help)
+    echo "Usage: toolkit-execute [run_options]"
+    echo "Options:"
+    echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
+    echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
+    echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
+    echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  -r|--runtime <path> - BigLearn runtime package in zip, default /hdfs/<vc>/biglearn/runtimes/biglearn.zip"
+    echo "  -s|--sub-cmd <cmd> - the sub command to be executed on the given binary program, default train"
+    echo "  -e|--entry <binary> - the binary C# program to be executed, default BigLearn.CLI.exe"
+    echo "  --int-path <path> - the intermediate path to reference for intermediate data, default NONE"
+    echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    exit 1
+    ;;
+    -c|--configFile)
+			CONFIG_FILE=$(realpath "$2")
+			shift # pass argument
+    ;;
+    -d|--dataDir)
+			DATA_DIR=$(realpath "$2")
+			shift # pass argument
+    ;;
+    --stdoutDir)
+			STDOUT_DIR=$(realpath "$2")
+			shift # pass argument
+    ;;
+    -l|--logDir)
+			LOG_DIR=$(realpath "$2")
+			shift # pass argument
+    ;;
+    -m|--modelDir)
+			MODEL_DIR=$(realpath "$2")
+			shift # pass argument
+    ;;
+    -n|--nGPU)
+			N_GPU="$2"
+			shift # pass argument
+    ;;
+    --debug)
+			IS_DEBUG=TRUE
+    ;;
+    --memCheck)
+			IS_MEMCHECK=TRUE
+    ;;
+    -r|--runtime)
+			RUNTIME=$(realpath "$2")
+			shift # pass argument
+    ;;
+    -e|--entry)
+			ENTRY="$2"
+			shift # pass argument
+    ;;
+    -s|--sub-cmd)
+		  SUBCMD="$2"
+	    shift # pass argument
+    ;;
+		--int-path)
+			CACHED_INTERMEDIATE_PATH=$(realpath "$2")
+			shift
+		;;
+    *)
+	    EXTRA_ARGS="$EXTRA_ARGS $1"
+    ;;
+esac
+shift # past argument or value
+done
+
+CONFIG_FILE_NAME=${CONFIG_FILE##*/}
+DATA_DIR_NAME=${DATA_DIR%%/}
+DATA_DIR_NAME=${DATA_DIR_NAME##*/}
+INTERMEDIATE_DIR="${CONFIG_FILE_NAME}~"
+[ ! -z "$OUTPUT_DIR" ] || OUTPUT_DIR=$MODEL_DIR
+[ -d $OUTPUT_DIR ] || mkdir -p $OUTPUT_DIR
+
+OUTPUT_DIR=$(realpath $OUTPUT_DIR)
+
+vc=$(echo $DATA_DIR|sed -n "s/^\/hdfs\/\([^\/]\+\).*$/\1/p")
+[ ! -z $RUNTIME ]||RUNTIME=/hdfs/$vc/biglearn/runtimes/biglearn.zip
+
+echo "toolkit-execute: CONFIG_FILE=$CONFIG_FILE"
+echo "toolkit-execute: DATA_DIR=$DATA_DIR"
+echo "toolkit-execute: LOG_DIR=$LOG_DIR"
+echo "toolkit-execute: STDOUT_DIR=$STDOUT_DIR"
+echo "toolkit-execute: N_GPU=$N_GPU"
+echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
+echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
+echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
+echo "toolkit-execute: RUNTIME=$RUNTIME"
+echo "toolkit-execute: WORKING__DIR=$WORKING__DIR"
+echo "toolkit-execute: ENTRY=$ENTRY"
+echo "toolkit-execute: SUBCMD=$SUBCMD"
+echo "DATA_DIR_NAME=$DATA_DIR_NAME"
+echo "CONFIG_FILE_NAME=$CONFIG_FILE_NAME"
+echo "PWD: $PWD"
+
+#$CONFIG_FILE $RUNTIME || exit 1
+if [ ! -f $RUNTIME ]; then
+ echo "Specified runtime path $RUNTIME doesn't exist."
+ exit 1
+fi
+
+unzip -o $RUNTIME -d $WORKING__DIR/
+[ -d $OUTPUT_DIR/${INTERMEDIATE_DIR} ] || mkdir -p $OUTPUT_DIR/${INTERMEDIATE_DIR}
+cp -f $CONFIG_FILE $OUTPUT_DIR/
+ln -s $DATA_DIR $OUTPUT_DIR/data
+#ln -s $MODEL_DIR $WORKING__DIR/model
+#ln -s $LOG_DIR $WORKING__DIR/log
+
+if [ ( ! -z $CACHED_INTERMEDIATE_PATH ) && ( -d $CACHED_INTERMEDIATE_PATH ) ]; then
+	echo "Link data from $CACHED_INTERMEDIATE_PATH to $OUTPUT_DIR/$INTERMEDIATE_DIR"
+	for x in $CACHED_INTERMEDIATE_PATH/*; do
+		xname=${x%%/}
+		xname=${xname##*/}
+		xname=${xname,,}
+		if [[ $xname -ne "log" ]] && [[ $xname -ne "eval" ]] && [[ $xname != model.* ]]; then
+			ln -s $(realpath $x) $OUTPUT_DIR/${INTERMEDIATE_DIR}/
+		fi
+	done
+fi
+
+CONFIG_PATH=$OUTPUT_DIR/$CONFIG_FILE_NAME
+
+export PHILLY_DATA_PATH=$OUTPUT_DIR/data
+cd $WORKING__DIR/
+
+if [ ! -f $ENTRY ]; then 
+	entry_path=$(find . -name $ENTRY|head -n1)
+	[ -z $entry_path ] || entry_path=$(dirname $entry_path)
+	if [ -d $entry_path ]; then
+		ln -s $entry_path/* $WORKING__DIR/
+	else
+		echo "Can't find $ENTRY in the runtime."
+		exit 1
+	fi
+fi
+
+if [ ! -f libCudalib.so ]; then
+	echo "Can't find cuda math lib, try to build from source code."
+	src=$(find . -name Cudalib.cpp)
+	if [ ! -f $src ]; then
+		mkdir CudaLib
+		pushd CudaLib
+		git init
+		git remote add origin -t master https://philly:pi5b5fu2oqtjos2wtgr6ul4qdsee3ospvqkos7ritbeep7lbzzoa@msblox.visualstudio.com/DefaultCollection/Biglearn/_git/Biglearn
+	  git config core.sparseCheckout true
+		echo "MathLib/Cudalib" >> .git/info/sparse-checkout
+		git pull --depth=1 origin master
+		git log -n1
+		popd 
+		src=$(find . -name Cudalib.cpp)
+	fi
+
+	if [ -f $src ]; then
+		pushd $(dirname $src)
+		make clean
+		make && cp $(pwd)/bin/libCudalib.so $WORKING__DIR/ || exit $?
+		popd
+	else
+		echo "Failed to build libCudalib."
+		exit 1
+	fi
+fi
+
+python $script_dir/stdoutParser.py $LOG_DIR $CONFIG_FILE_NAME < <(mono $ENTRY $SUBCMD -conf $CONFIG_PATH || exit $?)
+
+#[ ! -d $INTERMEDIATE_DIR ] || cp -rf $INTERMEDIATE_DIR $OUTPUT_DIR/
+#[ ! -f model.* ] || cp -f model.* $OUTPUT_DIR/
