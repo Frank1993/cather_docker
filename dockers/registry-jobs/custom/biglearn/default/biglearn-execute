@@ -122,13 +122,13 @@ ln -s $DATA_DIR $OUTPUT_DIR/data
 #ln -s $MODEL_DIR $WORKING__DIR/model
 #ln -s $LOG_DIR $WORKING__DIR/log
 
-if [ ( ! -z $CACHED_INTERMEDIATE_PATH ) && ( -d $CACHED_INTERMEDIATE_PATH ) ]; then
+if [ ! -z $CACHED_INTERMEDIATE_PATH ] && [ -d $CACHED_INTERMEDIATE_PATH ]; then
 	echo "Link data from $CACHED_INTERMEDIATE_PATH to $OUTPUT_DIR/$INTERMEDIATE_DIR"
 	for x in $CACHED_INTERMEDIATE_PATH/*; do
 		xname=${x%%/}
 		xname=${xname##*/}
 		xname=${xname,,}
-		if [[ $xname -ne "log" ]] && [[ $xname -ne "eval" ]] && [[ $xname != model.* ]]; then
+		if [[ $xname != "log" ]] && [[ $xname != "eval" ]] && [[ $xname != model.* ]]; then
 			ln -s $(realpath $x) $OUTPUT_DIR/${INTERMEDIATE_DIR}/
 		fi
 	done
