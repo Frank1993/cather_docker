@@ -14,10 +14,10 @@ EXTRA_ARGS=""
 deviceQuery
 script_dir=$(cd $(dirname $0); pwd)
 
-WORKING_DIR=/home/job/scratch
-[ -d $WORKING_DIR ] || mkdir -p $WORKING_DIR
 #PHILLY_SCRATCH_DIR
-#[ ! -z "$PHILLY_SCRATCH_DIR" ] || PHILLY_SCRATCH_DIR=/var/scratch
+[ ! -z "$PHILLY_SCRATCH_DIR" ] || PHILLY_SCRATCH_DIR=/home/job/
+WORKING_DIR=$PHILLY_SCRATCH_DIR/scratch
+[ -d $WORKING_DIR ] || mkdir -p $WORKING_DIR
 
 # parsing command line arguments:
 while [[ $# > 0 ]]

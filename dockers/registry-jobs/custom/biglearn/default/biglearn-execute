@@ -3,10 +3,10 @@ ENTRY=BigLearn.CLI.exe
 SUBCMD=train
 script_dir=$(cd $(dirname $0); pwd)
 #PHILLY_SCRATCH_DIR
-#[ ! -z "$PHILLY_SCRATCH_DIR" ] || PHILLY_SCRATCH_DIR=/var/scratch
-WORKING__DIR=/home/job/scratch
+[ ! -z "$PHILLY_SCRATCH_DIR" ] || PHILLY_SCRATCH_DIR=/home/job/
+WORKING_DIR=$PHILLY_SCRATCH_DIR/scratch
+[ -d $WORKING_DIR ] || mkdir -p $WORKING_DIR
 CACHED_INTERMEDIATE_PATH=
-[ -d $WORKING__DIR ] || mkdir -p $WORKING__DIR
 
 # parsing command line arguments:
 while [[ $# > 0 ]]
@@ -15,7 +15,7 @@ key="$1"
 
 case $key in
     -h|--help)
-    echo "Usage: toolkit-execute [run_options]"
+    echo "Usage: biglearn-execute [run_options]"
     echo "Options:"
     echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
     echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
@@ -85,6 +85,7 @@ CONFIG_FILE_NAME=${CONFIG_FILE##*/}
 DATA_DIR_NAME=${DATA_DIR%%/}
 DATA_DIR_NAME=${DATA_DIR_NAME##*/}
 INTERMEDIATE_DIR="${CONFIG_FILE_NAME}~"
+OUTPUT_DIR=$PHILLY_MODEL_DIRECTORY
 [ ! -z "$OUTPUT_DIR" ] || OUTPUT_DIR=$MODEL_DIR
 [ -d $OUTPUT_DIR ] || mkdir -p $OUTPUT_DIR
 
@@ -93,18 +94,18 @@ OUTPUT_DIR=$(realpath $OUTPUT_DIR)
 vc=$(echo $DATA_DIR|sed -n "s/^\/hdfs\/\([^\/]\+\).*$/\1/p")
 [ ! -z $RUNTIME ]||RUNTIME=/hdfs/$vc/biglearn/runtimes/biglearn.zip
 
-echo "toolkit-execute: CONFIG_FILE=$CONFIG_FILE"
-echo "toolkit-execute: DATA_DIR=$DATA_DIR"
-echo "toolkit-execute: LOG_DIR=$LOG_DIR"
-echo "toolkit-execute: STDOUT_DIR=$STDOUT_DIR"
-echo "toolkit-execute: N_GPU=$N_GPU"
-echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
-echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
-echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
-echo "toolkit-execute: RUNTIME=$RUNTIME"
-echo "toolkit-execute: WORKING__DIR=$WORKING__DIR"
-echo "toolkit-execute: ENTRY=$ENTRY"
-echo "toolkit-execute: SUBCMD=$SUBCMD"
+echo "biglearn-execute: CONFIG_FILE=$CONFIG_FILE"
+echo "biglearn-execute: DATA_DIR=$DATA_DIR"
+echo "biglearn-execute: LOG_DIR=$LOG_DIR"
+echo "biglearn-execute: STDOUT_DIR=$STDOUT_DIR"
+echo "biglearn-execute: N_GPU=$N_GPU"
+echo "biglearn-execute: MODEL_DIR=$MODEL_DIR"
+echo "biglearn-execute: IS_DEBUG=$IS_DEBUG"
+echo "biglearn-execute: IS_MEMCHECK=$IS_MEMCHECK"
+echo "biglearn-execute: RUNTIME=$RUNTIME"
+echo "biglearn-execute: WORKING_DIR=$WORKING_DIR"
+echo "biglearn-execute: ENTRY=$ENTRY"
+echo "biglearn-execute: SUBCMD=$SUBCMD"
 echo "DATA_DIR_NAME=$DATA_DIR_NAME"
 echo "CONFIG_FILE_NAME=$CONFIG_FILE_NAME"
 echo "PWD: $PWD"
@@ -115,12 +116,12 @@ if [ ! -f $RUNTIME ]; then
  exit 1
 fi
 
-unzip -o $RUNTIME -d $WORKING__DIR/
+unzip -o $RUNTIME -d $WORKING_DIR/
 [ -d $OUTPUT_DIR/${INTERMEDIATE_DIR} ] || mkdir -p $OUTPUT_DIR/${INTERMEDIATE_DIR}
 cp -f $CONFIG_FILE $OUTPUT_DIR/
 ln -s $DATA_DIR $OUTPUT_DIR/data
-#ln -s $MODEL_DIR $WORKING__DIR/model
-#ln -s $LOG_DIR $WORKING__DIR/log
+#ln -s $MODEL_DIR $WORKING_DIR/model
+#ln -s $LOG_DIR $WORKING_DIR/log
 
 if [ ! -z $CACHED_INTERMEDIATE_PATH ] && [ -d $CACHED_INTERMEDIATE_PATH ]; then
 	echo "Link data from $CACHED_INTERMEDIATE_PATH to $OUTPUT_DIR/$INTERMEDIATE_DIR"
@@ -137,13 +138,13 @@ fi
 CONFIG_PATH=$OUTPUT_DIR/$CONFIG_FILE_NAME
 
 export PHILLY_DATA_PATH=$OUTPUT_DIR/data
-cd $WORKING__DIR/
+cd $WORKING_DIR/
 
 if [ ! -f $ENTRY ]; then 
 	entry_path=$(find . -name $ENTRY|head -n1)
 	[ -z $entry_path ] || entry_path=$(dirname $entry_path)
 	if [ -d $entry_path ]; then
-		ln -s $entry_path/* $WORKING__DIR/
+		ln -s $entry_path/* $WORKING_DIR/
 	else
 		echo "Can't find $ENTRY in the runtime."
 		exit 1
@@ -169,7 +170,7 @@ if [ ! -f libCudalib.so ]; then
 	if [ -f $src ]; then
 		pushd $(dirname $src)
 		make clean
-		make && cp $(pwd)/bin/libCudalib.so $WORKING__DIR/ || exit $?
+		make && cp $(pwd)/bin/libCudalib.so $WORKING_DIR/ || exit $?
 		popd
 	else
 		echo "Failed to build libCudalib."
