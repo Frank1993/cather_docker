@@ -83,12 +83,12 @@ cd $CODE_DIR
 
 if [ -f "$CODE_DIR/requirements.txt" ]; then
     echo "Installing custom requirements..."
-    pip install -r $CODE_DIR/requirements.txt --user
+    pip install -r $CODE_DIR/requirements.txt --user || exit $?
 fi
 
 if [ -f "$CODE_DIR/setup.sh" ]; then
     echo "Executing custom script..."
-    source $CODE_DIR/setup.sh
+    source $CODE_DIR/setup.sh || exit $?
 fi
 
 echo Running: python3.6 -B $CONFIG_FILE $EXTRA_ARGS
