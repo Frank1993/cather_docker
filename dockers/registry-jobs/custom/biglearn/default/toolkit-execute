@@ -15,8 +15,9 @@ deviceQuery
 script_dir=$(cd $(dirname $0); pwd)
 
 #PHILLY_SCRATCH_DIR
-[ ! -z "$PHILLY_SCRATCH_DIR" ] || PHILLY_SCRATCH_DIR=/home/job/
-WORKING_DIR=$PHILLY_SCRATCH_DIR/scratch
+[ ! -z "$PHILLY_SCRATCH_DIR" ] || PHILLY_SCRATCH_DIR=/tmp/workspace
+#WORKING_DIR=$PHILLY_SCRATCH_DIR/scratch
+WORKING_DIR=/tmp/workspace
 [ -d $WORKING_DIR ] || mkdir -p $WORKING_DIR
 
 # parsing command line arguments:
@@ -104,15 +105,15 @@ export IS_DEBUG=$IS_DEBUG
 export N_GPU=$N_GPU
 export PREV_MODEL_PATH=$PREV_MODEL_PATH
 
-cp $CONFIG_FILE $WORKING_DIR/ 
+#cp $CONFIG_FILE $WORKING_DIR/ 
 cd $WORKING_DIR
 if [ $conf_ext == "py" ]; then
-	echo "Execute python script $CONFIG_FILE_NAME under $WORKING_DIR"
-	python3 $CONFIG_FILE_NAME $EXTRA_ARGS
+	echo "Execute python script $CONFIG_FILE under $WORKING_DIR"
+	python3 $CONFIG_FILE $EXTRA_ARGS
 elif [ $conf_ext == "sh" ]; then
-	echo "Execute bash script $CONFIG_FILE_NAME under $WORKING_DIR"
-	source $CONFIG_FILE_NAME $EXTRA_ARGS
+	echo "Execute bash script $CONFIG_FILE under $WORKING_DIR"
+	source $CONFIG_FILE $EXTRA_ARGS
 else
-	echo "Execute biglearn config $CONFIG_FILE_NAME under $WORKING_DIR"
+	echo "Execute biglearn config $CONFIG_FILE under $WORKING_DIR"
 	$script_dir/biglearn-execute $EXTRA_ARGS
 fi

@@ -3,7 +3,7 @@ FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF && \
 		echo "deb http://download.mono-project.com/repo/ubuntu stable-xenial main" | sudo tee /etc/apt/sources.list.d/mono-official.list
 RUN apt-get update
-RUN apt-get install -y git build-essential wget vim rpm2cpio cpio mono-complete module-init-tools libgfortran3 libibumad3 libibverbs1 libpmi0 unzip locales zip bc
+RUN apt-get install -y git build-essential wget vim rpm2cpio cpio mono-complete module-init-tools libgfortran3 libibumad3 libibverbs1 libpmi0 unzip locales zip bc apt-transport-https
 COPY vimrc /root/.vimrc
 RUN locale-gen en_US en_US.UTF-8
 
@@ -38,6 +38,12 @@ RUN cd /usr/local/cuda/samples/1_Utilities/deviceQuery/ &&\
 RUN echo "/usr/local/cuda/lib64" >> /etc/ld.so.conf.d/cuda.conf && \
 	ldconfig
 ENV CUDA_DRIVER_PATH=$CUDA_PATH/lib64/stubs/  MPI_PATH=$MPI_PATH MPI_LIB_PATH=$MPI_LIB_PATH LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MPI_LIB_PATH:$NCCL_PATH/lib 
+
+RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod/ xenial main" > azure.list && \
+  sudo cp ./azure.list /etc/apt/sources.list.d/ && \
+  apt-key adv --keyserver packages.microsoft.com --recv-keys B02C46DF417A0893 
+
+RUN apt-get update && apt-get install -y --allow-unauthenticated azcopy
 
 ENV ON_PHILLY_VC=true
 # Labels for the docker
