@@ -84,9 +84,11 @@ done
 
 export WORKING_DIR=$WORKING_DIR
 CONFIG_FILE_NAME=${CONFIG_FILE##*/}
-if [[ ${CONFIG_FILE_NAM,,} == "pre_setup.source" ]]; then
+if [[ ${CONFIG_FILE_NAME,,} == "pre_setup.source" ]]; then
+	echo "Run pre_setup script to setup environments..."
 	source ${CONFIG_FILE}
 fi
+CONFIG_FILE_NAME=${CONFIG_FILE##*/}
 
 DATA_DIR_NAME=${DATA_DIR%%/}
 DATA_DIR_NAME=${DATA_DIR_NAME##*/}
