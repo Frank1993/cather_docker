@@ -63,7 +63,7 @@ RUN echo "$CAFFE_ROOT/lib" >> /etc/ld.so.conf.d/caffe.conf
 
 # Created with: tar cfz mtorch.tar.gz mtorch
 # Install our extensions (they can be updated later through pre-run)
-ADD mtorch.tar.gz /home/job
+COPY mtorch /home/job/mtorch
 RUN chmod -R 777 /home/job
 
 # Fixed in upstream
@@ -100,12 +100,14 @@ RUN wget https://github.com/Itseez/opencv/archive/3.3.0.zip -O /home/job/ocv.zip
 COPY caffe.tar.gz /home/job
 RUN tar --strip-components=1 -C / -xvf /home/job/caffe.tar.gz
 
-RUN  cd /home/job/mtorch/rt && /opt/conda/bin/python2.7 setup.py install
-RUN  cd /home/job/mtorch/smt && /opt/conda/bin/python2.7 setup.py install
-RUN  cd /home/job/mtorch/smtl && /opt/conda/bin/python2.7 setup.py install
+ENV MPLCONFIGDIR /home/job/.config/matplotlib
+ENV PYTHON_EGG_CACHE /tmp
+
+RUN  cd /home/job/mtorch/rt && /opt/conda/bin/pip install .
+RUN  cd /home/job/mtorch/smt && /opt/conda/bin/pip install .
+RUN  cd /home/job/mtorch/smtl && /opt/conda/bin/pip install .
 
 # remove intermediates
-#RUN rm -rf /home/job/mtorch
 RUN rm -rf /home/job/*.tar.gz
 RUN rm -rf /home/job/*.deb
 RUN rm -rf /home/job/*.zip
