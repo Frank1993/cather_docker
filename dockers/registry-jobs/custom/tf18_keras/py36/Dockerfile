@@ -23,6 +23,6 @@ RUN apt-get -y update && \
     apt-get -y install python3.6
 RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
 
-RUN python3.6 -m pip install --upgrade numpy scipy h5py keras sklearn https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.8.0-cp36-cp36m-linux_x86_64.whl
+RUN python3.6 -m pip install --upgrade numpy scipy h5py keras sklearn matplotlib scikit-image https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.8.0-cp36-cp36m-linux_x86_64.whl
 
 ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
