@@ -4,6 +4,7 @@ SUBCMD=train
 script_dir=$(cd $(dirname $0); pwd)
 #PHILLY_SCRATCH_DIR
 [ ! -z "$PHILLY_SCRATCH_DIR" ] || PHILLY_SCRATCH_DIR=/tmp/workspace
+[ -d $PHILLY_MODEL_DIRECTORY ] || mkdir -p $PHILLY_MODEL_DIRECTORY
 #WORKING_DIR=$PHILLY_SCRATCH_DIR/scratch
 WORKING_DIR=/tmp/workspace
 [ -d $WORKING_DIR ] || mkdir -p $WORKING_DIR
@@ -93,7 +94,8 @@ CONFIG_FILE_NAME=${CONFIG_FILE##*/}
 DATA_DIR_NAME=${DATA_DIR%%/}
 DATA_DIR_NAME=${DATA_DIR_NAME##*/}
 INTERMEDIATE_DIR="${CONFIG_FILE_NAME}~"
-OUTPUT_DIR=$PHILLY_MODEL_DIRECTORY
+#OUTPUT_DIR=$PHILLY_MODEL_DIRECTORY
+OUTPUT_DIR=$PHILLY_JOB_DIRECTORY
 [ ! -z "$OUTPUT_DIR" ] || OUTPUT_DIR=$MODEL_DIR
 [ -d $OUTPUT_DIR ] || mkdir -p $OUTPUT_DIR
 
@@ -125,20 +127,30 @@ if [ ! -f $RUNTIME ]; then
 fi
 
 unzip -o $RUNTIME -d $WORKING_DIR/
-[ -d $OUTPUT_DIR/${INTERMEDIATE_DIR} ] || mkdir -p $OUTPUT_DIR/${INTERMEDIATE_DIR}
+WORKING_INTERMEDIATE=$OUTPUT_DIR/$INTERMEDIATE_DIR
+WORKING_DATA=$OUTPUT_DIR/data
+#[ -d $OUTPUT_DIR/${INTERMEDIATE_DIR} ] || mkdir -p $OUTPUT_DIR/${INTERMEDIATE_DIR}
+[ ! -e $WORKING_INTERMEDIATE ] || rm -rf $WORKING_INTERMEDIATE
+ln -s $PHILLY_MODEL_DIRECTORY $WORKING_INTERMEDIATE
+
+[ ! -e $WORKING_DATA ] || rm -rf $WORKING_DATA
+ln -s $DATA_DIR $WORKING_DATA
 cp -f $CONFIG_FILE $OUTPUT_DIR/
-ln -s $DATA_DIR $OUTPUT_DIR/data
 #ln -s $MODEL_DIR $WORKING_DIR/model
 #ln -s $LOG_DIR $WORKING_DIR/log
 
 if [ ! -z $CACHED_INTERMEDIATE_PATH ] && [ -d $CACHED_INTERMEDIATE_PATH ]; then
-	echo "Link data from $CACHED_INTERMEDIATE_PATH to $OUTPUT_DIR/$INTERMEDIATE_DIR"
+	echo "Link data from $CACHED_INTERMEDIATE_PATH to $WORKING_INTERMEDIATE"
 	for x in $CACHED_INTERMEDIATE_PATH/*; do
 		xname=${x%%/}
 		xname=${xname##*/}
 		xname=${xname,,}
 		if [[ $xname != "log" ]] && [[ $xname != "eval" ]] && [[ $xname != model.* ]]; then
-			ln -s $(realpath $x) $OUTPUT_DIR/${INTERMEDIATE_DIR}/
+			if [[ -f $x ]]; then
+				cp -f $(realpath $x) $WORKING_INTERMEDIATE/ 
+			else
+				ln -s $(realpath $x) $WORKING_INTERMEDIATE/
+			fi
 		fi
 	done
 fi
@@ -146,7 +158,7 @@ fi
 CONFIG_PATH=$OUTPUT_DIR/$CONFIG_FILE_NAME
 
 export ON_PHILLY_VC=true
-export PHILLY_DATA_PATH=$OUTPUT_DIR/data
+export PHILLY_DATA_PATH=$WORKING_DATA
 export PHILLY_INTERMEDIATE_PATH=$CACHED_INTERMEDIATE_PATH
 cd $WORKING_DIR/
 
@@ -188,7 +200,10 @@ if [ ! -f libCudalib.so ]; then
 	fi
 fi
 
-python $script_dir/stdoutParser.py $LOG_DIR $CONFIG_FILE_NAME < <(mono $ENTRY $SUBCMD -conf $CONFIG_PATH || exit $?)
-
+python $script_dir/stdoutParser.py $LOG_DIR $CONFIG_FILE_NAME < <(mono $ENTRY $SUBCMD -conf $CONFIG_PATH || echo $? > error_code)
+if [[ -f error_code ]]; then
+	error=$(cat error_code)
+	[ -z error ] || exit $error
+fi
 #[ ! -d $INTERMEDIATE_DIR ] || cp -rf $INTERMEDIATE_DIR $OUTPUT_DIR/
 #[ ! -f model.* ] || cp -f model.* $OUTPUT_DIR/
