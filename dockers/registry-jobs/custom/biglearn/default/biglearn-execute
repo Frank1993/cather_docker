@@ -85,9 +85,12 @@ done
 
 export WORKING_DIR=$WORKING_DIR
 CONFIG_FILE_NAME=${CONFIG_FILE##*/}
+sudo chown $UID:$UID $CONFIG_FILE
+sudo chmod 700 $CONFIG_FILE
 if [[ ${CONFIG_FILE_NAME,,} == "pre_setup.source" ]]; then
 	echo "Run pre_setup script to setup environments..."
-	source ${CONFIG_FILE}
+	PRESETUP_CONF=$CONFIG_FILE
+	source $PRESETUP_CONF
 fi
 CONFIG_FILE_NAME=${CONFIG_FILE##*/}
 
@@ -205,5 +208,7 @@ if [[ -f error_code ]]; then
 	error=$(cat error_code)
 	[ -z error ] || exit $error
 fi
+
+[ -z $PRESETUP_CONF ] || sudo rm $PRESETUP_CONF
 #[ ! -d $INTERMEDIATE_DIR ] || cp -rf $INTERMEDIATE_DIR $OUTPUT_DIR/
 #[ ! -f model.* ] || cp -f model.* $OUTPUT_DIR/
