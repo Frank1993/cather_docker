@@ -25,3 +25,5 @@ RUN pip install torchtext==0.2.3 && \
     pip install six && \
     pip install future && \
     python -m spacy download en
+
+RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION nltk
