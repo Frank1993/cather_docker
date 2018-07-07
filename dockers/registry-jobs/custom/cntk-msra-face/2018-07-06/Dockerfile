@@ -17,7 +17,7 @@ RUN chmod u+x /home/job/toolkit-execute
 
 LABEL description="custom cntk for face team" \
       repository="philly/jobs/custom/cntk-msra-face" \
-      tag="2018-07-04" \
+      tag="2018-07-06" \
       creator="lewlu" \
       tooltype="cntk"
 

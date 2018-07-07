@@ -130,6 +130,12 @@ fi
 
 cd $DATA_DIR
 
+ln -s $DATA_DIR/* .
+
+nvidia-smi
+
+nvidia-smi topo -m
+
 cntk configFile=$CONFIG_FILE \
      WorkDir=$WORK_DIR \
      datadir=$DATA_DIR \
