@@ -7,7 +7,7 @@ RUN chmod u+x /home/job/toolkit-execute
 # Labels for the docker
 LABEL description="This docker has tensorflow1.4.0, gym[all], in anaconda python36 with cuda 8.0, and cudnn 6.0." \
       lepository="philly/jobs/custom/tensorflow" \
-      tag="tensorflow1.4.0-py36-openai-baselines" \
+      tag="tf14-py36-openai-rl" \
       creator="v-liguoq" tooltype="tensorflow" \
       tooltypeversion="1.4.0" \
       createtime="7/8/2018"
