@@ -17,5 +17,6 @@ LABEL description="This docker has pytorch 0.4.0 with msgpack-python package(0.5
 RUN pip install msgpack-python==0.5.6 && \
     pip install pandas==0.22.0 && \
     pip install tqdm && \
-    pip install spacy && \
+    pip install allennlp==0.5.1 && \
+    pip install -U spacy==1.9.0 && \
     python -m spacy download en
