@@ -38,13 +38,9 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
 
 ENV PATH /opt/conda/envs/tensorflow-py$PYTHON_VERSION/bin:$PATH
 
-
-RUN pip --no-cache-dir install https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-$TENSORFLOW_VERSION-cp36-cp36m-linux_x86_64.whl
-
 RUN pip install gym[all] && \
     pip install opencv-python && \ 
-    pip install tqdm && \
-    pip install baselines
+    pip install tqdm
 
 Run pip uninstall -y  Box2D-kengz && \ 
     git clone https://github.com/pybox2d/pybox2d.git && \ 
