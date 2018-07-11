@@ -47,7 +47,6 @@ RUN pip install gym[all] && \
     pip install baselines
 
 Run pip uninstall -y  Box2D-kengz && \ 
-    pip uninstall -y tensorflow && \
     git clone https://github.com/pybox2d/pybox2d.git && \ 
     cd pybox2d && ls && \ 
     python setup.py build && \ 
