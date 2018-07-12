@@ -11,7 +11,8 @@ from torch.autograd import Variable
 from collections import OrderedDict
 
 from mmod.utils import init_logging, cwd
-from mmod.simple_parser import parse_prototxt, print_prototxt, read_model, read_blob
+from mmod.simple_parser import parse_prototxt, print_prototxt, read_model, read_blob, read_model_proto, \
+    array_to_blobproto
 from mtorch.caffetorch import FCView, Eltwise, Scale, Crop, Slice, Concat, Permute, SoftmaxWithLoss, \
     Normalize, Flatten, Reshape, Accuracy, EuclideanLoss
 from mtorch.region_target import RegionTarget
@@ -66,6 +67,7 @@ class CaffeNet(nn.Module):
         self.keep_diffs = keep_diffs or self.verbose
         self.blob_dims = dict()
 
+        self.protofile = protofile
         self.net_info = parse_prototxt(protofile)
 
         # if should have separate data layer (useful for distributed)
@@ -266,6 +268,109 @@ class CaffeNet(nn.Module):
         print(self)
         print_prototxt(self.net_info)
 
+    def save_weights(self, caffemodel, state=None):
+        """Save weights to caffemodel
+        :param caffemodel: path to save the weights
+        :param state: model state dict
+        """
+        if state is None:
+            state = self.state_dict()
+
+        net = read_model_proto(self.protofile)
+        layers = net.layer
+        if len(layers) == 0:
+            logging.warning('Using V1LayerParameter')
+            layers = net.layers
+
+        lmap = {}
+        for l in layers:
+            lmap[l.name] = l
+
+        layers = self.net_info['layers']
+        layer_num = len(layers)
+        i = 0
+        while i < layer_num:
+            layer = layers[i]
+            lname = layer['name']
+            if 'include' in layer and 'phase' in layer['include']:
+                phase = layer['include']['phase']
+                lname = lname + '.' + phase
+            ltype = layer['type']
+            if lname not in lmap:
+                i = i + 1
+                continue
+            if ltype in ['Convolution', 'Deconvolution']:
+                if self.verbose:
+                    logging.info('save weights %s' % lname)
+                convolution_param = layer['convolution_param']
+                bias = True
+                if 'bias_term' in convolution_param and convolution_param['bias_term'] == 'false':
+                    bias = False
+
+                blobs = [state[lname + '.weight'].data.cpu().numpy()]
+                if bias:
+                    blobs.append(state[lname + '.bias'].data.cpu().numpy())
+                i = i + 1
+            elif ltype == 'BatchNorm':
+                if self.verbose:
+                    logging.info('save weights %s' % lname)
+                blobs = [
+                    state[lname + '.running_mean'].data.cpu().numpy(),
+                    state[lname + '.running_var'].data.cpu().numpy(),
+                    np.array([1.0], dtype=np.float32)  # TODO: can find a better scale
+                ]
+                i = i + 1
+            elif ltype == 'Scale':
+                if self.verbose:
+                    logging.info('save weights %s' % lname)
+                blobs = [
+                    state[lname + '.weight'].data.cpu().numpy(),
+                    state[lname + '.bias'].data.cpu().numpy()
+                ]
+                i = i + 1
+            elif ltype == 'Normalize':
+                if self.verbose:
+                    logging.info('save weights %s' % lname)
+                blobs = [
+                    state[lname + '.weight'].data.cpu().numpy()
+                ]
+                i = i + 1
+            elif ltype == 'InnerProduct':
+                if self.verbose:
+                    logging.info('save weights %s' % lname)
+                inner_product_param = layer['inner_product_param']
+                bias = True
+                if 'bias_term' in inner_product_param and inner_product_param['bias_term'] == 'false':
+                    bias = False
+                if type(self.models[lname]) == nn.Sequential:
+                    blobs = [state[lname + '.1.weight'].data.cpu().numpy()]
+                    if bias:
+                        blobs.append(state[lname + '.1.bias'].data.cpu().numpy())
+                else:
+                    blobs = [state[lname + '.weight'].data.cpu().numpy()]
+                    if bias:
+                        blobs.append(state[lname + '.bias'].data.cpu().numpy())
+                i = i + 1
+            elif ltype == 'RegionTarget':
+                if self.verbose:
+                    logging.info('save weights %s' % lname)
+                blobs = [
+                    np.array([[[[state[lname + '.seen_images'].data.item()]]]], dtype=np.float32)
+                ]
+                i = i + 1
+            else:
+                if ltype not in SUPPORTED_LAYERS:
+                    logging.error('unknown type %s' % ltype)
+                i = i + 1
+                continue
+
+            lmap[lname].blobs.extend([
+                array_to_blobproto(b) for b in blobs
+            ])
+
+        with open(caffemodel, 'wb') as f:
+            f.write(net.SerializeToString())
+
     def load_weights(self, caffemodel):
         """Load weights from caffemodel
         :param caffemodel: caffemodel file (could be already loaded)
@@ -298,7 +403,7 @@ class CaffeNet(nn.Module):
             model = caffemodel
         layers = model.layer
         if len(layers) == 0:
-            logging.info('Using V1LayerParameter')
+            logging.warning('Using V1LayerParameter')
             layers = model.layers
 
         lmap = {}
@@ -319,7 +424,8 @@ class CaffeNet(nn.Module):
                 i = i + 1
                 continue
             if ltype in ['Convolution', 'Deconvolution']:
-                logging.info('load weights %s' % lname)
+                if self.verbose:
+                    logging.info('load weights %s' % lname)
                 convolution_param = layer['convolution_param']
                 bias = True
                 if 'bias_term' in convolution_param and convolution_param['bias_term'] == 'false':
@@ -331,23 +437,27 @@ class CaffeNet(nn.Module):
                     self.models[lname].bias.data.copy_(torch.from_numpy(np.array(lmap[lname].blobs[1].data)))
                 i = i + 1
             elif ltype == 'BatchNorm':
-                logging.info('load weights %s' % lname)
+                if self.verbose:
+                    logging.info('load weights %s' % lname)
                 self.models[lname].running_mean.copy_(
                     torch.from_numpy(np.array(lmap[lname].blobs[0].data) / lmap[lname].blobs[2].data[0]))
                 self.models[lname].running_var.copy_(
                     torch.from_numpy(np.array(lmap[lname].blobs[1].data) / lmap[lname].blobs[2].data[0]))
                 i = i + 1
             elif ltype == 'Scale':
-                logging.info('load weights %s' % lname)
+                if self.verbose:
+                    logging.info('load weights %s' % lname)
                 self.models[lname].weight.data.copy_(torch.from_numpy(np.array(lmap[lname].blobs[0].data)))
                 self.models[lname].bias.data.copy_(torch.from_numpy(np.array(lmap[lname].blobs[1].data)))
                 i = i + 1
             elif ltype == 'Normalize':
-                logging.info('load weights %s' % lname)
+                if self.verbose:
+                    logging.info('load weights %s' % lname)
                 self.models[lname].weight.data.copy_(torch.from_numpy(np.array(lmap[lname].blobs[0].data)))
                 i = i + 1
             elif ltype == 'InnerProduct':
-                logging.info('load weights %s' % lname)
+                if self.verbose:
+                    logging.info('load weights %s' % lname)
                 if type(self.models[lname]) == nn.Sequential:
                     self.models[lname][1].weight.data.copy_(torch.from_numpy(np.array(lmap[lname].blobs[0].data)))
                     if len(lmap[lname].blobs) > 1:
@@ -358,12 +468,13 @@ class CaffeNet(nn.Module):
                         self.models[lname].bias.data.copy_(torch.from_numpy(np.array(lmap[lname].blobs[1].data)))
                 i = i + 1
             elif ltype == 'RegionTarget':
-                logging.info('load weights %s' % lname)
+                if self.verbose:
+                    logging.info('load weights %s' % lname)
                 self.models[lname].seen_images.data.copy_(torch.tensor(lmap[lname].blobs[0].data[0]))
                 i = i + 1
             else:
                 if ltype not in SUPPORTED_LAYERS:
-                    logging.error('load_weights: unknown type %s' % ltype)
+                    logging.error('unknown type %s' % ltype)
                 i = i + 1
 
     def create_network(self, net_info,

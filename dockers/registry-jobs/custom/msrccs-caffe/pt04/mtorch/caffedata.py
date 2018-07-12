@@ -42,6 +42,14 @@ class CaffeData(nn.Module):
         batch_size *= local_gpus_size
         layer[data_param]['batch_size'] = batch_size
 
+        self.data_target = None
+        self.label_target = None
+        tops = layer['top']
+        assert len(tops) > 0, "Data layer has no outputs"
+        self.data_target = tops[0]
+        if len(tops) > 1:
+            self.label_target = tops[1]
+
         net_info['layers'] = [layer]
 
         rand_val = random.random()
@@ -68,14 +76,15 @@ class CaffeData(nn.Module):
 
     def forward(self):
         self.net.forward()
-        data = self.net.blobs['data'].data
-        label = self.net.blobs['label'].data
+        data = self.net.blobs[self.data_target].data
         data = torch.from_numpy(data)
-        label = torch.from_numpy(label)
         self.data.resize_(data.size()).copy_(data)
-        self.label.resize_(label.size()).copy_(label)
-        # print('dataloader data size = %s' % (str(self.data.size())))
-        return Variable(self.data), Variable(self.label)
+        if self.label_target:
+            label = self.net.blobs[self.label_target].data
+            label = torch.from_numpy(label)
+            self.label.resize_(label.size()).copy_(label)
+            return Variable(self.data), Variable(self.label)
+        return Variable(self.data)
 
     @staticmethod
     def to_image(data, mean_value=None):
