@@ -108,4 +108,4 @@ CONFIGB=$(basename "$CONFIG_FILE")
 CONFIG_DIR=$(dirname "$CONFIG_FILE")
 CONFIG_EXT="${CONFIGB##*.}"
 CONFIG_NAME="${CONFIGB%.*}"
-cd ${DATA_DIR} && cd SQuADv2/PyLearn && python PyLearn.py train ${CONFIG_FILE}
+cd ${DATA_DIR} && cd SQuADv2/PyLearn && python PyLearn.py train ${CONFIG_FILE} || exit 1
