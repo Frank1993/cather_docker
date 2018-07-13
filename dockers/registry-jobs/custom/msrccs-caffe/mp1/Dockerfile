@@ -1,4 +1,4 @@
-FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
+FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.8.0-cudnn.6
 # Copy the files to the necessary folder
 RUN mkdir /home/job
 COPY toolkit-execute /home/job/toolkit-execute
@@ -58,8 +58,9 @@ RUN apt-get install -y tmux
 RUN apt-get autoremove
 
 # NCCL2
-COPY nccl-repo-ubuntu1604-2.1.15-ga-cuda9.0_1-1_amd64.deb /home/job
-RUN dpkg -i /home/job/nccl-repo-ubuntu1604-2.1.15-ga-cuda9.0_1-1_amd64.deb
+COPY nccl-repo-ubuntu1604-2.1.15-ga-cuda8.0_1-1_amd64.deb /home/job
+RUN dpkg -i /home/job/nccl-repo-ubuntu1604-2.1.15-ga-cuda8.0_1-1_amd64.deb
+RUN apt-get install -y libnccl2=2.1.15-1+cuda8.0 libnccl-dev=2.1.15-1+cuda8.0
 
 #tmux conf
 COPY tmux.conf /etc/
@@ -70,6 +71,8 @@ RUN pip install -r /home/job/requirements.txt
 
 ENV NLTK_DATA /home/job/nltk_data
 RUN mkdir -p $NLTK_DATA
+ENV MPLCONFIGDIR /home/job/.config/matplotlib
+ENV PYTHON_EGG_CACHE /tmp
 
 # To build in the docker directly (make sure /src/Caffe has the source):
 #RUN mkdir -p /src/Caffe/build
