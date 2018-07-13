@@ -13,7 +13,7 @@ LABEL description="This docker contains PyTorch 0.4 using python 2.7 from anacon
       tag="pt04" \
       creator="ehazar" tooltype="pytorch" \
       tooltypeversion="0.4.0" \
-      createtime="6/5/2018"
+      createtime="7/13/2018"
 
 RUN apt-get -y update
 RUN apt-get install -y vim
