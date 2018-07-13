@@ -14,17 +14,17 @@ LABEL description="This docker has pytorch 0.4.0 and allennlp 0.5.1" \
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
 
-run apt-get update && apt-get install -y git && apt-get install -y python-pip python-dev build-essential
-run pip install --upgrade pip
-run pip install --upgrade virtualenv 
+run apt-get update && apt-get install -y git && apt-get install -y python3-pip python3-dev build-essential
+run pip3 install --upgrade pip
+run pip3 install --upgrade virtualenv 
 
 RUN git clone https://github.com/allenai/allennlp.git && \
-    pip install -r ./allennlp/requirements.txt && \
+    pip3 install -r ./allennlp/requirements.txt && \
     rm ~/.cache/pip/ -rf
 
 env PYTHONPATH="${PYTHONPATH}:/stage/allennlp"
-run pip install pandas
-run python -m spacy download en
+run pip3 install pandas
+run python3 -m spacy download en
 run apt-get install -y vim
 
 
