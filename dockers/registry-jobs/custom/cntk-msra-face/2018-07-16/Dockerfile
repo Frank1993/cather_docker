@@ -131,6 +131,13 @@ RUN wget -q -O - http://nih.at/libzip/libzip-${LIBZIP_VERSION}.tar.gz | tar -xzf
     rm -rf libzip-${LIBZIP_VERSION}
 ENV LD_LIBRARY_PATH /usr/local/lib:$LD_LIBRARY_PATH
 
+ARG OPENCV_VERSION=3.1.0
+RUN wget -q -O - https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.tar.gz | tar -xzf - && \
+    cd opencv-${OPENCV_VERSION} && \
+    cmake -DWITH_CUDA=OFF -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr/local/opencv-${OPENCV_VERSION} . && \
+    make -j $(nproc) install && \
+    cd .. && \
+    rm -rf opencv-${OPENCV_VERSION}
 
 ARG OFED_VERSION=3.3-1.0.4.0
 RUN DEBIAN_FRONTEND=noninteractive && \
