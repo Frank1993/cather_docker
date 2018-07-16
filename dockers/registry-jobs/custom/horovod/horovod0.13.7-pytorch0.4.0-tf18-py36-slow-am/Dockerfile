@@ -7,7 +7,7 @@ LABEL description="This docker has horovod-0.13.2 with support for pytorch-0.4, 
       creator="wigale" \
       tooltype="horovod" \
       tooltypeversion="0.13.7" \
-      createtime="7/9/2018"
+      createtime="7/16/2018"
 
 # TensorFlow version is tightly coupled to CUDA and cuDNN so it should be selected carefully
 # Horovod requires both tensorflow and pytorch to be installed
