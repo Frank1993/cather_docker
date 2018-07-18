@@ -25,6 +25,19 @@ RUN apt-get update -y && \
     git && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
+# v-jiarxu: Install basic dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        cmake \
+        git \
+        wget \
+        vim \
+        tmux \
+        htop 
+
+# v-jiarxu: Set timezone
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
 RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
     wget --quiet https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh -O ~/anaconda.sh && \
     /bin/bash ~/anaconda.sh -b -p /opt/conda && \
@@ -46,3 +59,5 @@ RUN pip install --upgrade pip && \
                 pyyaml \
                 json_tricks \
                 scikit-image \
+                tqdm \
+                gputil 
