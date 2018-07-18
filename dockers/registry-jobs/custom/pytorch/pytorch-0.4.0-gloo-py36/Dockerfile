@@ -40,7 +40,8 @@ RUN cd ~ &&\
     conda install -y -c pytorch magma-cuda91 &&\
     conda install -y cffi tqdm &&\
     conda install -y opencv matplotlib && \
-    conda install -y -c conda-forge openmpi &&\
+# conda search openmpi -c conda-forge -----> only have 3.1.0 version openmpi, seems this version can not pass philly's hostname validation .
+#    conda install -y -c conda-forge openmpi &&\
     conda install -y -c pytorch pytorch=0.4.0 torchvision nltk && \
     conda clean -ya 
 
