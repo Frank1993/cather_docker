@@ -33,3 +33,4 @@ ENV CUDA_ROOT /usr/local/cuda/bin
 
 # Install pytorch GPU version.
 RUN conda install pytorch=0.2.0 cuda80 -c soumith
+RUN conda install -c soumith torchvision
