@@ -17,7 +17,7 @@ LABEL description="caffe-lstm-ctc" \
 RUN ompi_info
 
 #############  RDMA #################
-RUN apt-get update
+RUN apt-get -y update
 
 
 RUN apt-get -y install build-essential cmake gcc libudev-dev libnl-3-dev libnl-route-3-dev ninja-build pkg-config valgrind git
