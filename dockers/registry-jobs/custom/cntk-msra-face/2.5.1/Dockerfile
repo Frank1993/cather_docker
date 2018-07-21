@@ -228,7 +228,7 @@ RUN cd /home/ && \
     cd CNTK && \
     git submodule update --init external/gsl && \
     git submodule update --init Source/Multiverso && \
-    git clone https://github.com/onnx/onnx.git Source/CNTKv2LibraryDll/proto/onnx/onnx_repo && \
+    git clone -b rel-1.2.2  https://github.com/onnx/onnx.git Source/CNTKv2LibraryDll/proto/onnx/onnx_repo && \
     mkdir build/release -p && \
     cd build/release && \
     ../../configure --asgd=no && \
