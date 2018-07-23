@@ -129,9 +129,6 @@ else
     MPI_COMM_LOCAL_RANK=$OMPI_COMM_WORLD_LOCAL_RANK
 fi
 
-# TODO Remove this
-MPI_COMM_WORLD_RANK=0
-
 # Download or find the build on HDFS
 if [[ -z $BUILD_ID ]]; then
     echo "BUILD_ID is a required parameter. Usage: --buildId buildID; extra args"
