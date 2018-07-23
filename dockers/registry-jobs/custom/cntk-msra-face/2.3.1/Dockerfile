@@ -17,7 +17,7 @@ RUN chmod u+x /home/job/toolkit-execute
 
 LABEL description="custom cntk for face team" \
       repository="philly/jobs/custom/cntk-msra-face" \
-      tag="2018-07-17" \
+      tag="2.3.1" \
       creator="lewlu" \
       tooltype="cntk"
 
@@ -221,7 +221,6 @@ RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learn
     dpkg -i libnccl2_${NCCL_VERSION}+cuda8.0_amd64.deb && \
     dpkg -i libnccl-dev_${NCCL_VERSION}+cuda8.0_amd64.deb && \
     rm libnccl*
-
 
 RUN chmod -R 777 /home/
 

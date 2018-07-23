@@ -136,9 +136,6 @@ nvidia-smi
 
 nvidia-smi topo -m
 
-echo "root               hard    stack             6553600" >> /etc/security/limits.conf
-ulimit -a
-ulimit -s 6553600
 ulimit -a
 
 cntk configFile=$CONFIG_FILE \
