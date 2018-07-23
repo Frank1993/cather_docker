@@ -221,7 +221,10 @@ RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learn
     dpkg -i libnccl2_2.2.12-1+cuda9.0_amd64.deb && \
     rm libnccl*
 
+RUN ulimit -a
 RUN sed -i '$a root               hard    stack             6553600' /etc/security/limits.conf
+RUN ulimit -s 6553600
+RUN ulimit -a
 
 ENV CNTK_ENABLE_ASGD true
 RUN chmod -R 777 /home/
