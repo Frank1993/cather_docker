@@ -24,6 +24,7 @@ RUN pip install torchtext==0.2.3 && \
     pip install tqdm && \
     pip install six && \
     pip install future && \
+    pip install allennlp && \
     python -m spacy download en
 
 RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION nltk
