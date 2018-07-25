@@ -221,10 +221,6 @@ RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learn
     dpkg -i libnccl2_2.2.12-1+cuda9.0_amd64.deb && \
     rm libnccl*
 
-RUN ulimit -a
-RUN sed -i '$a root               hard    stack             6553600' /etc/security/limits.conf
-RUN ulimit -s 6553600
-RUN ulimit -a
 
 ENV CNTK_ENABLE_ASGD true
 RUN chmod -R 777 /home/
@@ -232,8 +228,8 @@ RUN cd /home/ && \
     git clone -b lewlu/msra-face https://github.com/Microsoft/CNTK.git && \
     cd CNTK && \
     git submodule update --init external/gsl && \
+    git submodule update --init Source/CNTKv2LibraryDll/proto/onnx/onnx_repo && \
     git submodule update --init Source/Multiverso && \
-    git clone -b rel-1.2.2  https://github.com/onnx/onnx.git Source/CNTKv2LibraryDll/proto/onnx/onnx_repo && \
     mkdir build/release -p && \
     cd build/release && \
     ../../configure --asgd=no && \
