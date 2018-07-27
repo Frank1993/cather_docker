@@ -136,10 +136,6 @@ nvidia-smi
 
 nvidia-smi topo -m
 
-ulimit -a
-ulimit -s 6553600
-ulimit -a
-
 cntk configFile=$CONFIG_FILE \
      WorkDir=$WORK_DIR \
      datadir=$DATA_DIR \

@@ -4,7 +4,6 @@ RUN mkdir /home/job
 COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
-
 RUN DEBIAN_FRONTEND=noninteractive && \
         apt-get update && apt-get install -y --no-install-recommends \
         autotools-dev \
