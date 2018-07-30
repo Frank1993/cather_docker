@@ -15,8 +15,10 @@ LABEL description="This docker has pytorch 0.4.0 and allennlp 0.5.1" \
 # Add your personalized features below here.
 
 RUN apt-get update && apt-get install -y --no-install-recommends apt-transport-https 
-RUN apt-get install -y git build-essential wget vim rpm2cpio cpio  module-init-tools libgfortran3 libibumad3 libibverbs1 libpmi0 unzip locales libssl-dev
+RUN apt-get install -y git build-essential wget vim rpm2cpio cpio  module-init-tools libgfortran3 libibumad3 libibverbs1 libpmi0 unzip locales libssl-dev libsqlite3-dev bzip2 ca-certificates curl gcc libc-dev libglib2.0-0 libsm6 libxext6 libxrender1 libevent-dev build-essential
 
+RUN apt-get install -y libbz2-dev
+RUN apt-get install -y liblzma-dev
 
 # ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
@@ -106,7 +108,7 @@ RUN git clone https://github.com/allenai/allennlp.git && \
     pip3 install -r ./allennlp/requirements.txt && \
     rm ~/.cache/pip/ -rf
 
-env PYTHONPATH="/stage/allennlp/:${PYTHONPATH}"
+env PYTHONPATH "/stage/allennlp/:${PYTHONPATH}"
 copy elmo_lstm.py /stage/allennlp/allennlp/modules/
 run pip3 install pandas
 run python3 -m spacy download en
