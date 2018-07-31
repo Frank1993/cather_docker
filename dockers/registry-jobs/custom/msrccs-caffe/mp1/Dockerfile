@@ -74,6 +74,8 @@ RUN mkdir -p $NLTK_DATA
 ENV MPLCONFIGDIR /home/job/.config/matplotlib
 ENV PYTHON_EGG_CACHE /tmp
 
+LABEL changed="7/31/2018"
+
 # To build in the docker directly (make sure /src/Caffe has the source):
 #RUN mkdir -p /src/Caffe/build
 #RUN cd /src/Caffe/build && \
