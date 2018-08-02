@@ -47,7 +47,7 @@ RUN /opt/conda/bin/conda update --yes -n base conda
 ENV PATH /opt/conda/envs/cntk-py35/bin:$PATH
 
 ## Creating the environment
-RUN /opt/conda/bin/conda create -n cntk-py35 --yes python=3.5 pandas h5py jsonschema numpy scipy scikit-learn && \
+RUN /opt/conda/bin/conda create -n cntk-py35 --yes python=3.5 pandas h5py jsonschema numpy scipy scikit-learn pillow pytables pyyaml && \
     pip install easydict azure && \
     /opt/conda/bin/conda install --yes --name cntk-py35 opencv=3.1 -c conda-forge && \
     /opt/conda/bin/conda clean --yes --all
