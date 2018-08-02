@@ -5,7 +5,6 @@ DATA_DIR=NONE
 LOG_DIR=$PWD
 STDOUT_DIR=$PWD
 MODEL_DIR=NONE
-PREV_MODEL_PATH=NONE
 N_GPU=1
 IS_DEBUG=FALSE
 IS_MEMCHECK=FALSE
@@ -51,6 +50,10 @@ case $key in
     N_GPU="$2"
     shift # pass argument
     ;;
+    --prevModelDir)
+    PREV_MODEL_PATH="$2"
+    shift # pass argument
+    ;;
     --debug)
     IS_DEBUG=TRUE
     ;;
@@ -72,6 +75,7 @@ echo "toolkit-execute: N_GPU=$N_GPU"
 echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
 echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
 echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
+echo "toolkit-execute: PREV_MODEL_PATH=$PREV_MODEL_PATH"
 
 CODE_DIR=$(dirname $CONFIG_FILE)
 
@@ -79,16 +83,22 @@ export PT_CODE_DIR=$CODE_DIR
 export PT_OUTPUT_DIR=$MODEL_DIR
 export PT_DATA_DIR=$DATA_DIR
 
+if [ "${PREV_MODEL_PATH+x}" ]; then
+    echo "Exporting PT_PREV_OUTPUT_DIR..."
+    export PT_PREV_OUTPUT_DIR=$PREV_MODEL_PATH
+fi
+
+cd $CODE_DIR
+
 if [ -f "$CODE_DIR/requirements.txt" ]; then
     echo "Installing custom requirements..."
-    pip install -r $CODE_DIR/requirements.txt --user
+    pip install -r $CODE_DIR/requirements.txt --user || exit $?
 fi
 
 if [ -f "$CODE_DIR/setup.sh" ]; then
     echo "Executing custom script..."
-    source $CODE_DIR/setup.sh
+    source $CODE_DIR/setup.sh || exit $?
 fi
 
-cd $CODE_DIR
 echo Running: python3.6 -B $CONFIG_FILE $EXTRA_ARGS
 python3.6 -B $CONFIG_FILE $EXTRA_ARGS
