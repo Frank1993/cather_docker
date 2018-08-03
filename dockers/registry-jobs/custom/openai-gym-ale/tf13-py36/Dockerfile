@@ -29,7 +29,9 @@ RUN pip --no-cache-dir install \
     pyyaml       \
     argparse     \
     pandas       \
-    imageio
+    imageio      \
+    matplotlib   \
+    click
 
 # Install Cython
 RUN pip install Cython
