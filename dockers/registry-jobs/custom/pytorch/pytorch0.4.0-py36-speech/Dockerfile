@@ -5,7 +5,7 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has pytorch 0.4.0 in anaconda python36 with cuda 9.0, and cudnn 7.0." \
+LABEL description="This docker has pytorch 0.4.0 in miniconda python36 with cuda 9.0, and cudnn 7.0." \
       repository="philly/jobs/custom/pytorch" \
       tag="pytorch0.4.0-py36-speech" \
       creator="v-wanke" tooltype="pytorch" \
@@ -15,9 +15,10 @@ LABEL description="This docker has pytorch 0.4.0 in anaconda python36 with cuda 
 # Add your personalized features below here.
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-         git \
-         octave &&\
-         rm -rf /var/lib/apt/lists/*
+        python3-dev \
+        python3-pip \
+        octave && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV PYTHON_VERSION 3.6
 
@@ -26,23 +27,12 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh
 
-# RUN curl -o ~/anaconda.sh -O https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh && \
-#     chmod +x ~/anaconda.sh && ~/anaconda.sh -b -p /opt/conda && rm ~/anaconda.sh
-
 ENV PATH /opt/conda/bin/:/opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
-
 RUN conda create -y --name pytorch-py$PYTHON_VERSION python=$PYTHON_VERSION && \
     conda clean -ya
-
-RUN /bin/bash -c "source activate pytorch-py3.6"
-
 RUN conda install numpy scipy scikit-learn numba cython && conda clean -ya
 RUN conda install -c conda-forge tensorboardx && conda clean -ya
 RUN conda install torchvision cuda90 pytorch=0.4.0 -c pytorch && conda clean -ya
-# Tensorflow 1.8.0
-RUN pip install --ignore-installed --upgrade https://download.tensorflow.google.cn/linux/cpu/tensorflow-1.8.0-cp36-cp36m-linux_x86_64.whl
-
-RUN /bin/bash -c "source deactivate"
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
