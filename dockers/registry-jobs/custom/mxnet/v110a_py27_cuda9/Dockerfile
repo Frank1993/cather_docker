@@ -65,3 +65,6 @@ RUN pip install --upgrade pip && \
 
 # v-jiarxu: compile mxnet
 RUN env GIT_SSL_NO_VERIFY=true git clone --recursive https://df7313c4a74781305fedacea4bf40e142d5b83a9@github.com/xvjiarui/mxnet_custom -b master && cd mxnet_custom && make -j $(nproc) USE_OPENCV=1 USE_BLAS=openblas && cd python && pip install -e .
+
+# v-jiarxu: cp mxnet to python
+RUN cd mxnet_custom && cp lib/* python/mxnet/ && cp -r python/mxnet /opt/conda/lib/python2.7/site-packages/
