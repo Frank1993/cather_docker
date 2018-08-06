@@ -33,13 +33,16 @@ ENV PATH /opt/conda/bin/:/opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 
 RUN conda create -y --name pytorch-py$PYTHON_VERSION python=$PYTHON_VERSION && \
     conda clean -ya
-RUN conda install --name pytorch-py$PYTHON_VERSION numpy scipy scikit-learn numba cython && \
-    conda clean -ya
-RUN conda install --name pytorch-py$PYTHON_VERSION -c conda-forge toml && \
-    conda clean -ya
 
-RUN conda install --name pytorch-py$PYTHON_VERSION torchvision cuda90 pytorch=0.4.0 -c pytorch && \
-    conda clean -ya
+RUN /bin/bash -c "source activate pytorch-py3.6"
+
+RUN conda install numpy scipy scikit-learn numba cython && conda clean -ya
+RUN conda install -c conda-forge tensorboardx && conda clean -ya
+RUN conda install torchvision cuda90 pytorch=0.4.0 -c pytorch && conda clean -ya
+# Tensorflow 1.8.0
+RUN pip install --ignore-installed --upgrade https://download.tensorflow.google.cn/linux/cpu/tensorflow-1.8.0-cp36-cp36m-linux_x86_64.whl
+
+RUN /bin/bash -c "source deactivate"
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
