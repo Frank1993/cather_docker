@@ -12,7 +12,7 @@ RUN unzip -d /detectron /detectron.zip
 
 # Labels for the docker
 LABEL description="caffe2-detectron" \
-      repository="philly/jobs/custom/detectron" \
+      repository="philly/jobs/custom/caffe2-detectron" \
       tag="v08-12" \
       creator="KaiHu" tooltype="caffe2-detectron" \
       tooltypeversion="1.0" \
