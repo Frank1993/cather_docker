@@ -90,7 +90,8 @@ RUN pip install \
     zmq \
     dill \
     azure==1.0.3 \
-    progressbar2
+    progressbar2 \
+    xlwt
 
 RUN apt-get install -y --no-install-recommends swig
 RUN git clone https://github.com/pybox2d/pybox2d && \
@@ -99,3 +100,5 @@ RUN git clone https://github.com/pybox2d/pybox2d && \
     python setup.py install
 
 RUN pip install keras==1.2.0
+
+RUN sudo chmod -R ugo+rw /opt/conda
