@@ -12,10 +12,10 @@ RUN mkdir /home/ncclv1
 # Labels for the docker
 LABEL description="This docker has BVLC Caffe and python2, add focal loss layer" \
       repository="philly/jobs/custom/caffe-fawe" \
-      tag="v08-13" \
+      tag="v08-14" \
       creator="fawe" tooltype="caffe" \
       tooltypeversion="1.0" \
-      createtime="08/13/2018"
+      createtime="08/14/2018"
 
 RUN apt-get -y update
 RUN apt-get -y install -y \ 
