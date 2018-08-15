@@ -43,7 +43,7 @@ RUN pip install gym[all] && \
     pip install tqdm && \
     pip install tensorflow-gpu==1.4.0 pandas h5py joblib
 
-RUN git clone https://github.com/bioinf-jku/tensorflow-layer-library.git && \
+RUN git clone https://github.com/zpschang/tensorflow-layer-library.git && \
     pip install ./tensorflow-layer-library 
 
 Run pip uninstall -y  Box2D-kengz && \ 
