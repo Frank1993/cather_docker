@@ -29,9 +29,14 @@ ENV PYTHON_VERSION=3.6
 RUN add-apt-repository ppa:jonathonf/python-3.6 && \
     apt-get update && apt-get install -y python3.6 && \
     cd /usr/bin && rm python3 && ln -s python3.6m python3
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        python3.6-dev && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --upgrade pip
-RUN pip3 install numpy scipy scikit-learn numba cython
+RUN pip3 install setuptools six
+RUN pip3 install numpy scipy scikit-learn cython
+RUN pip3 install pysptk
 RUN pip3 install http://download.pytorch.org/whl/cu90/torch-0.4.0-cp36-cp36m-linux_x86_64.whl
 RUN pip3 install torchvision
 RUN pip3 install tensorboardX
