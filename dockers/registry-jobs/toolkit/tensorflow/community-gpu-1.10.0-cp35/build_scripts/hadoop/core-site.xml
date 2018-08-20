@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+
+<property>
+  <name>fs.defaultFS</name>
+  <value>hdfs://rr1</value>
+  <description>
+         Formerly fs.default.name, the default path prefix used by the Hadoop FS client when
+         none is given. 
+  </description>
+</property>
+
+<property>
+  <name>dfs.journalnode.edits.dir</name>
+  <value>/var/lib/hdfs/journal</value>
+  <description>
+         Configure the addresses of the JournalNodes which provide the shared edits storage,
+         written to by the Active NameNode and read by the Standby NameNode to stay
+         up-to-date with all the file system changes the Active NameNode makes. Though you
+         must specify several JournalNode addresses, you should only configure one of
+         these URIs.
+  </description>
+</property>
+
+<property>
+  <name>dfs.ha.fencing.methods</name>
+  <value>sshfence(root:2122)
+         shell(/bin/true)
+  </value>
+  <description>
+         It is critical for correctness of the system that only one NameNode is
+         in the Active state at any given time. Thus, during a failover, the
+         haadmin command first ensures that the Active NameNode is either in the
+         Standby state, or that the Active NameNode process has terminated, before
+         haadmin transitions the other NameNode to the Active state. The method
+         that haadmin uses to ensure this is called the fencing method.
+  </description>
+</property>
+
+<property>
+  <name>dfs.ha.fencing.ssh.private-key-files</name>
+  <value>/root/.ssh/id_rsa</value>
+  <description>
+         SSH fence simply SSH-es to the Active NameNode to kill the process.
+  </description>
+</property>
+
+<property>
+  <name>ha.zookeeper.quorum</name>
+  <value>phlrrinfra01:2181,phlrrinfra02:2181,phlrrinfra03:2181,phlrrinfra04:2181,phlrrinfra05:2181</value>
+  <description>
+         The list the host-port pairs running the ZooKeeper service ZKFailoverController.
+  </description>
+</property>
+
+<property>
+  <name>fs.trash.interval</name>
+  <value>4320</value>
+  <description>
+         The number of minutes after which a trash checkpoint directory is deleted.
+         This option can be configured both on the server and the client.
+  </description>
+</property>
+
+<property>
+  <name>fs.trash.checkpoint.interval</name>
+  <value>60</value>
+  <description>
+         The number of minutes between trash checkpoints. Every time the checkpointer
+         runs on the NameNode, it creates a new checkpoint of the "Current" directory
+         and removes checkpoints older than fs.trash.interval minutes. This value
+         should be smaller than or equal to fs.trash.interval. This option is configured
+         on the server. If configured to zero (the default), then the value is set to
+         the value of fs.trash.interval.
+  </description>
+</property>
+
+<property>
+  <name>hadoop.proxyuser.root.groups</name>
+  <value>*</value>
+  <description>
+         The 'nfsserver' user is allowed to proxy all members of the 'users-group1' and
+         'users-group2' groups. Note that in most cases you will need to include the
+         group "root" because the user "root" (which usually belonges to "root" group) will
+         generally be the user that initially executes the mount on the NFS client system.
+         Set this to '*' to allow nfsserver user to proxy any group.
+  </description>
+</property>
+
+<property>
+  <name>hadoop.proxyuser.root.hosts</name>
+  <value>*</value>
+  <description>
+         This is the host where the nfs gateway is running. Set this to '*' to allow
+         requests from any hosts to be proxied.
+  </description>
+</property>
+
+
+</configuration>
