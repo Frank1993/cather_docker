@@ -1,1 +1,1 @@
-horovod:horovod0.13.2-pytorch0.4.0-tf18-py36-slow
+horovod:horovod0.13.11-pytorch0.4.1-tf19-py36-slow

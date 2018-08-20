@@ -1,0 +1,86 @@
+#!/bin/bash
+
+CONFIG_FILE=NONE
+DATA_DIR=NONE
+LOG_DIR=$PWD
+STDOUT_DIR=$PWD
+MODEL_DIR=NONE
+PREV_MODEL_PATH=NONE
+N_GPU=1
+IS_DEBUG=FALSE
+IS_MEMCHECK=FALSE
+EXTRA_ARGS=""
+
+# parsing command line arguments:
+while [[ $# > 0 ]]
+do
+key="$1"
+
+case $key in
+    -h|--help)
+    echo "Usage: toolkit-execute [run_options]"
+    echo "Options:"
+    echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
+    echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
+    echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
+    echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    exit 1
+    ;;
+    -c|--configFile)
+    CONFIG_FILE="$2"
+    shift # pass argument
+    ;;
+    -d|--dataDir)
+    DATA_DIR="$2"
+    shift # pass argument
+    ;;
+    --stdoutDir)
+    STDOUT_DIR="$2"
+    shift # pass argument
+    ;;
+    -l|--logDir)
+    LOG_DIR="$2"
+    shift # pass argument
+    ;;
+    --modelDir)
+    MODEL_DIR="$2"
+    shift # pass argument
+    ;;
+    -m|--nGPU)
+    N_GPU="$2"
+    shift # pass argument
+    ;;
+    --debug)
+    IS_DEBUG=TRUE
+    ;;
+    --memCheck)
+    IS_MEMCHECK=TRUE
+    ;;
+    *)
+    EXTRA_ARGS="$EXTRA_ARGS $1"
+    ;;
+esac
+shift # past argument or value
+done
+
+echo "toolkit-execute: CONFIG_FILE=$CONFIG_FILE"
+echo "toolkit-execute: DATA_DIR=$DATA_DIR"
+echo "toolkit-execute: LOG_DIR=$LOG_DIR"
+echo "toolkit-execute: STDOUT_DIR=$STDOUT_DIR"
+echo "toolkit-execute: N_GPU=$N_GPU"
+echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
+echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
+echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
+
+CODE_DIR=$(dirname $CONFIG_FILE)
+
+if [ -f "$CODE_DIR/setup.sh" ]; then
+    echo "Executing custom script..."
+    source $CODE_DIR/setup.sh
+fi
+
+cd $CODE_DIR
+echo "python $CONFIG_FILE -dataPath $DATA_DIR -modelPath $MODEL_DIR $EXTRA_ARGS"
+python $CONFIG_FILE -dataPath $DATA_DIR -modelPath $MODEL_DIR $EXTRA_ARGS
+
