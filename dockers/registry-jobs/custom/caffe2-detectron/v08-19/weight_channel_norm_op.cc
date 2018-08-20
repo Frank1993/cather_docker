@@ -327,15 +327,15 @@ namespace caffe2 {
 	// Input: X, gamma, beta, weight; Output: Y, mu, var, weighted_mu, weighted_rsig
 	OPERATOR_SCHEMA(WeightChannelNorm)
 		.NumInputs(4)
-		.NumOutputs(3)
+		.NumOutputs(5)
 		.SetDoc(R"DOC(
-Weight Channel Normalization (WCN) operation
-)DOC")
-.Arg("epsilon", "(float) default 1e-5; small constant added to var.")
-.Input(
-	0,
-	"X",
-	">=4D feature map input of shape (N, C, H, W) or (N, C, T, H, W)")
+		Weight Channel Normalization (WCN) operation
+		)DOC")
+		.Arg("epsilon", "(float) default 1e-5; small constant added to var.")
+		.Input(
+			0,
+			"X",
+			">=4D feature map input of shape (N, C, H, W) or (N, C, T, H, W)")
 		.Input(
 			1,
 			"gamma",
