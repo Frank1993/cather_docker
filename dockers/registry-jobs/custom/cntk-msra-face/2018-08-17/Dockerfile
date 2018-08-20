@@ -232,7 +232,7 @@ RUN cd /home/ && \
     mkdir build/release -p && \
     cd build/release && \
     ../../configure --asgd=no && \
-    make clean && make -j 2 && \
+    make clean && make -j $(nproc) && \
     cd bin && \
     chmod 777 cntk
 ENV PATH /home/CNTK/build/release/bin:$PATH

@@ -132,19 +132,22 @@ fi
 # Copy files from $PREV_MODEL_PATH to $DATA_DIR.
 # Use -maxdepth 1 to avoid recursively copying.
 if [ "$PREV_MODEL_PATH" != "NONE" ]; then
+    echo "check ${PREV_MODEL_PATH}"
+    PREV_MODEL_PATH="//philly/${PHILLY_CLUSTER}/${PHILLY_VC}/${PREV_MODEL_PATH}"
     find $PREV_MODEL_PATH -maxdepth 1 -name "*" -type f | \
     while read filename; do
-        echo "copy $filename to $DATA_DIR"
-        cp $filename $DATA_DIR
+        echo "copy $filename to $MODEL_DIR"
+        cp $filename $MODEL_DIR
     done
 fi
 
 # $CONFIG_DIR: the parent directory of $CONFIG_FILE
+echo "check PRECMD.sh"
 CONFIG_DIR=$(dirname "${CONFIG_FILE}")
 # If there is a file named PRECMD.sh in $CONFIG_DIR, execute it.
 if [ -f $CONFIG_DIR/PRECMD.sh ]; then
     echo "run $CONFIG_DIR/PRECMD.sh"
-    sh -x $CONFIG_DIR/PRECMD.sh
+    sh -x $CONFIG_DIR/PRECMD.sh $CONFIG_FILE $DATA_DIR $LOG_DIR $MODEL_DIR $PREV_MODEL_PATH $STD_OUT_DIR $EXTRA_ARGS
 fi
 
 cd $DATA_DIR
