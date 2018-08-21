@@ -31,10 +31,13 @@ ENV CUDA_ROOT /usr/local/cuda/bin
 
 # Install pytorch GPU version.
 RUN conda install pytorch torchvision -c pytorch
-RUN conda install pytorch==0.3.1
+RUN conda install pytorch==0.4.0
 RUN conda install -c conda-forge nltk
 RUN conda install -c pytorch torchvision
 RUN conda install -c conda-forge ipdb
 RUN conda install -c conda-forge keras
 RUN conda install -c conda-forge tensorboardx
-RUN conda install -c davidmertz accelerate-skimage
+RUN conda install -c conda-forge scikit-image
+RUN sudo apt-get update
+RUN pip install zip
+RUN conda install -c bioconda java-jdk
