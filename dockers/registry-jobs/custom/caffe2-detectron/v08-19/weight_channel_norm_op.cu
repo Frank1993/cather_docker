@@ -49,6 +49,10 @@ __global__ void WeightChannelMeanVarianceCUDAKernel(
     const T* weight,
     T* weighted_mu,
     T* weighted_var) {
+  CUDA_1D_KERNEL_LOOP(i, N * C) { // firstly set to all-zero
+    weighted_mu[i] = 0;
+	weighted_var[i] = 0;
+  }
   CUDA_1D_KERNEL_LOOP(i, size) {
     // weighted_mu_nc = sum(mu_nw * weight_wc, w)
     //const int i_n = i / (C * C);
@@ -163,47 +167,6 @@ __global__ void ComputeInternalGradientsCUDAKernel(
 // dL/dbeta = dL/dY
 // dL/dweight = dL/dY * (dY/ds * ds/dweighted_sig * dweighted_sig/dweight + dY/db * db/dweighted_mu * dweighted_mu/dweight + dY/db * db/dsig_ * dsig_/dweight)
 //            = dL/dY * (-0.5 * X * rsig_^3 * dsig_/dweight - gamma * rsig_ * dmu_/dweight + gamma * mu_ * rsig_^3 * drsig_/dweight)
-// drsig_/dweight = sig + mu^2 - 2 * Sum(W * mu) * mu
-// dmu_/dweight = mu
-// template <typename T, StorageOrder kOrder>
-// __global__ void WeightChannelNormBackwardCUDAKernel(
-//     const int size,
-//     const int C,
-//     const int HxW,
-//     const T* dY,
-//     const T* X,
-//     const T* mu,
-//     const T* var,
-//     const T* weighted_mu,
-//     const T* weighted_rsig,
-//     const T* gamma,
-//     const T* weight,
-//     const T* ds,
-//     const T* db,
-//     T* dX) {
-//   const T denom = T(1) / static_cast<T>(HxW);
-//   CUDA_1D_KERNEL_LOOP(i, size) {
-//     const int i_mu = kOrder == StorageOrder::NCHW
-//         ? i / HxW
-//         : i / (C * HxW) * C + (i % C);
-//     const int i_gamma = kOrder == StorageOrder::NCHW ? (i / HxW) % C : i % C;
-//     const int i_weight_CC = i_gamma * C + i_gamma;
-// #if __CUDA_ARCH__ >= 350
-//     const T u = (__ldg(db + i_mu) * __ldg(weighted_mu + i_mu) * __ldg(gamma + i_mu) - __ldg(ds + i_mu)) * __ldg(weight + i_weight_CC) * 
-//         (__ldg(X + i) - __ldg(weighted_mu + i_mu)) *
-//         math::utils::Cube<T>(__ldg(weighted_rsig + i_mu));
-//     const T v = __ldg(db + i_mu) * __ldg(gamma + i_gamma) * __ldg(weighted_rsig + i_mu) * __ldg(weight + i_weight_CC);
-//     dX[i] = __ldg(gamma + i_gamma) * __ldg(dY + i) * __ldg(weighted_rsig + i_mu) +
-//         (u - v) * denom;
-// #else
-//     const T u = (db[i_mu] * weighted_mu[i_mu] * gamma[i_mu] - ds[i_mu]) * weight[i_weight_CC] * (X[i] - weighted_mu[i_mu]) *
-//         math::utils::Cube<T>(weighted_rsig[i_mu]);
-//     const T v = db[i_mu] * gamma[i_gamma] * weighted_rsig[i_mu] * weight[i_weight_CC];
-//     dX[i] = gamma[i_gamma] * dY[i] * weighted_rsig[i_mu] + (u - v) * denom;
-// #endif
-//   }
-// }
-
 // TODO:Kai Hu This function can be optimized
 template <typename T, StorageOrder kOrder>
 __global__ void WeightChannelNormBackwardCUDAKernel(

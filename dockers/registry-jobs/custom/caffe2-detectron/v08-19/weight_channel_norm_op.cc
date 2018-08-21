@@ -36,6 +36,10 @@ namespace caffe2 {
 			T* weighted_var) {
 			const int C = kOrder == StorageOrder::NCHW ? dims[1] : dims[2];
 			const int size = dims[0] * C * C;
+			for (int i = 0; i < dims[0] * C; ++i) {  // firstly set to all-zero
+				weighted_mu[i] = 0;
+				weighted_var[i] = 0;
+			}
 			for (int i = 0; i < size; ++i) {
 				// weighted_mu_nc = sum(mu_nw * weight_wc, w)
 				// const int i_n = i / (C * C);
