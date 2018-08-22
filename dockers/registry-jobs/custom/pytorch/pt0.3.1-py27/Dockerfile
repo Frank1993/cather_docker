@@ -41,3 +41,4 @@ RUN conda install -c conda-forge scikit-image
 RUN sudo apt-get update
 RUN pip install zip
 RUN conda install -c bioconda java-jdk
+RUN sudo apt-get -y install vim
