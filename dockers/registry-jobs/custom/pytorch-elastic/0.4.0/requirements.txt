@@ -4,8 +4,9 @@ progressbar
 easydict
 mpi4py
 loky
-torchvision
 Pillow
+torchvision
 tensorflow-gpu
 tensorflow-tensorboard
 tensorboardX
+/home/job/hyperdrive-1.0.7-py3-none-any.whl
