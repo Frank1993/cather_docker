@@ -74,4 +74,4 @@ echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
 echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
 
 echo python $CONFIG_FILE --model_dir $MODEL_DIR --data_dir $DATA_DIR --log_dir $LOG_DIR $EXTRA_ARGS
-python $CONFIG_FILE $EXTRA_ARGS
+python $CONFIG_FILE  --log_dir $LOG_DIR  $EXTRA_ARGS
