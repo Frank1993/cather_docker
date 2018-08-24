@@ -234,7 +234,7 @@ fi
 
 
 
-python -u $CONFIG_FILE --data $DATA_DIR ${EXTRA_ARGS}
+python3 -u $CONFIG_FILE --data $DATA_DIR ${EXTRA_ARGS}
 
 RETURN_CODE=$?
 
