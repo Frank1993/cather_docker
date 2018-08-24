@@ -38,49 +38,6 @@ __global__ void InvStdCUDAKernel(
   }
 }
 
-// add by Kai Hu, add function to compute the weighted mean and variance. 
-template <typename T>
-__global__ void WeightChannelMeanVarianceCUDAKernel(
-    const int size,
-    const int N,
-    const int C,
-    const T* mu,
-    const T* var,
-    const T* weight,
-    T* weighted_mu,
-    T* weighted_var) {
-  CUDA_1D_KERNEL_LOOP(i, N * C) { // firstly set to all-zero
-    weighted_mu[i] = 0;
-	weighted_var[i] = 0;
-  }
-  CUDA_1D_KERNEL_LOOP(i, size) {
-    // weighted_mu_nc = sum(mu_nw * weight_wc, w)
-    //const int i_n = i / (C * C);
-	//const int i_w = i % C;
-	//const int i_c = (i / C) % C;
-	const int i_nc = i / (C * C) * C + (i / C) % C;
-	const int i_wc = (i % C) * C + (i / C) % C;
-	const int i_nw = i / (C * C) * C + i % C;
-#if __CUDA_ARCH__ >= 350
-    weighted_mu[i_nc] += __ldg(weight + i_wc) * __ldg(mu + i_nw);
-#else
-    weighted_mu[i_nc] += weight[i_wc] * mu[i_nw];
-#endif
-  }
-  CUDA_1D_KERNEL_LOOP(i, size) {
-    // weighted_var_nc = sum((var_nw + mu_nw^2 - weighted_mu_nc^2) * weight_wc, w)
-    const int i_nc = i / (C * C) * C + (i / C) % C;
-	const int i_wc = (i % C) * C + (i / C) % C;
-	const int i_nw = i / (C * C) * C + i % C;
-#if __CUDA_ARCH__ >= 350
-    weighted_var[i_nc] += __ldg(weight + i_wc) * (__ldg(var + i_nw) + __ldg(mu + i_nw) * __ldg(mu + i_nw) - 
-                              __ldg(weighted_mu + i_nc) * __ldg(weighted_mu + i_nc));
-#else
-    weighted_var[i_nc] += weight[i_wc] * (var[i_nw] + mu[i_nw] * mu[i_nw] - weighted_mu[i_nc] * weighted_mu[i_nc]);
-#endif
-  }
-}
-
 template <typename T, StorageOrder kOrder>
 __global__ void WeightChannelNormForwardCUDAKernel(
     const int size,
@@ -107,6 +64,70 @@ __global__ void WeightChannelNormForwardCUDAKernel(
   }
 }
 
+// add by Kai Hu, add function to compute the weighted mean and variance. 
+template <typename T>
+__global__ void WeightChannelMeanCUDAKernel(
+    const int N,
+    const int C,
+    const T* mu,
+    const T* weight,
+    T* weighted_mu) {
+    const int outer_size = N * C;
+    const int inner_size = C;
+    __shared__ typename BlockReduce<T>::TempStorage wmu_storage;
+    for (int i = blockIdx.x; i < outer_size; i += gridDim.x) {
+        T wmu_val = 0;
+        for (int j = threadIdx.x; j < inner_size; j += blockDim.x) {
+            const int i_nc = i;
+            const int i_wc = j * C + i % C;
+            const int i_nw = (i / C) * C + j;
+#if __CUDA_ARCH__ >= 350
+            wmu_val += __ldg(mu + i_nw) * __ldg(weight + i_wc);
+#else
+            wmu_val += mu[i_nw] * weight[i_wc];
+#endif
+        }
+        wmu_val = BlockReduce<T>(wmu_storage).Reduce(wmu_val, cub::Sum());
+        if (threadIdx.x == 0) {
+            weighted_mu[i] = wmu_val;
+        }
+        __syncthreads();
+    }
+}
+
+template <typename T>
+__global__ void WeightChannelVarianceCUDAKernel(
+    const int N,
+    const int C,
+    const T* mu,
+    const T* var,
+    const T* weight,
+    T* weighted_mu,
+    T* weighted_var) {
+    const int outer_size = N * C;
+    const int inner_size = C;
+    __shared__ typename BlockReduce<T>::TempStorage wvar_storage;
+    for (int i = blockIdx.x; i < outer_size; i += gridDim.x) {
+        T wvar_val = 0;
+        for (int j = threadIdx.x; j < inner_size; j += blockDim.x) {
+            const int i_nc = i;
+            const int i_wc = j * C + i % C;
+            const int i_nw = (i / C) * C + j;
+#if __CUDA_ARCH__ >= 350
+            wvar_val += __ldg(weight + i_wc) * (__ldg(var + i_nw) + __ldg(mu + i_nw) * __ldg(mu + i_nw) - 
+                    __ldg(weighted_mu + i_nc) * __ldg(weighted_mu + i_nc));
+#else
+            wvar_val += weight[i_wc] * (var[i_nw] + mu[i_nw] * mu[i_nw] - weighted_mu[i_nc] * weighted_mu[i_nc]);
+#endif
+        }
+        wvar_val = BlockReduce<T>(wvar_storage).Reduce(wvar_val, cub::Sum());
+        if (threadIdx.x == 0) {
+            weighted_var[i] = wvar_val;
+        }
+        __syncthreads();
+    }
+}
+
 template <typename T, StorageOrder kOrder>
 __global__ void ComputeInternalGradientsCUDAKernel(
     const int N,
@@ -128,7 +149,7 @@ __global__ void ComputeInternalGradientsCUDAKernel(
       const int i_gamma = i % C;
       const int index = kOrder == StorageOrder::NCHW
           ? i * inner_size + j
-          : (i / C * HxW) * C + i % C;
+          : ((i / C) * HxW + j) * C + i % C;
 #if __CUDA_ARCH__ >= 350
       ds_val += __ldg(gamma + i_gamma) * __ldg(dY + index) * __ldg(X + index);
       db_val += __ldg(gamma + i_gamma) * __ldg(dY + index);
@@ -192,11 +213,11 @@ __global__ void WeightChannelNormBackwardCUDAKernel(
   for (int i = blockIdx.x; i < outer_size; i += gridDim.x) {
     T u_val = 0;
     T v_val = 0;
-    const int i_mu = kOrder == StorageOrder::NCHW
-        ? i / HxW
-        : i / (C * HxW) * C + (i % C); // (n,c)
-    const int i_gamma = kOrder == StorageOrder::NCHW ? (i / HxW) % C : i % C; // (c)
     for (int j = threadIdx.x; j < inner_size; j += blockDim.x) {
+      const int i_mu = kOrder == StorageOrder::NCHW
+        ? i / HxW
+        : (i / (C * HxW)) * C + (i % C); // (n,c)
+      const int i_gamma = kOrder == StorageOrder::NCHW ? (i / HxW) % C : i % C; // (c)
       const int i_nj = i_mu / C * C + j; // (n,c')
       const int i_cj = i_gamma * C + j; // (c,c')
 #if __CUDA_ARCH__ >= 350
@@ -212,6 +233,10 @@ __global__ void WeightChannelNormBackwardCUDAKernel(
     u_val = BlockReduce<T>(u_storage).Reduce(u_val, cub::Sum());
     v_val = BlockReduce<T>(v_storage).Reduce(v_val, cub::Sum());
     if (threadIdx.x == 0) {
+      const int i_mu = kOrder == StorageOrder::NCHW
+        ? i / HxW
+        : (i / (C * HxW)) * C + (i % C); // (n,c)
+      const int i_gamma = kOrder == StorageOrder::NCHW ? (i / HxW) % C : i % C; // (c)
       dX[i] = gamma[i_gamma] * dY[i] * weighted_rsig[i_mu] + (u_val - v_val) * denom;
     }
     __syncthreads();
@@ -335,14 +360,21 @@ bool WeightChannelNormOp<float, CUDAContext>::RunOnDeviceImpl(
   math::Moments<float, CUDAContext>(
       3, dims.data(), 1, axes.data(), X_data, mu_data, var_data, &context_);
   // Computes weighted mean and variance.
-  // TODO: hasn't solve the <<< >>> problem for this function
-  int size = N * C * C;
-  WeightChannelMeanVarianceCUDAKernel<float>
-    <<<CAFFE_GET_BLOCKS(size),
+  WeightChannelMeanCUDAKernel<float>
+    <<<std::min(N * C, CAFFE_MAXIMUM_NUM_BLOCKS),
        CAFFE_CUDA_NUM_THREADS,
        0,
        context_.cuda_stream()>>>(
-        size,
+        N,
+        C,
+        mu_data,
+        weight_data,
+        weighted_mu_data);
+  WeightChannelVarianceCUDAKernel<float>
+    <<<std::min(N * C, CAFFE_MAXIMUM_NUM_BLOCKS),
+       CAFFE_CUDA_NUM_THREADS,
+       0,
+       context_.cuda_stream()>>>(
         N,
         C,
         mu_data,
@@ -358,7 +390,7 @@ bool WeightChannelNormOp<float, CUDAContext>::RunOnDeviceImpl(
       context_.cuda_stream()>>>(N * C, epsilon_, weighted_rsig_data, weighted_rsig_data);
 
   // Computes Y = gamma * (X - weighted_mu) * weighted_rsig + beta.
-  size = N * C * HxW;
+  const int size = N * C * HxW;
   if (order_ == StorageOrder::NCHW) {
     WeightChannelNormForwardCUDAKernel<float, StorageOrder::NCHW>
         <<<CAFFE_GET_BLOCKS(size),
@@ -467,6 +499,7 @@ bool WeightChannelNormGradientOp<float, CUDAContext>::RunOnDeviceImpl(
             weighted_rsig_data,
             dgamma_data,
             dbeta_data);
+    // Computes dL/dweight
     WeightBackwardCUDAKernel<float, StorageOrder::NCHW>
         <<<std::min(C * C, CAFFE_MAXIMUM_NUM_BLOCKS),
            CAFFE_CUDA_NUM_THREADS,
@@ -495,7 +528,7 @@ bool WeightChannelNormGradientOp<float, CUDAContext>::RunOnDeviceImpl(
 
     // Computes dL/dX.
     WeightChannelNormBackwardCUDAKernel<float, StorageOrder::NHWC>
-        <<<std::min(size, CAFFE_CUDA_NUM_THREADS),
+        <<<std::min(size, CAFFE_MAXIMUM_NUM_BLOCKS),
            CAFFE_CUDA_NUM_THREADS,
            0,
            context_.cuda_stream()>>>(

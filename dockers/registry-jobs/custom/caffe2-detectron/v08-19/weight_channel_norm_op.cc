@@ -23,8 +23,18 @@ namespace caffe2 {
 			return x * x * x;
 		}
 
-		// For samplify backwark, just use softmax op(outside of WCN op) for weight to normalization to sum-one.
-		// TODO: Kai Hu implement the function and the backwark part to optimum time and space complexity
+		// for now use softmax outside this op. 
+		// TODO: Kai Hu optimum time and space complexity just use sum-one op in this op, the non-linear op should add before this op, use exp for softmax, but suggest use relu.
+		template <typename T>
+		void SumoneWeight(const int C, T* weight) {
+			for (int col = 0; col < C; col++) {
+				T sum = T(0);
+				for (int row = 0; row < C; row++)
+					sum += weight[row * C + col];
+				for (int row = 0; row < C; row++)
+					weight[row * C + col] /= sum;
+			}
+		}
 
 		template <typename T, StorageOrder kOrder>
 		void WeightChannelMeanVariance(
@@ -162,8 +172,9 @@ namespace caffe2 {
 				dbeta[i_gamma] += dY[i];
 				math::utils::IncreaseIndexInDims(3, dims.data(), index.data());
 			}
-			for (int i_n = 0; i_n < dims[0]; i_n++) {
-				for (int i_ck = 0; i_ck < C * C; i_ck++) {
+			for (int i_ck = 0; i_ck < C * C; i_ck++) {
+				T dw_val = T(0);
+				for (int i_n = 0; i_n < dims[0]; i_n++) {
 					const int i_c = i_ck / C;
 					const int i_nc = i_n * C + i_ck / C;
 					const int i_nk = i_n * C + i_ck % C;
@@ -171,8 +182,9 @@ namespace caffe2 {
 						0.5 * (db[i_nk] * weighted_mu[i_nk] - ds[i_nk]) * Cube(weighted_rsig[i_nk]) * (var[i_nc] + mu[i_nc] * mu[i_nc] - 2 * weighted_mu[i_nk] * mu[i_nc]);
 					const T v =
 						db[i_nk] * weighted_rsig[i_nk] * mu[i_nc];
-					dweight[i_ck] += u - v;
+					dw_val += u - v;
 				}
+				dweight[i_ck] = dw_val;
 			}
 		}
 
@@ -203,9 +215,8 @@ namespace caffe2 {
 		math::Moments<T, Context>(
 			3, dims.data(), 1, axes.data(), X_data, mu_data, var_data, &context_);
 
-		// Computes Boltzmann weight. Attention: use softmax outside the WeightChannelNorm op
-		// BoltzmannWeight<T>(C, weight_data);
-
+		// Computes sum-one weight.
+		// SumoneWeight<T>(C, weight_data);
 		// Computes weighted mean and variance.
 		if (order_ == StorageOrder::NCHW) {
 			WeightChannelMeanVariance<T, StorageOrder::NCHW>(
