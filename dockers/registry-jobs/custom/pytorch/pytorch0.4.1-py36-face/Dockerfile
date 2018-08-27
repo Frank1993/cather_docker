@@ -36,7 +36,7 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
 
 ENV PATH /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 
-RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION cuda90 pytorch=0.4.1 -c pytorch && \
+RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION torchvision cuda90 pytorch=0.4.1 -c pytorch && \
     /opt/conda/bin/conda clean -ya
 
 WORKDIR /workspace
