@@ -5,12 +5,12 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="caffe-lstm-ctc" \
-      repository="philly/jobs/custom/caffe-speech-wenh" \
-      tag="v03-13" \
-      creator="wenh" tooltype="caffe-speech-wenh" \
+LABEL description="caffe-lstm-ctc, add the lfmmi code" \
+      repository="philly/jobs/custom/caffe-speech" \
+      tag="v03-20" \
+      creator="wenh" tooltype="caffe-speech" \
       tooltypeversion="1.0" \
-      createtime="3/13/2018"
+      createtime="3/20/2018"
 
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
