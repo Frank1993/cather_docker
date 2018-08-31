@@ -13,10 +13,10 @@ RUN unzip -d /detectron /detectron.zip
 # Labels for the docker
 LABEL description="caffe2-detectron" \
       repository="philly/jobs/custom/caffe2-detectron" \
-      tag="v08-12" \
+      tag="v08-30" \
       creator="KaiHu" tooltype="caffe2-detectron" \
       tooltypeversion="1.0" \
-      createtime="12/08/2018"
+      createtime="30/08/2018"
 
 
 
@@ -82,21 +82,21 @@ RUN chmod u+x /pytorch/caffe2/operators/weight_channel_norm_op.h
 RUN chmod u+x /pytorch/caffe2/operators/weight_channel_norm_op.cc
 RUN chmod u+x /pytorch/caffe2/operators/weight_channel_norm_op.cu
 
-#RUN cd /pytorch && mkdir build && cd build \
-#    && cmake .. \
-#    -DCUDA_ARCH_NAME=Pascal \
-#    -DCUDA_ARCH_BIN="35 52 60 61" \
-#    -DCUDA_ARCH_PTX="61" \
-#    -DUSE_NNPACK=OFF \
-#    -DUSE_ROCKSDB=OFF \
-#    && make -j4 install \
-#    && ldconfig \
-#    && make clean \
-#    && cd .. \
+RUN cd /pytorch && mkdir build && cd build \
+    && cmake .. \
+    -DCUDA_ARCH_NAME=Pascal \
+    -DCUDA_ARCH_BIN="35 52 60 61" \
+    -DCUDA_ARCH_PTX="61" \
+    -DUSE_NNPACK=OFF \
+    -DUSE_ROCKSDB=OFF \
+    && make -j4 install \
+    && ldconfig \
+    && make clean \
+    && cd .. \
 
-RUN FULL_CAFFE=1
-WORKDIR /pytorch
-RUN python setup.py install
+#RUN FULL_CAFFE=1
+#WORKDIR /pytorch
+#RUN python setup.py install
 
 # detectron install
 ENV Caffe2_DIR /pytorch/build
