@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		 python3-pip \
 		 libsndfile1 \
 		 libsndfile1-dev \
+             unzip \
 		 git &&\
          rm -rf /var/lib/apt/lists/*
 ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
