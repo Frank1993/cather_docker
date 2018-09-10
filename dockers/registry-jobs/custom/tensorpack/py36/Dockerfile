@@ -27,7 +27,8 @@ RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.
     rm ~/anaconda.sh && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
+    echo "conda activate base" >> ~/.bashrc && \
+    echo "sudo chmod -R 777 /opt/conda" >> ~/.bashrc
 
-RUN pip install tensorflow-gpu opencv-python msgpack
-RUN pip install tensorpack
+RUN pip install tensorflow-gpu opencv-python msgpack pycocotools tensorpack
+#RUN pip install tensorpack
