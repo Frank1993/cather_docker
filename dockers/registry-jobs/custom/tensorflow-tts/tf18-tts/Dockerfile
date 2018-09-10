@@ -12,10 +12,18 @@ LABEL description="This docker has tensorflow 1.8 and all packages Tacotron depe
       tooltypeversion="1.8" \
       createtime="5/26/2018"
 # Everything above this line is required for the docker.
+
 # Add your personalized features below here.
 RUN apt-get update
 RUN apt-get -y install python3-pip
 RUN apt-get -y install git
+RUN apt-get -y install vim
+RUN apt-get -y install htop
+RUN apt-get -y install tmux
+RUN apt-get -y install unzip
+RUN apt-get -y install zip
+
 RUN python3 -m pip install tensorflow-gpu==1.8.0
+RUN python3 -m pip install torch torchvision
 RUN python3 -m pip install --upgrade opencv-python h5py six termcolor zmq tabulate
 RUN python3 -m pip install --upgrade falcon==1.2.0 inflect==0.2.5 librosa==0.5.1 matplotlib==2.0.2 numpy==1.14.3 scipy==0.19.0 tqdm==4.11.2 Unidecode==0.4.20
