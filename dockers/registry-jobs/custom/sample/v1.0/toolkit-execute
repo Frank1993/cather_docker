@@ -2,11 +2,11 @@
 
 # This file is only for reference and to test the custom-built Docker feature in the Webportal.
 # It will read in the values from the command line (supplied by the Philly Cluster)
-# and print them to a testRunCust.txt saved in the log directory. All but the running 
+# and print them to a testRunCust.txt saved in the log directory. All but the running
 # time (-r|--runningTime) are hardcoded parameters from the GUI.  The running time can be
 # used in the extra parameters field of the GUI.  The main loop will run for the specified
-# running time and print a statement to the output file every 5 seconds.  This is to 
-# monitor through ssh (with 'tail -f -n +1 testRunCust.txt') that the script was started 
+# running time and print a statement to the output file every 5 seconds.  This is to
+# monitor through ssh (with 'tail -f -n +1 testRunCust.txt') that the script was started
 # and is running.  Making a short running time you can test that the job completes correctly.
 
 CONFIG_FILE=NONE
@@ -15,7 +15,7 @@ LOG_DIR=$PWD
 MODEL_DIR=NONE
 PREV_MODEL_PATH=NONE
 IS_MEMCHECK=false
-EXTRA_ARGS=""
+declare -a EXTRA_ARGS
 NUM_GPU=NONE
 STDOUT_DIR=$PWD
 IS_DEBUG=false
@@ -23,7 +23,7 @@ IS_PERF_TRACE=false
 IS_GDB_WRAPPED=false
 
 # parsing command line arguments:
-while [[ $# > 0 ]]
+while [[ $# -gt 0 ]]
 do
 key="$1"
 
@@ -85,7 +85,7 @@ case $key in
     IS_MEMCHECK=TRUE
     ;;
     *)
-    EXTRA_ARGS="$EXTRA_ARGS $1"
+    EXTRA_ARGS+=("$1")
     ;;
 esac
 shift # past argument or value
@@ -102,6 +102,6 @@ echo "toolkit-execute: IS_PERF_TRACE=$IS_PERF_TRACE"
 echo "toolkit-execute: IS_GDB_WRAPPED=$IS_GDB_WRAPPED"
 echo "toolkit-execute: PREV_MODEL_PATH=$PREV_MODEL_PATH"
 echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
-echo "toolkit-execute: EXTRA_ARGS=$EXTRA_ARGS"
+echo "toolkit-execute: EXTRA_ARGS=${EXTRA_ARGS[*]}"
 
-$CONFIG_FILE "$DATA_DIR" "$LOG_DIR" "$MODEL_DIR" $EXTRA_ARGS || exit 1
+$CONFIG_FILE "$DATA_DIR" "$LOG_DIR" "$MODEL_DIR" "${EXTRA_ARGS[@]}" || exit 1

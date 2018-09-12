@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script file is where you setup and execute your job inside your docker.  The following
-# is the parsing of all available arguements that you can receive from the process that 
+# is the parsing of all available arguements that you can receive from the process that
 # runs this script.  They are take directly from the values you supply when you submit a
 # custom job. It is recommended not to change the following and to continue to the end of the
 # file to add your script code.  Refer to the --help for a description of the arguements.
@@ -13,10 +13,10 @@ LOG_DIR=NONE
 MODEL_DIR=NONE
 PREV_MODEL_PATH=NONE
 IS_MEMCHECK=FALSE
-EXTRA_ARGS=NONE
+declare -a EXTRA_ARGS
 
 # Parsing command line arguments:
-while [[ $# > 0 ]]
+while [[ $# -gt 0 ]]
 do
 key="$1"
 
@@ -51,7 +51,7 @@ case $key in
     IS_MEMCHECK=TRUE
     ;;
     *)
-    EXTRA_ARGS="$@"
+    EXTRA_ARGS=("$@")
     break
     ;;
 esac
@@ -64,6 +64,6 @@ echo "runCust: DATA_DIR=$DATA_DIR"
 echo "runCust: LOG_DIR=$LOG_DIR"
 echo "runCust: MODEL_DIR=$MODEL_DIR"
 echo "runCust: IS_MEMCHECK=$IS_MEMCHECK"
-echo "runCust: EXTRA_ARGS=$EXTRA_ARGS"
+echo "runCust: EXTRA_ARGS=${EXTRA_ARGS[*]}"
 
 # TODO: Add your script code below here
