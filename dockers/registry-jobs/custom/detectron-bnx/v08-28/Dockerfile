@@ -71,12 +71,11 @@ RUN pip install --no-cache-dir \
     tensorflow \
     typing
 
+
 RUN git clone --branch master --recursive https://github.com/pytorch/pytorch.git /pytorch 
 WORKDIR /pytorch
 RUN git submodule update --init --recursive
 
-# COPY setup.py /pytorch/setup.py
-# RUN chmod u+x /pytorch/setup.py
 
 RUN cd /pytorch && mkdir build && cd build \
     && cmake .. \
@@ -85,18 +84,18 @@ RUN cd /pytorch && mkdir build && cd build \
     -DCUDA_ARCH_PTX="61" \
     -DUSE_NNPACK=OFF \
     -DUSE_ROCKSDB=OFF \
-    -DUSE_MPI=ON \
     -DUSE_NCCL=ON \
+    -DNCCL_EXTERNAL=ON \
+    -DUSE_GLOO=ON \
+    -DUSE_MPI=ON \
     -DUSE_DISTRIBUTED=ON \
     && make -j4 install \
     && ldconfig \
     && make clean \
     && cd .. \
-
-# ENV FULL_CAFFE 1
-# ENV FULL_CAFFE=1
+    
 # WORKDIR /pytorch
-# RUN FULL_CAFFE2=1 python setup.py install
+# RUN python setup.py install
 # WORKDIR /
 
 
