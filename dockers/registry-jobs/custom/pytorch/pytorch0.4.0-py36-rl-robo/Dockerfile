@@ -23,6 +23,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
          libboost-all-dev\
          libsdl2-dev\
          swig\
+         vim\
+         tmux\
+         htop\
          xorg-dev\
          cmake zlib1g-dev libjpeg-dev xvfb libav-tools \
          libpng-dev &&\
@@ -47,7 +50,7 @@ RUN pip install h5py keras future chainer cupy
 RUN pip install gym[all] && \
     pip install opencv-python && \ 
     pip install tqdm   && \
-    pip install tensorboardX
+    pip install tensorboardX pytz logger matplotlib
 
 
 
