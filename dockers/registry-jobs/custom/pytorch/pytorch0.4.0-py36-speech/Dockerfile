@@ -41,6 +41,7 @@ RUN pip3 install http://download.pytorch.org/whl/cu90/torch-0.4.0-cp36-cp36m-lin
 RUN pip3 install torchvision
 RUN pip3 install tensorboardX
 RUN pip3 install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-1.8.0-cp36-cp36m-linux_x86_64.whl
+RUN pip3 install librosa soundfile h5py python-dateutil
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
