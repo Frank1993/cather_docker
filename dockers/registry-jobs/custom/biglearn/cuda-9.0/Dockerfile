@@ -46,6 +46,26 @@ RUN apt-get update && apt-get install -y azcopy
 # Philly requirements
 RUN apt-get install -y rsync jq openssh-server openssh-client sudo net-tools
 
+ARG	OPENMPI_VERSIONBASE=3.1 
+ENV STAGE_DIR=/root/gpu/install \
+		OPENMPI_VERSION=${OPENMPI_VERSIONBASE}.2 \
+    OFED_VERSION=4.2-1.2.0.0
+ARG	OPENMPI_STRING=openmpi-${OPENMPI_VERSION} 
+WORKDIR $STAGE_DIR
+RUN wget -q -O - https://download.open-mpi.org/release/open-mpi/v${OPENMPI_VERSIONBASE}/${OPENMPI_STRING}.tar.bz2 | tar -xjf - && \
+    cd ${OPENMPI_STRING} && \
+    ./configure --prefix=/usr/local/${OPENMPI_STRING} && \
+    make -j"$(nproc)" install && \
+    rm -rf $STAGE_DIR/${OPENMPI_STRING} && \
+    ln -s /usr/local/${OPENMPI_STRING} /usr/local/mpi && \
+    test -f /usr/local/mpi/bin/mpic++
+
+# Update environment variables
+ENV PATH=/usr/local/mpi/bin:$PATH \
+    LD_LIBRARY_PATH=/usr/local/lib:/usr/local/mpi/lib64:/usr/local/mpi/lib:$LD_LIBRARY_PATH
+
+# End Philly
+
 ENV ON_PHILLY_VC=true
 # Labels for the docker
 LABEL description="This docker is built to support .Net environment via mono with sepcifically support for biglearn." \
