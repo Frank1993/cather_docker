@@ -1,0 +1,119 @@
+#!/bin/bash
+
+CONFIG_FILE=
+DATA_DIR=
+LOG_DIR=$PWD
+STDOUT_DIR=$PWD
+MODEL_DIR=
+PREV_MODEL_PATH=
+N_GPU=1
+IS_DEBUG=FALSE
+IS_MEMCHECK=FALSE
+EXTRA_ARGS=""
+
+deviceQuery
+script_dir=$(cd $(dirname $0); pwd)
+
+#PHILLY_SCRATCH_DIR
+[ ! -z "$PHILLY_SCRATCH_DIR" ] || PHILLY_SCRATCH_DIR=/tmp/workspace
+#WORKING_DIR=$PHILLY_SCRATCH_DIR/scratch
+WORKING_DIR=/tmp/workspace
+[ -d $WORKING_DIR ] || mkdir -p $WORKING_DIR
+
+# parsing command line arguments:
+while [[ $# > 0 ]]
+do
+key="$1"
+
+case $key in
+    -h|--help)
+    echo "Usage: toolkit-execute [run_options]"
+    echo "Options:"
+    echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
+    echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
+    echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
+    echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  -r|--runtime <path> - number of seconds the script should run (default 1800)"
+    echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    exit 1
+    ;;
+    -c|--configFile)
+			CONFIG_FILE=$(realpath "$2")
+    shift # pass argument
+    ;;
+    -d|--dataDir)
+			DATA_DIR=$(realpath "$2")
+    shift # pass argument
+    ;;
+    --stdoutDir)
+			STDOUT_DIR=$(realpath "$2")
+    shift # pass argument
+    ;;
+    -l|--logDir)
+			LOG_DIR=$(realpath "$2")
+    shift # pass argument
+    ;;
+    -m|--modelDir)
+			MODEL_DIR=$(realpath "$2")
+    shift # pass argument
+    ;;
+    -n|--nGPU)
+			N_GPU="$2"
+    shift # pass argument
+    ;;
+		--prev-model-path)
+			PREV_MODEL_PATH=$(realpath "$2")
+			shift
+		;;
+    --debug)
+    IS_DEBUG=TRUE
+    ;;
+    --memCheck)
+    IS_MEMCHECK=TRUE
+    ;;
+    *)
+    EXTRA_ARGS="$EXTRA_ARGS $1"
+    ;;
+esac
+shift # past argument or value
+done
+
+vc=$(echo $DATA_DIR|sed -n "s/^\/hdfs\/\([^\/]\+\).*$/\1/p")
+
+echo "toolkit-execute: CONFIG_FILE=$CONFIG_FILE"
+echo "toolkit-execute: DATA_DIR=$DATA_DIR"
+echo "toolkit-execute: LOG_DIR=$LOG_DIR"
+echo "toolkit-execute: STDOUT_DIR=$STDOUT_DIR"
+echo "toolkit-execute: N_GPU=$N_GPU"
+echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
+echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
+echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
+echo "PWD: $PWD"
+
+CONFIG_FILE_NAME=${CONFIG_FILE##*/}
+conf_ext=${CONFIG_FILE##*.}
+conf_ext=${conf_ext,,}
+
+export PHILLY_VC=$vc
+export DATA_DIR=$DATA_DIR
+export LOG_DIR=$LOG_DIR
+export MODEL_DIR=$MODEL_DIR
+export CONFIG_FILE=$CONFIG_FILE
+export STDOUT_DIR=$STDOUT_DIR
+export EXTRA_ARGS=$EXTRA_ARGS
+export IS_DEBUG=$IS_DEBUG
+export N_GPU=$N_GPU
+export PREV_MODEL_PATH=$PREV_MODEL_PATH
+
+#cp $CONFIG_FILE $WORKING_DIR/ 
+cd $WORKING_DIR
+if [ $conf_ext == "py" ]; then
+	echo "Execute python script $CONFIG_FILE under $WORKING_DIR"
+	python3 $CONFIG_FILE $EXTRA_ARGS
+elif [ $conf_ext == "sh" ]; then
+	echo "Execute bash script $CONFIG_FILE under $WORKING_DIR"
+	source $CONFIG_FILE $EXTRA_ARGS
+else
+	echo "Execute biglearn config $CONFIG_FILE under $WORKING_DIR"
+	$script_dir/biglearn-execute $EXTRA_ARGS
+fi
