@@ -43,6 +43,9 @@ RUN cd /tmp && curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list
 
 RUN apt-get update && apt-get install -y azcopy
 
+# Philly requirements
+RUN apt-get install -y rsync jq openssh-server openssh-client sudo net-tools
+
 ENV ON_PHILLY_VC=true
 # Labels for the docker
 LABEL description="This docker is built to support .Net environment via mono with sepcifically support for biglearn." \
