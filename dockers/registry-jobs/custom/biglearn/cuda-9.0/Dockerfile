@@ -46,9 +46,10 @@ RUN apt-get update && apt-get install -y azcopy
 # Philly requirements
 RUN apt-get install -y rsync jq openssh-server openssh-client sudo net-tools
 
-ARG	OPENMPI_VERSIONBASE=3.1 
+# Note. there is host name regex checking incompitability of 3.0+ with philly container name. fallback to 2.0 instead
+ARG	OPENMPI_VERSIONBASE=2.0 
 ENV STAGE_DIR=/root/gpu/install \
-		OPENMPI_VERSION=${OPENMPI_VERSIONBASE}.2 \
+		OPENMPI_VERSION=${OPENMPI_VERSIONBASE}.4 \
     OFED_VERSION=4.2-1.2.0.0
 ARG	OPENMPI_STRING=openmpi-${OPENMPI_VERSION} 
 WORKDIR $STAGE_DIR
