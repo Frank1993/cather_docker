@@ -7,6 +7,7 @@ RUN chmod u+x /home/job/toolkit-execute
 
 COPY detectron.zip /
 RUN apt-get update && apt-get install zip unzip
+RUN apt-get update && apt-get install -y --no-install-recommends expect
 RUN unzip -d /detectron /detectron.zip
 
 
