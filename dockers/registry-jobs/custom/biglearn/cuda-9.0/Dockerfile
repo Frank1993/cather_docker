@@ -67,6 +67,20 @@ ENV PATH=/usr/local/mpi/bin:$PATH \
 
 # End Philly
 
+# Python
+RUN apt-get install -y python3 python3-pip
+# make some useful symlinks that are expected to exist
+RUN cd /usr/bin \
+  && ln -s idle3 idle \
+  && ln -s pydoc3 pydoc \
+  && ln -s python3 python \
+  && ln -s python3-config python-config 
+
+RUN python -m pip install --upgrade pip && \
+		python -m pip install pandas sklearn scipy pycparser numpy
+#RUN python -m pip install  pythonnet
+# End python
+
 ENV ON_PHILLY_VC=true
 # Labels for the docker
 LABEL description="This docker is built to support .Net environment via mono with sepcifically support for biglearn." \
