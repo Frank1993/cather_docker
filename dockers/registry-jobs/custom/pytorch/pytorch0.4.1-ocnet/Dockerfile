@@ -39,7 +39,7 @@ ENV PATH /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION torchvision cuda90 pytorch=0.4.1 -c pytorch && \
     /opt/conda/bin/conda clean -ya
 
-RUN pip install tensorboardX opencv-python pillow tqdm h5py scikit-learn
+RUN pip install tensorboardX opencv-python pillow tqdm h5py scikit-learn matplotlib
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
