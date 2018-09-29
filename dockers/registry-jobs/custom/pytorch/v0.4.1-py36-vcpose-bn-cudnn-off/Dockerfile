@@ -1,4 +1,4 @@
-FROM phillyregistry.azurecr.io/philly/jobs/custom/pytorch:v0.4.0-py36-vcpose
+FROM phillyregistry.azurecr.io/philly/jobs/custom/pytorch:v0.4.1-py36-vcpose
 
 # Copy the files to the necessary folder
 COPY toolkit-execute /home/job/toolkit-execute
