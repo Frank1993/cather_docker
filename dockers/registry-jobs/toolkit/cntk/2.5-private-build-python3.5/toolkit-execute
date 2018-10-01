@@ -16,11 +16,16 @@ BUILD_ID=
 BUILD_TYPE=gpu
 BUILD_FLAVOR=release
 
-LOG_DIR=$PWD
-IS_MEMCHECK=FALSE
+CONFIG_FILE=NONE
 EXTRA_ARGS=""
-IS_DEBUG=false
-IS_PERF_TRACE=false
+export NUM_GPU=NONE
+export DATA_DIR=NONE
+export LOG_DIR=$PWD
+export MODEL_DIR=NONE
+export PREV_MODEL_PATH=NONE
+export IS_MEMCHECK=false
+export IS_DEBUG=false
+export IS_PERF_TRACE=false
 
 WORK_DIR=$PHILLY_HOME
 BIN_BASE_DIR=$WORK_DIR/cntkbin
@@ -60,15 +65,19 @@ case $key in
     shift # pass argument
     ;;
     -d|--dataDir)
-    DATA_DIR="$2"
+    export DATA_DIR="$2"
     shift # pass argument
     ;;
     -l|--logDir)
-    LOG_DIR="$2"
+    export LOG_DIR="$2"
     shift # pass argument
     ;;
     -m|--modelDir)
-    MODEL_DIR="$2"
+    export MODEL_DIR="$2"
+    shift # pass argument
+    ;;
+    --prevModelDir)
+    export PREV_MODEL_DIR="$2"
     shift # pass argument
     ;;
     -b|--buildID)
@@ -84,16 +93,16 @@ case $key in
     shift # pass argument
     ;;
     --debug)
-    IS_DEBUG=true
+    export IS_DEBUG=true
     ;;
     --memCheck)
-    IS_MEMCHECK=TRUE
+    export IS_MEMCHECK=TRUE
     ;;
      --perfTrace)
-    IS_PERF_TRACE=true
+    export IS_PERF_TRACE=true
     ;;
     --gdbWrapped)
-    IS_GDB_WRAPPED=true
+    export IS_GDB_WRAPPED=true
     ;;
     --)
     shift # pass argument
@@ -109,6 +118,7 @@ echo "toolkit-execute: CONFIG_FILE=$CONFIG_FILE"
 echo "toolkit-execute: DATA_DIR=$DATA_DIR"
 echo "toolkit-execute: LOG_DIR=$LOG_DIR"
 echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
+echo "toolkit-execute: PREV_MODEL_DIR=$PREV_MODEL_DIR"
 echo "toolkit-execute: BUILD_ID=$BUILD_ID"
 echo "toolkit-execute: BUILD_TYPE=$BUILD_TYPE"
 echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
