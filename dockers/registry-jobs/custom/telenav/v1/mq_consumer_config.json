@@ -1,0 +1,16 @@
+{
+
+  "component": "mq_consumer",
+  "mq_host": "localhost",
+  "mq_port": 5672,
+  "mq_username": "guest",
+  "mq_password": "guest",
+  "mq_input_queue_name": "DETECTED_TRAFFIC_SIGNS",
+  "mq_input_errors_queue_name": "input_queue_name_error",
+  "mq_output_queue_name": "quality_output_queue_name",
+  "max_internal_queue_size": 30,
+  "predict_batch_size": 32,
+  "no_ack": false,
+  "mq_prefetch_count": 30,
+  "elasticsearch_enabled": false
+}
