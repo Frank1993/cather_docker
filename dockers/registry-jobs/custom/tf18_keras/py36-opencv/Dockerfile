@@ -39,7 +39,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip3 install --upgrade pip 
 RUN pip3 install -U setuptools
 
-RUN pip3 install tensorflow-gpu
+RUN pip3 install --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.7.0-cp35-cp35m-linux_x86_64.whl
 
 RUN pip3 install Cython \ 
                 scikit-image \
