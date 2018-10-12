@@ -57,11 +57,12 @@ class MQConsumer(AbstractMQConsumer):
         image_proto = proto_api.read_image_proto(message.body)
         #print(image_proto)
         result = json.dumps(MessageToJson(image_proto))
-        print(result)
+        #print(result)
         self.output.write(result + '\n')
         print(self.counter)
 
         self.counter += 1
+        print('PROGRESS: {:.2f}%'.format(100 * self.counter / self.total_count))
         if self.counter >= self.total_count:
             message = 'All {} images are processed.'.format(str(self.counter))
             print(message)
@@ -98,8 +99,9 @@ def parse_arguments():
     parser.add_argument('--imagesZip',   help='Path to the zip file containg images', required=True, default=None)
     parser.add_argument('--imagesList',  help='Path to the file containing images in zip file', required=True, default=None)
     parser.add_argument('--outputDir',   help='Detection oputput path', required=True, default=None)
-    parser.add_argument('--modelConfig', help='Path to the model config file', required=False, default=None)
+    parser.add_argument('--modelConfig', help='Path to the model config file', required=True, default=None)
     parser.add_argument('--logDir',      help='Log file', required=False, default=None)
+    parser.add_argument('--datadir',     help='Not used', required=False, default=None)
     parser.add_argument('--dataDir',     help='Not used', required=False, default=None)
     parser.add_argument('--count',       help='Count', required=False, default=None)
     args = vars(parser.parse_args())
@@ -126,14 +128,11 @@ def create_messages(args):
 if __name__== '__main__':
     args = parse_arguments()
 
-    mq_rabbit_proc = subprocess.Popen(['rabbitmq-server', 'start'], stdout=subprocess.PIPE, preexec_fn=os.setsid)
-    time.sleep(10)
+    mq_rabbit_proc = subprocess.Popen(['rabbitmq-server', 'start'], preexec_fn=os.setsid)
+    time.sleep(5)
 
-    if args['modelConfig'] != None:
-        object_detection_proc = subprocess.Popen(['sh', './start_object_detection_component.sh', args['modelConfig']], stdout=subprocess.PIPE, preexec_fn=os.setsid)
-    else:
-        object_detection_proc = subprocess.Popen(['sh', './start_object_detection_component.sh'], stdout=subprocess.PIPE, preexec_fn=os.setsid)
-    time.sleep(10)
+    object_detection_proc = subprocess.Popen(['sh', './start_object_detection_component.sh', args['modelConfig']], preexec_fn=os.setsid)
+    time.sleep(5)
 
     img_proto_list = create_messages(args)
     if args['count'] == None:

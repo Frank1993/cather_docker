@@ -59,9 +59,10 @@ class MQConsumer(AbstractMQConsumer):
             print(message)
             raise AllImagesProcessedExcepton(message)
 
-mq_rabbit_proc = subprocess.Popen(['rabbitmq-server', 'start'], stdout=subprocess.PIPE, preexec_fn=os.setsid)
+mq_rabbit_proc = subprocess.Popen(['rabbitmq-server', 'start'], preexec_fn=os.setsid)
 time.sleep(10)
-object_detection_proc = subprocess.Popen(['sh', './start_object_detection_component.sh'], stdout=subprocess.PIPE, preexec_fn=os.setsid)
+
+object_detection_proc = subprocess.Popen(['sh', './start_object_detection_component.sh'], preexec_fn=os.setsid)
 time.sleep(10)
 
 def get_proto_for_path(path):
