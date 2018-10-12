@@ -30,7 +30,11 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
     rm ~/miniconda.sh && \
     /opt/conda/bin/conda install -y python=$PYTHON_VERSION numpy scipy scikit-learn && \
     /opt/conda/bin/conda install -y torchvision cuda90 pytorch=0.4.0 -c pytorch && \
-    /opt/conda/bin/conda clean -ya
+    /opt/conda/bin/conda clean -ya && \
+    echo "export PATH=/opt/conda/bin:$PATH" >> ~/.bashrc && \
+    echo "export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/include:$LD_LIBRARY_PATH" >> ~/.bashrc && \
+    echo "export LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:/opt/OpenBLAS/lib:$LD_LIBRARY_PATH" >> ~/.bashrc && \
+    echo "LC_ALL=C" >> ~/.bashrc
 
 ENV PATH=/opt/conda/bin:$PATH
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/include:$LD_LIBRARY_PATH
