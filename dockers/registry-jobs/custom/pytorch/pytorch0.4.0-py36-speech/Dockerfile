@@ -15,33 +15,31 @@ LABEL description="This docker has pytorch 0.4.0 in python36 with cuda 9.0, and 
 # Add your personalized features below here.
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        software-properties-common \
-        python3-dev \
-        python3-pip \
-        zip \
-        unzip \
+        git \
+        curl \
         vim \
-        octave && \
+        octave \
+        zip \
+        unzip && \
     rm -rf /var/lib/apt/lists/*
 
-ENV PYTHON_VERSION=3.6
+ARG PYTHON_VERSION=3.6
+RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    chmod +x ~/miniconda.sh && \
+    ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    /opt/conda/bin/conda install -y python=$PYTHON_VERSION numpy scipy scikit-learn && \
+    /opt/conda/bin/conda install -y torchvision cuda90 pytorch=0.4.0 -c pytorch && \
+    /opt/conda/bin/conda clean -ya
 
-RUN add-apt-repository ppa:jonathonf/python-3.6 && \
-    apt-get update && apt-get install -y python3.6 && \
-    cd /usr/bin && rm python3 && ln -s python3.6m python3
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        python3.6-dev && \
-    rm -rf /var/lib/apt/lists/*
+ENV PATH=/opt/conda/bin:$PATH
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/include:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:/opt/OpenBLAS/lib:$LD_LIBRARY_PATH
+ENV LC_ALL=C
 
-RUN pip3 install --upgrade pip
-RUN pip3 install setuptools six
-RUN pip3 install numpy scipy scikit-learn cython
-RUN pip3 install pysptk
-RUN pip3 install http://download.pytorch.org/whl/cu90/torch-0.4.0-cp36-cp36m-linux_x86_64.whl
-RUN pip3 install torchvision
-RUN pip3 install tensorboardX
-RUN pip3 install --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-1.8.0-cp36-cp36m-linux_x86_64.whl
-RUN pip3 install librosa soundfile h5py python-dateutil
+RUN pip install --upgrade pip
+RUN pip install setuptools six soundfile h5py python-dateutil pysptk tensorboardX librosa
+RUN pip install --ignore-installed --upgrade https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-1.10.0-cp36-cp36m-linux_x86_64.whl
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
