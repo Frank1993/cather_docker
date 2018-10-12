@@ -14,16 +14,40 @@ LABEL description="This docker has tensorflow 1.8 using python36, with numpy, sc
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
 
-RUN apt-get update
-RUN apt-get -y install software-properties-common libcupti-dev
-RUN apt-get -y install libboost-all-dev libhdf5-serial-dev libzmq3-dev libopencv-dev python-opencv
+ENV CUDA_PATH /usr/local/cuda
+ENV PATH ${ANACONDA}/bin:${CUDA_PATH}/bin:$PATH
+ENV LD_LIBRARY_PATH ${ANACONDA}/lib:${CUDA_PATH}/bin64:$LD_LIBRARY_PATH
+ENV C_INCLUDE_PATH ${CUDA_PATH}/include
 
-RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get update && apt-get install -y --no-install-recommends \
+         wget \
+         vim \
+         libopencv-dev \
+         python-pip \
+         python-opencv \
+         git \
+         libzmq3-dev \
+         libhdf5-serial-dev \
+         libboost-all-dev 
 
-RUN apt-get -y update && \
-    apt-get -y install python3.6
-RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
 
-RUN python3.6 -m pip install --upgrade numpy scipy h5py keras sklearn matplotlib scikit-image Cython pandas zmq opencv-python IPython configobj https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.8.0-cp36-cp36m-linux_x86_64.whl
+RUN apt-get update && apt-get install -y --no-install-recommends \
+         python3-pip \
+         python3-dev \
+         python3-tk
 
-ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
+RUN pip3 install --upgrade pip 
+RUN pip3 install -U setuptools
+
+RUN pip3 install tensorflow-gpu
+
+RUN pip3 install Cython \ 
+                scikit-image \
+                keras==2.1.1 \
+                configobj \
+                IPython \
+                tqdm \
+                pandas \
+                opencv-python \
+                zmq \ 
+                h5py
