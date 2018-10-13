@@ -13,8 +13,8 @@ LABEL description="This docker has pytorch 1.0rc torchvision in anaconda python2
       tooltypeversion="1.0rc" \
       createtime="10/12/2018"
 
-COPY nccl_2.3.5_16.04_cuda8.deb /home/job
-RUN dpkg -i /home/job/nccl_2.3.5_16.04_cuda8.deb
+COPY nccl_2.3.5_16.04_cuda9.deb /home/job
+RUN dpkg -i /home/job/nccl_2.3.5_16.04_cuda9.deb
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
          git \
@@ -35,11 +35,10 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
 ENV PATH /opt/conda/bin:$PATH 
 ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
 
-RUN conda install -y python=2.7 numpy pyyaml scipy ipython mkl scikit-learn matplotlib pandas setuptools Cython h5py graphviz 
+RUN conda install -y python=2.7 numpy pyyaml scipy ipython mkl scikit-learn matplotlib pandas setuptools Cython h5py graphviz  future
 
 RUN conda install mkl-include cmake cffi typing
 RUN conda install -c mingfeima mkldnn
-RUN conda clean -ya
 
 COPY requirements.txt /home/job
 
@@ -48,6 +47,7 @@ RUN /opt/conda/bin/pip install -r /home/job/requirements.txt && \
     conda install -c pytorch pytorch-nightly  && \
     cd ~ && git clone --recursive https://github.com/pytorch/vision.git && cd vision && python setup.py install 
 
+RUN conda clean -ya
 RUN export CUDA_HOME="/usr/local/cuda"
 
 
