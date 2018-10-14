@@ -22,7 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
          libjpeg-dev \
          curl \
          cmake \
-         ninja-build\
+         ninja-build \
+         gcc \
          libpng-dev &&\
          rm -rf /var/lib/apt/lists/*
 
