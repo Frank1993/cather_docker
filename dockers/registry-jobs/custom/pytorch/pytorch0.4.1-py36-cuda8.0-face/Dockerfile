@@ -5,9 +5,9 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has pytorch 0.4.1 in anaconda python36 with cuda 8.0, OpenMPI 3.1.1, cuDNN 7.2.1.38, NCCL 2.3.5-2." \
+LABEL description="This docker has pytorch 0.4.1 in anaconda python36 with cuda 8.0, cuDNN 7.2.1.38, OpenMPI 1.10.3, NCCL 2.3.5-2." \
       repository="philly/jobs/custom/pytorch" \
-      tag="pytorch0.4.1-py36-cuda8.0-openmpi3.1.1-face" \
+      tag="pytorch0.4.1-py36-cuda8.0-openmpi1.10.3-face" \
       creator="v-ximing" tooltype="pytorch" \
       tooltypeversion="0.4.1" \
       createtime="10/16/2018"
@@ -19,31 +19,32 @@ ENV STAGE_DIR=/root/gpu/install \
     CUDNN_DIR=/usr/local/cudnn \
     CUDA_DIR=/usr/local/cuda-8.0 \
     CUDNN_VERSION=${CUDNN_VERSION}+cuda8.0 \
-    OPENMPI_VERSIONBASE=3.1 \
     NCCL_VERSION=2.3.5-2+cuda8.0 \
     NCCL_IB_DISABLE=0 \
     PYTHON_VERSION=3.6 \
     PYTORCH_VERSION=0.4.1 \
-    PATH=/usr/local/mpi/bin:${PATH} \
-    LD_LIBRARY_PATH=/usr/local/lib:/usr/local/mpi/lib:/usr/local/mpi/lib64:${LD_LIBRARY_PATH} \
-    LANG=C.UTF-8
-ENV OPENMPI_VERSION=${OPENMPI_VERSIONBASE}.1
-ENV OPENMPI_STRING=openmpi-${OPENMPI_VERSION}
+    LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH} \
+    LANG=C.UTF-8 \
+    OPENMPI_VERSIONBASE=1.10
+ENV OPENMPI_VERSION=${OPENMPI_VERSIONBASE}.3
+ENV OPENMPI_STRING=openmpi-${OPENMPI_VERSION} \
+    OFED_VERSION=4.2-1.2.0.0
 
 RUN mkdir -p $STAGE_DIR
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa -y && \
-    echo "deb http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list && \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get install -y \
+      apt-utils \
+      software-properties-common \
+      autotools-dev \
+      htop \
+      tree \
+      vim \
       build-essential \
       cmake \
+      g++-5 \
+      gcc-5 \
       git \
-      curl \
-      vim \
-      wget \
       ca-certificates \
       libnccl2=${NCCL_VERSION} \
       libnccl-dev=${NCCL_VERSION} \
@@ -53,66 +54,73 @@ RUN apt-get update && \
       jq \
       openssh-server \
       openssh-client \
-    # No longer in 'minimal set of packages'
+    # No longer in 'minimal set of packages'      
       sudo \
-    # Needed by OpenMPI
-      cmake \
-      g++ \
-      gcc \
     # ifconfig
-      net-tools
+      net-tools \
+      ca-certificates \
+      libjpeg-dev \
+      libpng-dev \
+      ninja-build && \
+    apt-get autoremove && \
+    apt-get autoclean
+
+WORKDIR $STAGE_DIR
+
+# Install Mellanox OFED user-mode drivers and its prereqs
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get install -y --no-install-recommends \
+    # For MLNX OFED
+        dnsutils \
+        pciutils \
+        ethtool \
+        lsof \
+        python-libxml2 \
+        quilt \
+        libltdl-dev \
+        dpatch \
+        autotools-dev \
+        graphviz \
+        autoconf \
+        chrpath \
+        swig \
+        automake \
+        tk8.4 \
+        tcl8.4 \
+        libgfortran3 \
+        tcl \
+        libnl-3-200 \
+        libnl-route-3-200 \
+        libnl-route-3-dev \
+        libnl-utils \
+        gfortran \
+        tk \
+        bison \
+        flex \
+        libnuma1 && \
+    rm -rf /var/lib/apt/lists/* && \
+    wget -q -O - http://www.mellanox.com/downloads/ofed/MLNX_OFED-$OFED_VERSION/MLNX_OFED_LINUX-$OFED_VERSION-ubuntu16.04-x86_64.tgz | tar xzf - && \
+    cd MLNX_OFED_LINUX-$OFED_VERSION-ubuntu16.04-x86_64/DEBS && \
+    for dep in libibverbs1 libibverbs-dev ibverbs-utils libmlx4-1 libmlx5-1 librdmacm1 librdmacm-dev libibumad libibumad-devel libibmad libibmad-devel; do \
+        dpkg -i $dep\_*_amd64.deb; \
+    done && \
+    cd ../.. && \
+    rm -rf MLNX_OFED_LINUX-*
 
 ##################### OPENMPI #####################
-RUN apt-get update && \
-    apt-get install \
-        libc6-dev \
-        libc6 \
-        g++-5 \
-        gcc-5 \
-        libexpat1-dev \
-        libjpeg-dev \
-        libpng-dev \
-        libjpeg-turbo8-dev \
-        libjpeg8-dev \
-        libpng12-0 \
-        libpython3.6-dev \
-        libstdc++-5-dev \
-        zlib1g-dev -y && \
-    ln -s /usr/include/asm-generic/ /usr/include/asm && \
-    mkdir /tmp/openmpi && \
-    cd /tmp/openmpi && \
-    wget https://www.open-mpi.org/software/ompi/v${OPENMPI_VERSIONBASE}/downloads/${OPENMPI_STRING}.tar.gz && \
-    tar zxf ${OPENMPI_STRING}.tar.gz && \
+
+RUN wget -q -O - https://www.open-mpi.org/software/ompi/v${OPENMPI_VERSIONBASE}/downloads/${OPENMPI_STRING}.tar.gz | tar -xzf - && \
     cd ${OPENMPI_STRING} && \
-    ./configure --enable-orterun-prefix-by-default --with-openib --prefix /usr/local/mpi  && \
-    make -j $(nproc) all && \
-    make install && \
-    ldconfig && \
-    rm -rf /tmp/openmpi && \
-    test -f /usr/local/mpi/bin/mpic++     # Sanity check
+    ./configure --prefix=/usr/local/${OPENMPI_STRING} && \
+    make -j"$(nproc)" install && \
+    rm -rf $STAGE_DIR/${OPENMPI_STRING} && \
+    ln -s /usr/local/${OPENMPI_STRING} /usr/local/mpi && \
+    # Sanity check:
+    test -f /usr/local/mpi/bin/mpic++
 
-# Configure NCCL and OpenMPI to run good defaults:
-RUN echo "hwloc_base_binding_policy = none" >> /usr/local/etc/openmpi-mca-params.conf && \
-    echo "rmaps_base_mapping_policy = slot" >> /usr/local/etc/openmpi-mca-params.conf && \
-    echo "btl = self,sm,tcp" >> /usr/local/etc/openmpi-mca-params.conf && \
-    echo "btl_tcp_if_exclude = docker0,lo,ib0,ib1" >> /usr/local/etc/openmpi-mca-params.conf && \
-    echo NCCL_DEBUG=INFO >> /etc/nccl.conf && \
-    echo NCCL_SOCKET_IFNAME=^docker0 >> /etc/nccl.conf
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    git \
-    ca-certificates \
-    libjpeg-dev \
-    curl \
-    cmake \
-    ninja-build \
-    libpng-dev
-
-RUN rm -rf /var/lib/apt/lists/*
-RUN apt-get autoclean
-
-ENV PYTHON_VERSION=3.6
+# Update environment variables
+ENV PATH=/usr/local/mpi/bin:$PATH \
+    LD_LIBRARY_PATH=/usr/local/lib:/usr/local/mpi/lib:/usr/local/mpi/lib64:$LD_LIBRARY_PATH
 
 RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh  && \
      chmod +x ~/miniconda.sh && \
