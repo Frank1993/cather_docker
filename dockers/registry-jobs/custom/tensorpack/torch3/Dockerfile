@@ -27,9 +27,10 @@ RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.
     rm ~/anaconda.sh && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc 
+    echo "conda activate base" >> ~/.bashrc
+	
+RUN sudo chmod -R 777 /opt/conda 
 
-RUN sudo chmod -R 777 /opt/conda
 RUN pip install tensorflow-gpu opencv-python msgpack pycocotools tensorpack \
-    ninja torch imgaug tensorboardX torchvision
+    ninja torch==0.3.1 imgaug tensorboardX torchvision
 
