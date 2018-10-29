@@ -20,10 +20,11 @@ RUN apt-get -y install software-properties-common libcupti-dev
 RUN add-apt-repository ppa:deadsnakes/ppa
 
 RUN apt-get -y update && \
-    apt-get -y install python3.6 python3.6-dev python3.6-tk 
-RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
+    apt-get -y install python3.5 python3.5-dev python3.5-tk 
+RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.5
 
-RUN python3.6 -m pip install --upgrade numpy scipy h5py tensorflow-gpu cython easydict ipython opencv-python setproctitle msgpack msgpack_numpy zmq tqdm matplotlib contextlib2 pillow lxml jupyter
+RUN python3.5 -m pip install --upgrade numpy scipy h5py cython easydict ipython opencv-python setproctitle msgpack msgpack_numpy zmq tqdm matplotlib contextlib2 pillow lxml jupyter
+RUN python3.5 -m pip install --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.11.0-cp35-cp35m-linux_x86_64.whl
 
 ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 ENV PATH=/usr/local/cuda/bin:$PATH
