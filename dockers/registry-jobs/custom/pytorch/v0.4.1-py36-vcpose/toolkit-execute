@@ -109,11 +109,11 @@ CONFIG_EXT="${CONFIGB##*.}"
 CONFIG_NAME="${CONFIGB%.*}"
 
 if [[ ${CONFIG_EXT} == "py" ]] ; then
-    cd ${CONFIG_DIR} && python ${CONFIGB} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS} || exit 1
+    cd ${CONFIG_DIR} && python ${CONFIGB} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} --prevModelDir ${PREV_MODEL_PATH} ${EXTRA_ARGS} || exit 1
 elif [[ ${CONFIG_EXT} == "sh" ]] ; then
-    cd ${CONFIG_DIR} && bash ${CONFIGB} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS} || exit 1
+    cd ${CONFIG_DIR} && bash ${CONFIGB} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} --prevModelDir ${PREV_MODEL_PATH} ${EXTRA_ARGS} || exit 1
 else
-    cmd="${CONFIG_FILE} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS}"
+    cmd="${CONFIG_FILE} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} --prevModelDir ${PREV_MODEL_PATH} ${EXTRA_ARGS}"
     ${cmd} || exit 1
 fi
 
