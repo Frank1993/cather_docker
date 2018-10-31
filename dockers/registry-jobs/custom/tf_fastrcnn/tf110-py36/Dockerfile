@@ -13,6 +13,9 @@ LABEL description="This docker has tensorflow latest using python36, with packag
       createtime="9/14/2018"
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
+ENV CUDNN_DIR=/usr/local/cudnn \
+    CUDNN_VERSION=7.2.1.38-1+cuda9.0 
+
 
 RUN apt-get update
 RUN apt-get -y install software-properties-common libcupti-dev
