@@ -34,27 +34,26 @@ libtiff-dev && \
 rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # Installing Miniconda
-RUN echo 'export PATH=/opt/conda/envs/cntk-py35/bin:$PATH' > /etc/profile.d/conda.sh && \
-wget --quiet https://repo.continuum.io/miniconda/Miniconda3-4.4.10-Linux-x86_64.sh -O ~/anaconda.sh && \
-/bin/bash ~/anaconda.sh -b -p /opt/conda && \
-rm ~/anaconda.sh
+RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-4.4.10-Linux-x86_64.sh -O ~/miniconda.sh && \
+/bin/bash ~/miniconda.sh -b -p /opt/conda && \
+rm ~/miniconda.sh && \
+ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+echo "conda activate" >> ~/.bashrc
+
+# Change to bash
+SHELL ["/bin/bash", "-c"]
 
 ## Error in opencv, updating conda
 RUN /opt/conda/bin/conda update --yes -n base conda
 
-## Adding cntk-py35 to the environment
-
-ENV PATH /opt/conda/envs/cntk-py35/bin:$PATH
+ENV PATH /opt/conda/bin:$PATH
 
 ## Creating the environment
-RUN /opt/conda/bin/conda create -n cntk-py35 --yes python=3.5 pandas h5py jsonschema numpy scipy scikit-learn pillow pytables pyyaml && \
-    pip install easydict azure && \
-    /opt/conda/bin/conda install --yes --name cntk-py35 opencv=3.1 -c conda-forge && \
-    /opt/conda/bin/conda clean --yes --all
-
-ENV LD_LIBRARY_PATH /opt/conda/envs/cntk-py35/lib/:$LD_LIBRARY_PATH
-
-# CNTK configuration
+RUN conda create -n cntk-py35 --yes python=3.5 pandas h5py jsonschema numpy scipy scikit-learn pillow pytables pyyaml && \
+    source activate cntk-py35 && pip install easydict azure && \
+    conda install --yes --name cntk-py35 opencv=3.1 -c conda-forge && \
+    conda clean --yes --all
 
 ## MKL
 RUN mkdir /usr/local/mklml
@@ -73,4 +72,6 @@ rm -rf mkl-dnn-0.12
 ENV LD_LIBRARY_PATH /usr/local/lib:$LD_LIBRARY_PATH
 
 ## CNTK
-RUN pip install cntk-gpu
+RUN source activate cntk-py35 && pip install cntk-gpu
+ENV LD_LIBRARY_PATH=/usr/local/mpi/lib:/opt/conda/envs/cntk-py35/lib/:$LD_LIBRARY_PATH
+ENV PATH=/usr/local/mpi/lib:$PATH
