@@ -1,0 +1,73 @@
+FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
+
+# Copy the files to the necessary folder
+COPY toolkit-execute /home/job/toolkit-execute
+RUN chmod u+x /home/job/toolkit-execute
+
+# Labels for the docker
+LABEL description="This docker mxnet using 1.1.0 mxnet, add sync bn, roi_align and channel shuffle" \
+      repository="philly/jobs/custom/speech-mxnet" \
+      tag="v11-7" \
+      creator="v-kahu" tooltype="mxnet" \
+      tooltypeversion="1.1.0" \
+      createtime="11/7/2018"
+
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    wget \
+    python-dev \
+    python-setuptools \
+    python-pip \
+    python-numpy \
+    libgfortran3 \
+    build-essential \
+    libopenblas-dev \
+    liblapack-dev \
+    libopencv-dev \
+    libyaml-dev \
+    python-tk \
+    zip \
+    unzip \
+    git \
+    vim-gtk \
+    expect && \
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
+RUN pip install --no-cache-dir --upgrade pip==9.0.3 setuptools wheel && \
+    pip install --no-cache-dir \
+    opencv-python \
+    pyyaml \
+    easydict \
+    Cython \
+    Pillow 
+
+RUN pip install numpy matplotlib mock scipy scikit-image shapely Polygon2
+RUN  git clone --recursive --branch  v1.1.0 https://github.com/apache/incubator-mxnet.git  /mxnet
+
+RUN git clone https://github.com/TuSimple/mx-maskrcnn.git /mx-maskrcnn
+RUN cp /mx-maskrcnn/rcnn/CXX_OP/roi_align-inl.h  /mxnet/src/operator/  
+RUN cp /mx-maskrcnn/rcnn/CXX_OP/roi_align.cc  /mxnet/src/operator/ 
+RUN cp /mx-maskrcnn/rcnn/CXX_OP/roi_align.cu  /mxnet/src/operator/ 
+
+RUN  git clone --branch master https://github.com/YueshangGu/incubator-mxnet  /mxnet_kai
+# RUN cp /mxnet_kai/src/operator/contrib/roi_align-inl.h /mxnet/src/operator/contrib/
+# RUN cp /mxnet_kai/src/operator/contrib/roi_align.cc /mxnet/src/operator/contrib/
+# RUN cp /mxnet_kai/src/operator/contrib/roi_align.cu /mxnet/src/operator/contrib/
+RUN cp /mxnet_kai/src/operator/contrib/sync_batch_norm-inl.h /mxnet/src/operator/contrib/
+RUN cp /mxnet_kai/src/operator/contrib/sync_batch_norm.cc /mxnet/src/operator/contrib/
+RUN cp /mxnet_kai/src/operator/contrib/sync_batch_norm.cu /mxnet/src/operator/contrib/
+RUN git clone https://github.com/Tveek/mxnet-shufflenet /mxnet-shufflenet
+RUN cp -r /mxnet-shufflenet/operator/* /mxnet/src/operator/contrib/
+
+RUN cd /mxnet && make -j $(nproc) USE_OPENCV=1 USE_BLAS=openblas USE_CUDA=1 USE_CUDA_PATH=/usr/local/cuda USE_CUDNN=1 && cd python && sudo python setup.py install
+
+ENV MXNET_CUDNN_AUTOTUNE_DEFALUT 0
+ENV MXNET_CUDNN_AUTOTUNE_DEFALUT=0
+
+ENV PATH /usr/local/cuda/bin:${PATH}
+ENV PATH=/usr/local/cuda/bin:${PATH}
+
+ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
+
+ENV LIBRARY_PATH /usr/local/cuda/lib64:${LIBRARY_PATH}
+ENV LIBRARY_PATH=/usr/local/cuda/lib64:${LIBRARY_PATH}
