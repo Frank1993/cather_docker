@@ -5,7 +5,7 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has keras 2.1.5 with tensorflow 1.6 backend using python36, with numpy, scipy, h5py, opencv-python, Pillow, tqdm, and html5lib" \
+LABEL description="This docker has keras 2.1.5 with tensorflow 1.6 backend using python36, with numpy, scipy, h5py, opencv-python, Pillow, tqdm, and matplotlib" \
       repository="philly/jobs/custom/tensorflow" \
       tag="tf16-keras215-py36" \
       creator="v-dacyin" tooltype="tensorflow" \
@@ -23,6 +23,6 @@ RUN apt-get -y update && \
     apt-get -y install python3.6
 RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
 
-RUN python3.6 -m pip install --upgrade numpy scipy h5py Keras==2.1.5 opencv-python Pillow tqdm html5lib https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.6.0-cp36-cp36m-linux_x86_64.whl
+RUN python3.6 -m pip install --upgrade numpy scipy h5py Keras==2.1.5 opencv-python Pillow tqdm matplotlib https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-1.6.0-cp36-cp36m-linux_x86_64.whl
 
 ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
