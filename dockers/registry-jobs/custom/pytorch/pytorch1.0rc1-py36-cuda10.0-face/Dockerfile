@@ -5,12 +5,12 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has pytorch 1.0rc1 in anaconda python36 with cuda 10.0, cuDNN 7.3.1.20, OpenMPI 1.10.3, NCCL 2.3.5-2." \
+LABEL description="This docker has pytorch 1.0rc1 in anaconda python36 with cuda 10.0, cuDNN 7.4.1.5, OpenMPI 1.10.3, NCCL 2.3.7-1." \
       repository="philly/jobs/custom/pytorch" \
       tag="pytorch1.0rc1-py36-cuda10.0-openmpi1.10.3-face" \
       creator="v-ximing" tooltype="pytorch" \
       tooltypeversion="1.0rc1" \
-      createtime="11/04/2018"
+      createtime="11/13/2018"
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
 
@@ -19,7 +19,7 @@ ENV STAGE_DIR=/root/gpu/install \
     CUDNN_DIR=/usr/local/cudnn \
     CUDA_DIR=/usr/local/cuda-10.0 \
     CUDNN_VERSION=${CUDNN_VERSION}+cuda10.0 \
-    NCCL_VERSION=2.3.5-2+cuda10.0 \
+    NCCL_VERSION=2.3.7-1+cuda10.0 \
     NCCL_IB_DISABLE=0 \
     PYTHON_VERSION=3.6 \
     PYTORCH_VERSION=1.0rc1 \
