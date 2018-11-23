@@ -114,7 +114,7 @@ run pip3 install pandas
 run python3 -m spacy download en
 run apt-get install -y vim
 run pip3 install tensorflow-gpu
-
+run pip3 install boto3
 
 
 
