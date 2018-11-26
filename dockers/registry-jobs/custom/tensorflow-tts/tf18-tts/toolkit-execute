@@ -73,5 +73,15 @@ echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
 echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
 echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
 
-echo bash $CONFIG_FILE $EXTRA_ARGS
-bash $CONFIG_FILE $EXTRA_ARGS
+CONFIGB=$(basename "$CONFIG_FILE")
+CONFIG_DIR=$(dirname "$CONFIG_FILE")
+CONFIG_EXT="${CONFIGB##*.}"
+CONFIG_NAME="${CONFIGB%.*}"
+if [[ ${CONFIG_EXT} == "py" ]] ; then
+    python ${CONFIG_FILE} ${EXTRA_ARGS} || exit 1
+elif [[ ${CONFIG_EXT} == "sh" ]] ; then
+    bash ${CONFIG_FILE} ${EXTRA_ARGS} || exit 1
+else
+    cmd="${CONFIG_FILE} ${EXTRA_ARGS}"
+    ${cmd} || exit 1
+fi
