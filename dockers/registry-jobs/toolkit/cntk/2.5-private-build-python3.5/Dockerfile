@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cmake \
     libgtk2.0-dev \
     pkg-config \
+    libjasper-dev \
     libavcodec-dev \
     libavformat-dev \
     libswscale-dev \
