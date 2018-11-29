@@ -1,0 +1,6 @@
+tensorboard_logger
+tqdm
+matplotlib
+numpy
+spacy
+allennlp
