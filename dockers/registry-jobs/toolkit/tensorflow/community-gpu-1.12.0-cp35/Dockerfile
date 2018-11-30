@@ -151,7 +151,7 @@ RUN chmod u+x /home/job/toolkit-execute
 ENV PATH /home/job:$APPRUNNER_DIR/.working/runtime/env/bin:$PATH
 
 # Specify the cudnn version.
-ENV CUDNN_VERSION 7.3.1.20
+ENV CUDNN_VERSION 7.4.1.5
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libcudnn7=$CUDNN_VERSION-1+cuda9.0 \
     libcudnn7-dev=$CUDNN_VERSION-1+cuda9.0 && \
