@@ -15,7 +15,7 @@ LABEL description="This docker has pytorch 0.4.1 and torchtext 0.3.1 in anaconda
 # Add your personalized features below here.
 
 RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION nltk && \
+    /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION configargparse=0.13.0 && \
     /opt/conda/bin/conda clean -ya
 
 RUN pip install torchtext==0.3.1
-RUN pip install ConfigArgParse==0.13.0
