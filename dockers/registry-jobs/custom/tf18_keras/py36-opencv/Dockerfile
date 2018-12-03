@@ -43,7 +43,7 @@ RUN pip3 install --upgrade https://storage.googleapis.com/tensorflow/linux/gpu/t
 
 RUN pip3 install Cython \ 
                 scikit-image \
-                keras==2.1.1 \
+                keras==2.2.4 \
                 configobj \
                 IPython \
                 tqdm \
@@ -51,3 +51,5 @@ RUN pip3 install Cython \
                 opencv-python \
                 zmq \ 
                 h5py
+
+# RUN pip3 install --upgrade keras
