@@ -102,3 +102,6 @@ RUN echo 'ln -s /dev/null /dev/raw1394' >> ~/.bashrc
 RUN mkdir /home/custom
 COPY /toolkit-execute /home/custom/runCust
 RUN chmod u+x /home/custom/runCust
+
+WORKDIR /mnt
+RUN chmod -R a+w /mnt
