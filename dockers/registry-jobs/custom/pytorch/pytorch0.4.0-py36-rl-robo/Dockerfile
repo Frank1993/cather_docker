@@ -98,7 +98,7 @@ RUN mkdir -p /opt/bullet3/build \
     && ldconfig \
     && make clean
 
-
+RUN pip install pandas 
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
