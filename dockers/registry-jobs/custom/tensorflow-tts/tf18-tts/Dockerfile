@@ -25,7 +25,7 @@ RUN apt-get -y install zip
 RUN apt-get -y install libsndfile-dev
 
 RUN python3 -m pip install tensorflow-gpu==1.8.0
-RUN python3 -m pip install torch torchvision tensorboardX soundfile jupyter
+RUN python3 -m pip install --upgrade torch torchvision tensorboardX soundfile jupyter
 RUN python3 -m pip install --upgrade opencv-python h5py six termcolor zmq tabulate
 RUN python3 -m pip install --upgrade falcon==1.2.0 inflect==0.2.5 librosa==0.5.1 matplotlib==2.0.2 numpy==1.14.3 scipy==0.19.0 tqdm==4.11.2 Unidecode==0.4.20
 RUN python3 -m pip install nnmnkwii tensorboard_logger nltk docopt
