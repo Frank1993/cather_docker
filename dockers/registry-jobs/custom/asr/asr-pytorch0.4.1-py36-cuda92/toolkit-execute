@@ -81,6 +81,6 @@ if [ -f "$CODE_DIR/setup.sh" ]; then
 fi
 
 cd $CODE_DIR
-echo "python $CONFIG_FILE -dataPath $DATA_DIR -modelPath $MODEL_DIR -logDir $LOG_DIR $EXTRA_ARGS"
-python $CONFIG_FILE -dataPath $DATA_DIR -modelPath $MODEL_DIR -logDir $LOG_DIR $EXTRA_ARGS
+echo "python $CONFIG_FILE $EXTRA_ARGS --data_dir $DATA_DIR --model_dir $MODEL_DIR --log_dir $LOG_DIR"
+python $CONFIG_FILE $EXTRA_ARGS --data_dir $DATA_DIR --model_dir $MODEL_DIR --log_dir $LOG_DIR
 
