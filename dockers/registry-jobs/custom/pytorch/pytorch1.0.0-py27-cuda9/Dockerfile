@@ -7,9 +7,9 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker pytorch0.4.0 using anaconda python27 with other toolkits" \
+LABEL description="This docker pytorch1.0.0 using anaconda python27 with other toolkits, and with mpi nccl" \
       repository="philly/jobs/custom/pytorch" \
-      tag="pytorch0.4.0-py27-cuda9" \
+      tag="pytorch1.0.0-py27-cuda9" \
       creator="v-jiarui" tooltype="pytorch" \
       tooltypeversion="1.0.0" \
       createtime="15/12/2018"
@@ -18,6 +18,17 @@ LABEL description="This docker pytorch0.4.0 using anaconda python27 with other t
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
+# Install mpi and nccl
+RUN apt-get update && apt-get install -y --no-install-recommends \
+         git \
+         unzip \
+         libnccl2=2.1.15-1+cuda9.0 \
+         libnccl-dev=2.1.15-1+cuda9.0 \
+         ca-certificates \
+         libjpeg-dev \
+         libpng-dev &&\
+         rm -rf /var/lib/apt/lists/*
+         
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
     wget \
