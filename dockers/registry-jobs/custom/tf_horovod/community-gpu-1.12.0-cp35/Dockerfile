@@ -112,6 +112,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
     PATH="/usr/local/hadoop/bin:${PATH}" \
     LD_LIBRARY_PATH="/usr/local/hadoop/lib/native:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server:${LD_LIBRARY_PATH}"
 
+COPY AppRunner /tmp/AppRunner
 COPY build_scripts /root/build_scripts
 RUN cd /root/build_scripts && ./install_hadoop.sh && rm -rf /root/build_scripts
 
@@ -137,10 +138,9 @@ ENV APPRUNNER_DIR=/tmp/apprunner
 ENV APPRUNNER_RUNTIME_BINARY=tensorflow_community_gpu_1.12.0_cp35
 
 WORKDIR $APPRUNNER_DIR
-RUN curl https://cosmos08.osdinfra.net/cosmos/cosmos.upload/shares/bingads.data.clickpredict/data/ClickPrediction/TrainStation/AppRunner/Scripts/start_apprunner.py -o start_apprunner.py && \
-    python3 start_apprunner.py --host-platform Philly --app-type tensorflow --runtime-binary $APPRUNNER_RUNTIME_BINARY --setup-only && \
+RUN cp /tmp/AppRunner/Scripts/start_apprunner.py start_apprunner.py && \
+    python3 start_apprunner.py --apprunner-data-root /tmp/AppRunner --host-platform Philly --app-type tensorflow --runtime-binary $APPRUNNER_RUNTIME_BINARY --setup-only && \
     chmod 777 -R .
-
 
 # Create the home directory for the custom-docker
 RUN mkdir /home/job
@@ -156,9 +156,3 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcudnn7=$CUDNN_VERSION-1+cuda9.0 \
     libcudnn7-dev=$CUDNN_VERSION-1+cuda9.0 && \
     rm -rf /var/lib/apt/lists/*
-
-# Install horovod.
-RUN pip3 show tensorflow-gpu
-RUN ldconfig /usr/local/cuda/lib64/stubs
-RUN HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_NCCL_INCLUDE=/usr/include HOROVOD_NCCL_LIB=/usr/lib/x86_64-linux-gnu pip3 install --no-cache-dir horovod==0.15.1
-RUN ldconfig
