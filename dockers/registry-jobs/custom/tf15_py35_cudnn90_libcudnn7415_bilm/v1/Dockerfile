@@ -36,7 +36,8 @@ matplotlib \
 protobuf \
 tensorflow-gpu==1.5 \
 tensorflow==1.5 \
-tqdm 
+tqdm \
+h5py
 
 ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 ENV PATH=/usr/local/cuda/bin:$PATH
