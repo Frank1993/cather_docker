@@ -36,7 +36,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         vim \
         tmux \
         unzip \
-        htop 
+        htop \
+        zsh
 
 # Set timezone
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
@@ -51,7 +52,7 @@ ENV PATH /opt/conda/bin:$PATH
 RUN pip install --upgrade pip && \
     pip install EasyDict==1.7 \
                 hickle==2.1.0 \
-                opencv-python==3.2.0.6 \
+                opencv-python==3.4.4.19 \
                 tensorboard==1.0.0a6 \
                 shapely==1.6.4 \
                 future \
@@ -65,5 +66,4 @@ RUN pip install --upgrade pip && \
                 gputil \
                 tensorboardX
 
-RUN pip install torchvision_nightly
-RUN pip install torch_nightly -f https://download.pytorch.org/whl/nightly/cu90/torch_nightly.html
+RUN conda install pytorch==1.0.0 torchvision -c pytorch
