@@ -34,10 +34,7 @@ RUN sudo chmod -R 777 /opt/conda && \
         ninja  imgaug tensorboardX  prettytable   && \
     conda install pytorch torchvision -c pytorch
 
-RUN pip install yacs &&\
-    git clone https://github.com/facebookresearch/maskrcnn-benchmark.git &&\
-    cd maskrcnn-benchmark &&\
-    python setup.py build develop
+
     
 
 
