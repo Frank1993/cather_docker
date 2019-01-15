@@ -49,6 +49,16 @@ RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
 
 ENV PATH /opt/conda/bin:$PATH
 
+RUN conda install pytorch==1.0.0 torchvision==0.2.1 -c pytorch
+RUN pip install pytorch-pretrained-bert
+
+RUN pip install numpy pyyaml setuptools cmake cffi tqdm pyyaml scipy ipython mkl mkl-include cython typing h5py pandas nltk spacy numpydoc scikit-learn
+RUN conda install jpeg
+RUN pip install git+git://github.com/pytorch/vision.git@24577864e92b72f7066e1ed16e978e873e19d13d
+RUN cd ~ && git clone https://github.com/Liu-Ze/r2c.git && cd ~/r2c && pip install -r allennlp-requirements.txt
+RUN pip install --no-deps allennlp==0.8.0
+RUN python -m spacy download en_core_web_sm
+
 RUN pip install --upgrade pip && \
     pip install EasyDict==1.7 \
                 hickle==2.1.0 \
@@ -67,17 +77,5 @@ RUN pip install --upgrade pip && \
                 tensorboardX \
                 jsonlines
 
-RUN conda install pytorch==1.0.0 torchvision==0.2.1 -c pytorch
-RUN pip install pytorch-pretrained-bert
-
-RUN pip install numpy pyyaml setuptools cmake cffi tqdm pyyaml scipy ipython mkl mkl-include cython typing h5py pandas nltk spacy numpydoc scikit-learn
-RUN conda install jpeg
-RUN pip install git+git://github.com/pytorch/vision.git@24577864e92b72f7066e1ed16e978e873e19d13d
-
-RUN cd ~ && git clone https://github.com/rowanz/r2c.git  r2c
-RUN cd ~/r2c && pip install -I -r allennlp-requirements.txt && cd ~
-RUN pip install --no-deps allennlp==0.8.0
-# RUN python -m spacy download en_core_web_sm
 RUN pip uninstall -y pillow && CC="cc -mavx2" pip install -U --force-reinstall pillow-simd
-RUN rm -rf ~/r2c
 
