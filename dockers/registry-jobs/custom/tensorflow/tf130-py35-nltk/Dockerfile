@@ -5,7 +5,7 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has tensorflow 1.30 using python3.5, with numpy nltk tqdm pandas scikit-learn scipy ujson" \
+LABEL description="This docker has tensorflow 1.30 using python3.5, with numpy nltk tqdm pandas scikit-learn scipy ujson h5py" \
       repository="philly/jobs/custom/tensorflow" \
       tag="tf130-py35-nltk" \
       creator="v-haizhu" tooltype="tensorflow" \
@@ -34,5 +34,6 @@ RUN python3 -m pip install scikit-learn==0.18.1
 RUN python3 -m pip install scipy==0.19.0
 RUN python3 -m pip install tqdm==4.14.0
 RUN python3 -m pip install ujson==1.35
+RUN python3 -m pip install --upgrade h5py
 
 ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
