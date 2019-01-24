@@ -10,6 +10,7 @@
 set -x
 CONFIG_FILE=NONE
 INPUT_APP_DIR=NONE
+APP_ENTRY=NONE
 DATA_DIR=NONE
 LOG_DIR=$PWD
 MODEL_DIR=NONE
@@ -89,6 +90,10 @@ case $key in
     INPUT_APP_DIR="$2"
     shift # pass argument
     ;;
+    --app-entry)
+    APP_ENTRY="$2"
+    shift # pass argument
+    ;;
     *)
     EXTRA_ARGS="$EXTRA_ARGS $1"
     ;;
@@ -121,7 +126,7 @@ fi
 echo "toolkit-execute: CONFIG_DIR=$CONFIG_DIR"
 
 if [[ ${CONFIG_EXT} == "py" ]] ; then
-    cd ${CONFIG_DIR} && python ${CONFIGB} --gpu ${GPU} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS} || exit 1
+    cd ${INPUT_APP_DIR} && python ${APP_ENTRY} --gpu ${GPU} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS} || exit 1
 else
     cmd="${CONFIG_FILE} --gpu ${GPU} --dataDir ${DATA_DIR} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS}"
     ${cmd} || exit 1
