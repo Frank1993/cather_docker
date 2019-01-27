@@ -1,28 +1,28 @@
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
+FROM nvidia/cuda:9.2-cudnn7-devel-ubuntu16.04
 
 # Copy the files to the necessary folder
 COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has pytorch 1.0rc1 in anaconda python36 with cuda 10.0, cuDNN 7.4.1.5, OpenMPI 1.10.3, NCCL 2.3.7-1." \
+LABEL description="This docker has pytorch 1.0.0 in Anaconda python3.6 with cuda 9.2, cuDNN 7.4.1.5, OpenMPI 1.10.3, NCCL 2.3.7-1." \
       repository="philly/jobs/custom/pytorch" \
-      tag="pytorch1.0rc1-py36-cuda10.0-openmpi1.10.3-face" \
+      tag="pytorch1.0.0-py36-cuda9.2-openmpi1.10.3-face" \
       creator="v-ximing" tooltype="pytorch" \
-      tooltypeversion="1.0rc1" \
-      createtime="11/13/2018"
+      tooltypeversion="1.0.0" \
+      createtime="01/25/2019"
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
 
 # Environment variables
 ENV STAGE_DIR=/root/gpu/install \
     CUDNN_DIR=/usr/local/cudnn \
-    CUDA_DIR=/usr/local/cuda-10.0 \
-    CUDNN_VERSION=${CUDNN_VERSION}+cuda10.0 \
-    NCCL_VERSION=2.3.7-1+cuda10.0 \
+    CUDA_DIR=/usr/local/cuda-9.2 \
+    CUDNN_VERSION=${CUDNN_VERSION}+cuda9.2 \
+    NCCL_VERSION=2.3.7-1+cuda9.2 \
     NCCL_IB_DISABLE=0 \
     PYTHON_VERSION=3.6 \
-    PYTORCH_VERSION=1.0rc1 \
+    PYTORCH_VERSION=1.0.0 \
     LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH} \
     LANG=C.UTF-8 \
     OPENMPI_VERSIONBASE=1.10
@@ -127,20 +127,24 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      ~/miniconda.sh -b -p /opt/conda && \
      rm ~/miniconda.sh && \
      /opt/conda/bin/conda create -y --name pytorch-py${PYTHON_VERSION} python=${PYTHON_VERSION} \
-        numpy pyyaml scipy ipython mkl matplotlib mkl-include setuptools cmake cffi typing && \
-     /opt/conda/bin/conda install --name pytorch-py${PYTHON_VERSION} -c mingfeima mkldnn && \
+        numpy pyyaml scipy ipython mkl matplotlib mkl-include setuptools cmake cffi typing cython && \
      /opt/conda/bin/conda clean -ya
 
 ENV PATH=/opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:${PATH}
 ENV CMAKE_PREFIX_PATH=/opt/conda/envs/pytorch-py${PYTHON_VERSION}
 
-RUN git clone --recursive -b v1.0rc1 --single-branch https://github.com/pytorch/pytorch ~/pytorch
+RUN git clone --recursive -b v1.0.0 --single-branch https://github.com/pytorch/pytorch ~/pytorch
 RUN cd ~/pytorch && python setup.py install
+RUN rm -r ~/pytorch
 
 RUN git clone https://github.com/pytorch/vision.git ~/torchvision
 RUN cd ~/torchvision && python setup.py install
+RUN rm -r ~/torchvision
 
-RUN rm -r ~/pytorch ~/torchvision
+RUN git clone https://github.com/cocodataset/cocoapi.git ~/cocoapi
+RUN cd ~/cocoapi/PythonAPI && make install
+RUN rm -r ~/cocoapi
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
+
