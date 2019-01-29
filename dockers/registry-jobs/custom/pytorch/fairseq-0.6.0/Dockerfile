@@ -1,4 +1,4 @@
-FROM phillyregistry.azurecr.io/philly/jobs/custom/pytorch:pytorch1.0.0-py36-cuda9-mpi-nccl
+FROM phillyregistry.azurecr.io/philly/jobs/custom/pytorch:pytorch1.0.0-py36
 
 # Copy the files to the necessary folder
 COPY toolkit-execute /home/job/toolkit-execute
@@ -15,6 +15,6 @@ LABEL description="This docker has fairseq-0.6.0 with pytorch 1.0 in anaconda py
 # Add your personalized features below here.
 
 RUN wget https://github.com/pytorch/fairseq/archive/v0.6.0.tar.gz && tar -zxvf v0.6.0.tar.gz
-RUN cd fairseq-0.6.0 && pip install -r requirements.txt
+RUN cd /workspace/fairseq-0.6.0 && pip install -r requirements.txt
 ENV LANG C.UTF-8
-RUN cd fairseq-0.6.0 && python setup.py build && python setup.py develop
+RUN cd /workspace/fairseq-0.6.0 && python setup.py build && python setup.py develop
