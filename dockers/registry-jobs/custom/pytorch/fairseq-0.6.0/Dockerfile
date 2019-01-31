@@ -13,7 +13,9 @@ LABEL description="This docker has fairseq-0.6.0 with pytorch 1.0 in anaconda py
       createtime="1/28/2019"
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
-
+RUN apt-get update && apt-get install -y --no-install-recommends \
+         vim  &&\
+         rm -rf /var/lib/apt/lists/*
 RUN wget https://github.com/pytorch/fairseq/archive/v0.6.0.tar.gz && tar -zxvf v0.6.0.tar.gz
 RUN cd /workspace/fairseq-0.6.0 && pip install -r requirements.txt
 ENV LANG C.UTF-8
