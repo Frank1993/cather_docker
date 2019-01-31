@@ -16,7 +16,7 @@ LABEL description="This docker has tensorflow 1.5 using python35" \
 
 RUN apt-get update
 
-RUN apt-get install -y zip unzip vim tmux git 
+RUN apt-get install -y zip unzip git 
 
 RUN apt-get update
 
@@ -30,14 +30,13 @@ RUN apt-get -y update && \
     apt-get -y install python3.5 python3.5-dev python3.5-tk
 RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.5
 
+RUN python3.5 -m pip install --upgrade tensorflow-gpu==1.5 
+
 RUN python3.5 -m pip install --upgrade \
 Markdown \
 matplotlib \
 protobuf \
-tensorflow-gpu==1.5 \
-tensorflow==1.5 \
-tqdm \
-h5py
+tqdm 
 
 ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 ENV PATH=/usr/local/cuda/bin:$PATH
