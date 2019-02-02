@@ -113,7 +113,7 @@ RUN pip install cffi tqdm spacy mpi4py ipdb pandas matplotlib py3nvml && \
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libsndfile-dev && \
     pip install editdistance tensorboard_logger librosa SoundFile && \
-    pip install jupyter && \
+    pip install jupyter psutil && \
     pip install https://github.com/kpu/kenlm/archive/master.zip
 
 # Configure NCCL and OpenMPI to run good defaults:
