@@ -5,7 +5,7 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has tensorflow1.4.0, includes: h5py, bz2file, in anaconda python36 with cuda 8.0, and cudnn 6.0." \
+LABEL description="This docker has tensorflow1.4.0, includes: h5py, bz2file, tqdm, sympy, requests, six in anaconda python36 with cuda 8.0, and cudnn 6.0." \
       lepository="philly/jobs/custom/tensorflow" \
       tag="tf14-py36" \
       creator="v-renluo" tooltype="tensorflow" \
@@ -33,14 +33,10 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      chmod +x ~/miniconda.sh && \
      ~/miniconda.sh -b -p /opt/conda && \
      rm ~/miniconda.sh && \
-     /opt/conda/bin/conda create -y --name tensorflow-py$PYTHON_VERSION python=$PYTHON_VERSION numpy h5py bz2file pyyaml scipy ipython mkl&& \
+     /opt/conda/bin/conda create -y --name tensorflow-py$PYTHON_VERSION python=$PYTHON_VERSION numpy h5py bz2file pyyaml scipy ipython mkl tqdm six requests sympy && \
      /opt/conda/bin/conda clean -ya
 
 ENV PATH /opt/conda/envs/tensorflow-py$PYTHON_VERSION/bin:$PATH
-
-#RUN pip install gym[all] && \
-#    pip install opencv-python && \ 
-RUN pip install tqdm six
 
 RUN pip install tensorflow-gpu==1.4 h5py
 
