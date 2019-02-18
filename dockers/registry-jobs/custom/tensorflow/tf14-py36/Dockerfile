@@ -10,7 +10,7 @@ LABEL description="This docker has tensorflow1.4.0, includes: h5py, bz2file, tqd
       tag="tf14-py36" \
       creator="v-renluo" tooltype="tensorflow" \
       tooltypeversion="1.4.0" \
-      createtime="2/16/2019"
+      createtime="2/18/2019"
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
 
