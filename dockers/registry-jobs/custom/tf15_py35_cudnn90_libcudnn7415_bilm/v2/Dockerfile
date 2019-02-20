@@ -158,3 +158,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install bilm
 RUN cd /home/job/; git clone https://github.com/allenai/bilm-tf; cd bilm-tf; python3.5 setup.py install
+
+# Install torch
+RUN python3.5 -m pip install torch
