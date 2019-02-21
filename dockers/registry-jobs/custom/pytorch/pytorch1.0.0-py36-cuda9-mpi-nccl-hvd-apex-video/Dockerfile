@@ -66,7 +66,7 @@ ENV PATH /opt/conda/bin:$PATH
 # Install general libraries
 RUN conda install -y python=3.6 numpy pyyaml scipy ipython mkl scikit-learn matplotlib pandas setuptools Cython h5py graphviz
 RUN conda clean -ya
-RUN conda install -y mkl-include cmake cffi typing
+RUN conda install -y mkl-include cmake cffi typing cython
 RUN conda install -y -c mingfeima mkldnn
 
 # Install pytorch 
@@ -77,6 +77,9 @@ RUN export CUDA_HOME="/usr/local/cuda"
 
 # Install horovod
 RUN HOROVOD_GPU_ALLREDUCE=NCCL pip install --no-cache-dir horovod
+
+# Install mmdet lib
+RUN pip install mmcv
 
 # Install apex
 WORKDIR $STAGE_DIR
