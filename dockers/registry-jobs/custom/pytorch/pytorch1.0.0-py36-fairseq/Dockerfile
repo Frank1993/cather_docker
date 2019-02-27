@@ -39,7 +39,7 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      rm ~/miniconda.sh && \
      /opt/conda/bin/conda create -y --name pytorch-py$PYTHON_VERSION python=$PYTHON_VERSION numpy pyyaml scipy ipython mkl&& \
      /opt/conda/bin/conda clean -ya
-
+ENV LANG=C.UTF-8 
 ENV PATH /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 
 RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION cuda90 pytorch=1.0.0 torchvision -c pytorch  && \
@@ -103,16 +103,15 @@ RUN pip install pandas
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
 
- 
-RUN wget https://github.com/pytorch/fairseq/archive/v0.6.0.tar.gz && tar -zxvf v0.6.0.tar.gz
-RUN cd /workspace/fairseq-0.6.0 && pip install -r requirements.txt
-ENV LANG C.UTF-8
-RUN cd /workspace/fairseq-0.6.0 && python setup.py build && python setup.py develop
+ENV LANG C.UTF-8 
+RUN wget https://github.com/pytorch/fairseq/archive/v0.6.1.tar.gz && tar -zxvf v0.6.1.tar.gz
+RUN cd /workspace/fairseq-0.6.1 && pip install --editable .
+
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
 ENV LANG C.UTF-8
-WORKDIR /workspace/fairseq-0.6.0
+WORKDIR /workspace/fairseq-0.6.1
 RUN cd  examples/translation/ \
     &&  bash prepare-iwslt14.sh \
     && cd ../.. \
