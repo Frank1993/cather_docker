@@ -29,6 +29,8 @@ RUN apt-get update && apt-get install -y --allow-change-held-packages --no-insta
          rm -rf /var/lib/apt/lists/*
 
 ENV PYTHON_VERSION=3.6
+ENV PATH /usr/local/nvidia/bin:/usr/local/nvidia/lib64:$PATH
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib64:/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
 RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh  && \
      chmod +x ~/miniconda.sh && \
