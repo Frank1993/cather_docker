@@ -34,6 +34,8 @@ RUN sudo chmod -R 777 /opt/conda && \
         ninja  imgaug tensorboardX  prettytable   && \
     conda install pytorch torchvision -c pytorch
 
+RUN pip install torch-encoding
+
 
     
 
