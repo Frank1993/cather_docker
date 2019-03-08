@@ -1,0 +1,1 @@
+Given the invalidated images rois dataset (constructed with quick tag), it invalidates the selected rois in the rois.bin file

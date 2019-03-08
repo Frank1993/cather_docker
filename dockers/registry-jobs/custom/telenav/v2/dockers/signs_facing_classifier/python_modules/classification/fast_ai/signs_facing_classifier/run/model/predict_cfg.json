@@ -1,0 +1,14 @@
+{
+  "imgs_dir": "/data/roi_angle_predictor/full_dataset/matched/crop20square_clean_2/valid",
+  "model_dir": "/data/roi_angle_predictor/full_dataset/matched/predict_fastai",
+  "model_name": "2018_12_17_13_20_final",
+  "label_list_file": "models/2018_12_17_13_20_labels.json",
+  "backbone_model": "resnet50",
+  "batch_size": 256,
+  "image_size": 84,
+  "tfms_max_rotate": 0.0,
+  "tfms_max_warp" : 0,
+  "tfms_flip_vert": false,
+  "tfms_do_flip": false,
+  "tta": false
+}

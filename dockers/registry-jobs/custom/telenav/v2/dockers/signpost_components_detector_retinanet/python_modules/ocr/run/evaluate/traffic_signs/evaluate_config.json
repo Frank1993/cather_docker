@@ -1,0 +1,13 @@
+{
+ "ckpt_path":"/home/docker/apollo/datasets/ocr_traffic_signs/weights/current_weights/model.ckpt-372127", 
+ "dataset_name":"fake_dataset_ts_smaller",
+ "predict_folder": "/home/docker/apollo/datasets/ocr_traffic_signs/test_set/real_signs_from_test",
+ "output_csv_path": "./ocr_predictions.csv",
+ "nr_imgs":-1,
+ "with_evaluate": true,
+ "with_text_correction":true,
+ "text_correction_resources_path":"/home/docker/apollo/datasets/ocr_traffic_signs/fake_dataset_resources/text_correction/valid_sign_texts.csv",
+ "min_component_size":0,
+ "conf_thresh":0.85
+}
+   

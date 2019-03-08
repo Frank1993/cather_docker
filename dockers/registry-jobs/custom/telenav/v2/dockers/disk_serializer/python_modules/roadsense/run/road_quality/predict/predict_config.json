@@ -1,0 +1,6 @@
+{
+    "bundle_path":"/home/docker/apollo/datasets/roadsense/part2/output/model_bumpy_road_our_dataset/",
+    "pred_input_folders":["/home/docker/apollo/datasets/roadsense/part2/saved_data/f=50_s=50_b=0_pn=iphone_s=na_s=OUR_TRIPS_CORRECT_MATCHING/drive_22-11/", "/home/docker/apollo/datasets/roadsense/part2/saved_data/f=50_s=50_b=0_pn=iphone_s=na_s=OUR_TRIPS_CORRECT_MATCHING/drive_26-11/"],
+    "with_evaluate":true,
+    "pred_output_folder":"./detections"
+}

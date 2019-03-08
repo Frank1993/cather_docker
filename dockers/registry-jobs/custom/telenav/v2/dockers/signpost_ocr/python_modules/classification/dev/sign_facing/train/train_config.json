@@ -1,0 +1,15 @@
+{
+    "model_params_path" : "/data/roi_angle_predictor/predictor_dataset/script_test_train_1100_25/processed/classes=3_imgs=25000_size=139_KEEP_ASPECT/params/model_params.json",
+    "validated_params_path":"/data/roi_angle_predictor/predictor_dataset/script_test_test_1100_25/processed/classes=3_imgs=25000_size=139_KEEP_ASPECT/params/model_params.json",
+    "train_progress_csv" : "./training-progress.csv",
+    "ftp_output_path":"/ORBB/data/temp/sign_facing_test_bundle.zip",
+    "model_filters_path":"/data/roi_angle_predictor/predictor_dataset/script_test_train_1100_25/model_img_filters.json",
+    "compute_best_thresholds":true,
+    "nr_epochs": 10,
+    "network_config": {
+        "nr_conv_blocks": 1,
+        "nr_filters": 32,
+        "dense_size": 128,
+        "dropout_level": 0.3
+    }
+}

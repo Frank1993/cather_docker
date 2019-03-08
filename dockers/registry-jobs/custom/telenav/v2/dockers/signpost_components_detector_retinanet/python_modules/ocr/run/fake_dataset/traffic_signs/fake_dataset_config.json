@@ -1,0 +1,9 @@
+{
+ "resources_path":"/home/docker/apollo/datasets/ocr_traffic_signs/fake_dataset_resources",   
+ "img_generator_config_path":"./image_generator_config.json",
+ "save_path": "/home/docker/apollo/datasets/ocr_traffic_signs/fake_generated/few_test/",
+ "width": 125,
+ "height": 125,
+ "nr_texts":200,
+ "max_char_length":60
+}

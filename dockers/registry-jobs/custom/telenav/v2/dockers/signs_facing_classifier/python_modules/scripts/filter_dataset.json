@@ -1,0 +1,16 @@
+{ "IMAGES_FOLDER": "/Users/adrianpopovici/Downloads/QA_US_SIGNS/fake_additional_panels",
+  "IMAGES_OUT_FOLDER": "/Users/adrianpopovici/Downloads/QA_US_SIGNS/filtered_additional_panels/",
+  "NEEDED_CLASSES": ["STOP_ALL_WAY_US",
+                    "STOP_EXCEPT_RIGHT_TURN_US",
+                    "STOP_TO_ONCOMING_TRAFFIC_US",
+                    "SL_US_SCHOOL",
+                    "SL_US_WORKSITE",
+                    "SL_US_CITYWIDE",
+                    "SL_US_NEIGHBORHOOD",
+                    "SL_US_RESIDENTIAL",
+                    "SL_US_UNLESS_OTHERWISE_POSTED",
+                    "SL_US_WHEN_FLASHING",
+                    "SL_US_HOUR_INTERVAL",
+                    "SL_US_MON_FRI",
+                    "SL_US_RADAR_ENFORCED"]
+}

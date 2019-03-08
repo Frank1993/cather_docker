@@ -1,0 +1,26 @@
+{
+  "input_meta_file_path": "/Users/sergiuc/data/last_version/generic_signposts/rois.bin",
+  "images_path": "/Users/sergiuc/data/last_version/generic_signposts/",
+  "preprocessed_rois_path": "/Users/sergiuc/output/",
+  "min_size": 30,
+  "min_nr_rois_inside_class": 50,
+  "replace_class_names": {"ROUTE_SIGN": "ROAD_SIGN_INTERSTATE",
+                    "AUX_DIRECTION_EAST": "GENERIC_TEXT",
+                    "AUX_DIRECTION_WEST": "GENERIC_TEXT",
+                    "AUX_DIRECTION_NORTH": "GENERIC_TEXT",
+                    "AUX_DIRECTION_SOUTH": "GENERIC_TEXT",
+                    "DESTINATION": "GENERIC_TEXT",
+                    "EXIT_SIGN_ONE_LANE_STRAIGHT": "GENERIC_TEXT",
+                    "EXIT_SIGN_EXIT": "GENERIC_TEXT",
+                    "EXIT_SIGN_ONLY": "GENERIC_TEXT",
+                    "EXIT_SIGN_EXIT_ONLY": "GENERIC_TEXT",
+                    "EXIT_SIGN_ONE_LANE_RIGHT": "GENERIC_TEXT",
+                    "EXIT_SIGN_TWO_LANES_RIGHT": "GENERIC_TEXT",
+                    "EXIT_SIGN_TWO_LANES_STRAIGHT": "GENERIC_TEXT",
+                    "EXIT_SIGN_LEFT": "GENERIC_TEXT",
+                    "EXIT_XX_TEXT": "GENERIC_TEXT",
+                    "UNIT_MEASUREMENT": "GENERIC_TEXT",
+                    "EXIT_TEXT": "GENERIC_TEXT",
+                    "UNIT_MEASURMENT": "GENERIC_TEXT"
+  }
+}

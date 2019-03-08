@@ -1,0 +1,19 @@
+{
+  "imgs_dir": "/data/roi_angle_predictor/full_dataset/matched/crop20square_clean_2",
+  "frozen_backbone_model": "2018_12_17_15_20_freeze",
+  "final_model": "2018_12_17_15_20_final",
+  "label_list_file": "/data/roi_angle_predictor/full_dataset/matched/crop20square_clean_2/models/2018_12_17_15_20_labels.json",
+  "epochs": 10,
+  "unfreeze_epochs": 1,
+  "frozen_lr": 0.03,
+  "unfreeze_lr1": 1e-6,
+  "unfreeze_lr2": 1e-4,
+  "pct_start": 0.05,
+  "backbone_model": "resnet50",
+  "batch_size": 256,
+  "image_size": 84,
+  "tfms_max_rotate": 0.0,
+  "tfms_max_warp" : 0,
+  "tfms_flip_vert": false,
+  "tfms_do_flip": false
+}

@@ -1,0 +1,37 @@
+{
+    "base_img_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/raw_imgs/",
+    "classIndex_2_class": {
+        "0": "bad",
+        "1": "good"
+    },
+    "class_2_classIndex": {
+        "bad": 0,
+        "good": 1
+    },
+    "classes": [
+        "bad",
+        "good"
+    ],
+    "conv_layer_name": "mixed6",
+    "img_size": [
+        597,
+        336
+    ],
+    "nr_entries_per_split": 256,
+    "nr_images_per_class": 20000,
+    "params_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/processed/classes=2_imgs=20000_size=336_CONV_REV/params/",
+    "processed_base_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/processed/",
+    "processed_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/processed/classes=2_imgs=20000_size=336_CONV_REV/",
+    "suffix": "CONV_REV",
+    "test_conv_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/processed/classes=2_imgs=20000_size=336_CONV_REV/test/mixed6/",
+    "test_df_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/processed/classes=2_imgs=20000_size=336_CONV_REV/test/df/",
+    "test_img_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/processed/classes=2_imgs=20000_size=336_CONV_REV/test/imgs/",
+    "test_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/processed/classes=2_imgs=20000_size=336_CONV_REV/test/",
+    "train_conv_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/processed/classes=2_imgs=20000_size=336_CONV_REV/train/mixed6/",
+    "train_df_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/processed/classes=2_imgs=20000_size=336_CONV_REV/train/df/",
+    "train_img_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/processed/classes=2_imgs=20000_size=336_CONV_REV/train/imgs/",
+    "train_path": "/home/docker/apollo/datasets/image_quality/osc-images/ma_dataset/processed/classes=2_imgs=20000_size=336_CONV_REV/train/",
+    "train_percentage": 0.8,
+    "with_vp_crop": false,
+    "working_dir": "classes=2_imgs=20000_size=336_CONV_REV/"
+}

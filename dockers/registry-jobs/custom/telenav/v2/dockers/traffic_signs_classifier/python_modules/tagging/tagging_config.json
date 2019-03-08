@@ -1,0 +1,12 @@
+{
+  "input_folder":"/Users/bogdang/Telenav/apollo/quick_tag_datasets/lanes_count/lane-4",
+  "mapping":{
+        "2": "lane_2_filtered",
+        "3": "lane_3_filtered",
+        "4": "lane_4_filtered",
+        "5": "lane_5_filtered",
+        "6": "lane_6_filtered",
+        "k": "kill"
+  }
+
+}

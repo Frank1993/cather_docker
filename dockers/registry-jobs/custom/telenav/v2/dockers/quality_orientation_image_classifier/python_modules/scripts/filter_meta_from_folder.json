@@ -1,0 +1,5 @@
+{
+  "input_meta_file": "/home/adrianm/work/data/traffic_signs_04_2018/trips/rois.bin",
+  "filter_folders": ["/home/adrianm/work/data/traffic_signs_04_2018/trips"],
+  "output_meta_folder": "/home/adrianm/work/data"
+}

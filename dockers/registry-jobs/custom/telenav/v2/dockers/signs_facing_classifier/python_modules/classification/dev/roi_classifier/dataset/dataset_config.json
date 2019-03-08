@@ -1,0 +1,14 @@
+{
+    "base_path" : "/home/docker/apollo/datasets/roi_classifier/osc-images/train_nosignpost_v3_augmdelta_mostclasses/",
+    "img_dim":139,
+    "nr_images_per_class":100,
+    "augment_strategies" : {
+        "flip": true,
+        "rotate_cw": true,
+        "rotate_ccw": true
+    },
+    "suffix":"AUTO",
+    "with_vp_crop": false,
+    "split_train_test_by_seq_id": false,
+    "square_image":true
+}

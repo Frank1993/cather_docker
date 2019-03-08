@@ -1,0 +1,14 @@
+{
+    "train_model_params_path" : "/home/docker/apollo/datasets/roi_classifier_09_2018/osc-images/train_mostclasses_v3/processed/classes=2_imgs=1000_size=139_CONV_REV/params/model_params.json",
+    "train_progress_csv" : "./training-progress.csv",
+    "ftp_output_path":"/ORBB/data/temp/test_bundle.zip",
+    "weights_local_output_path":"./",
+    "nr_epochs": 10,
+    "network_config": {
+        "nr_conv_blocks": 3,
+        "nr_filters": 32,
+        "dropout_level": 0.6
+    },
+    "with_different_test_set": true,
+    "test_model_params_path" : "/home/docker/apollo/datasets/roi_classifier_09_2018/osc-images/train_mostclasses_v3/processed/classes=2_imgs=2000_size=139_CONV_REV/params/model_params.json"
+}

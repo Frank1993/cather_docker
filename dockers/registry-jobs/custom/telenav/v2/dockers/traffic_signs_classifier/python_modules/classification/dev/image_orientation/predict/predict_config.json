@@ -1,0 +1,7 @@
+{
+    "ftp_bundle_path":"/ORBB/data/image_orientation/good_bundle.zip",
+    "input_folder":"/home/docker/apollo/datasets/image_orientation/correct_orientation/orientation_src",
+    "nr_imgs":100,
+    "output_folder":"./output"
+
+}

@@ -1,0 +1,12 @@
+{
+  "input_dir": "/Users/mihaic7/Development/projects/telenav/roi_angle_predictor/mount/traffic_signs_09_2018/train_new",
+  "sample_file": "/Users/mihaic7/Development/projects/telenav/roi_angle_predictor/mount/roi_angle_predictor/new_samples/roi_sample0.csv",
+  "progress_file": "/Users/mihaic7/Development/projects/telenav/roi_angle_predictor/mount/roi_angle_predictor/new_samples/progress_sample0.txt",
+  "output_dir": "/Users/mihaic7/Development/projects/telenav/roi_angle_predictor/mount/roi_angle_predictor/new_samples/sample0",
+  "mapping":{
+        "w": "front",
+        "a": "left",
+        "d": "right",
+        "s": "drop"
+  }
+}

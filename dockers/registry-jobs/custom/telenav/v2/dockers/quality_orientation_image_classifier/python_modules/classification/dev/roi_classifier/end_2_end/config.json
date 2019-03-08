@@ -1,0 +1,14 @@
+{
+    "train_preds_file": "/home/docker/apollo/datasets/roi_classifier_09_2018/flaviu_preds/rois_flaviu_train_v2.bin",
+    "train_gt_folder": "/data_4gpu/traffic_signs_09_2018/train_new",
+    "test_preds_file": "/home/docker/apollo/datasets/roi_classifier_09_2018/flaviu_preds/rois_flaviu_test_v2.bin",
+    "test_gt_folder": "/data_4gpu/traffic_signs_09_2018/test",
+    "output_path": "/home/docker/apollo/datasets/roi_classifier_09_2018/end_2_end_workspace_2",
+    "ftp_output_path": "/ORBB/data/temp/test_bundle.zip",
+    "classif_img_dim":139,
+    "nr_epochs":20,
+    "min_size": 25,
+    "iou_threshold": 0.25,
+    "dataset_classes_file":"/home/docker/apollo/datasets/roi_classifier_09_2018/retinanet_preds/most_classes.json",
+    "evaluate_classes_file": "/home/docker/apollo/datasets/roi_classifier_09_2018/retinanet_preds/selected_classes.json"
+}

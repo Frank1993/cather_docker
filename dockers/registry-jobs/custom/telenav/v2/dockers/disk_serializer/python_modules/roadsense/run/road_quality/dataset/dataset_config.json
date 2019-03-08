@@ -1,0 +1,17 @@
+{"dataset_base_path": "/home/docker/apollo/datasets/roadsense/part2/saved_data",
+ "features_cols": ["yaw", "pitch", "roll", "GPSs", "accX", "accY", "accZ", "gX", "gY", "gZ"],
+ "specific_hazards": ["bumpy_road_start","bumpy_road_end","unpaved_road","clear"],
+ "blacklist_trips": [],
+ "frequency": 50,
+ "steps": 50,
+ "hazard_buffer": 0,
+ "derived_window_size": 80,
+ "scaler": "na",
+ "crop_start":false,
+ "add_match_data":true,
+ "with_custom_way_sections":true,
+ "drive_folders": ["/home/docker/apollo/datasets/roadsense/part2/drives/drive_21-11",
+                   "/home/docker/apollo/datasets/roadsense/part2/drives/drive_22-11"
+                  ],
+ "phone_name": "iphone",
+ "suffix": "TEST"}

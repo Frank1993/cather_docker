@@ -1,0 +1,7 @@
+{
+    "ftp_bundle_path":"/ORBB/data/roi_classifier/good_bundle.zip",
+    "input_folder":"/home/docker/apollo/datasets/roi_classifier/images/bad/",
+    "nr_imgs":100,
+    "output_folder":"./output"
+
+}

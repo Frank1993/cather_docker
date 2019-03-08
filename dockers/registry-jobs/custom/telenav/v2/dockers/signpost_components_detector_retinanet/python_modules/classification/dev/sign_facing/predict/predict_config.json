@@ -1,0 +1,7 @@
+{
+    "ftp_bundle_path":"/ORBB/data/temp/sign_facing_test_bundle.zip",
+    "input_folder":"/data/roi_angle_predictor/predictor_dataset/script_test_test_1100_25/raw_imgs/left",
+    "nr_imgs":100,
+    "output_folder":"/data/roi_angle_predictor/predictor_dataset/script_test_test_1100_25",
+    "apply_best_thresholds":true
+}

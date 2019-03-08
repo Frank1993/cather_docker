@@ -1,0 +1,13 @@
+{
+    "model_params_path" : "/home/docker/apollo/datasets/image_quality/osc-images/bg_dataset/processed/classes=2_imgs=100_size=336_AUTO/params/model_params.json",
+    "train_progress_csv" : "./training-progress.csv",
+    "ftp_output_path":"/ORBB/data/temp/test_bundle.zip",
+    "nr_epochs": 3,
+    "network_config": {
+        "nr_conv_blocks": 3,
+        "nr_filters": 32,
+        "dense_size": 128,
+        "dropout_level": 0.3
+    }
+    
+}

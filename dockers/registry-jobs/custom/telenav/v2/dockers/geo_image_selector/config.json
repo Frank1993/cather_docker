@@ -1,0 +1,17 @@
+{
+  "component": "geo_image_selector",
+  "algorithm_version": "1.0.5",
+  "regions_to_process": ["US"],
+  "regions_to_process_with_us_model": ["CA","DE","GB","NZ","FR","NL","AU","RO","SK","CH","AT","ES","RU","IT","BE","PT","SI"],
+  "mq_host": "localhost",
+  "mq_port": 5672,
+  "mq_username": "guest",
+  "mq_password": "guest",
+  "mq_input_queue_name": "GOOD_IMAGES",
+  "mq_input_errors_queue_name": "GOOD_IMAGES_ERROR",
+  "mq_output_queue_name": "PROCESSED_IMAGES",
+  "no_ack": false,
+  "mq_prefetch_count": 30,
+  "elasticsearch_host": "localhost",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline"
+}

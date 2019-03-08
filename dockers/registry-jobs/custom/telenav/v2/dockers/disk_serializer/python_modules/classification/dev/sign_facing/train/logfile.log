@@ -1,0 +1,265 @@
+2018-09-14 14:52:19 - __main__ - ERROR - Failed to create session.
+Traceback (most recent call last):
+  File "../../../../classification/run/network_trainer.py", line 125, in <module>
+    NetworkTrainer(train_config).train_network()
+  File "../../../../classification/run/network_trainer.py", line 109, in train_network
+    model = self.__build_model()
+  File "../../../../classification/run/network_trainer.py", line 50, in __build_model
+    self.params.img_size).output_shape[1:]
+  File "/home/mihaic/dev/imagerecognition/python_modules/classification/scripts/network.py", line 26, in get_conv_model
+    model = InceptionV3(include_top=False, input_shape=(size[1], size[0]) + (3,), weights='imagenet')
+  File "/opt/miniconda/lib/python3.6/site-packages/keras_applications/inception_v3.py", line 167, in InceptionV3
+    x = conv2d_bn(img_input, 32, 3, 3, strides=(2, 2), padding='valid')
+  File "/opt/miniconda/lib/python3.6/site-packages/keras_applications/inception_v3.py", line 81, in conv2d_bn
+    x = layers.BatchNormalization(axis=bn_axis, scale=False, name=bn_name)(x)
+  File "/opt/miniconda/lib/python3.6/site-packages/keras/engine/base_layer.py", line 457, in __call__
+    output = self.call(inputs, **kwargs)
+  File "/opt/miniconda/lib/python3.6/site-packages/keras/layers/normalization.py", line 183, in call
+    epsilon=self.epsilon)
+  File "/opt/miniconda/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py", line 1836, in normalize_batch_in_training
+    if not _has_nchw_support() and list(reduction_axes) == [0, 2, 3]:
+  File "/opt/miniconda/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py", line 290, in _has_nchw_support
+    gpus_available = len(_get_available_gpus()) > 0
+  File "/opt/miniconda/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py", line 276, in _get_available_gpus
+    _LOCAL_DEVICES = get_session().list_devices()
+  File "/opt/miniconda/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py", line 184, in get_session
+    _SESSION = tf.Session(config=config)
+  File "/opt/miniconda/lib/python3.6/site-packages/tensorflow/python/client/session.py", line 1560, in __init__
+    super(Session, self).__init__(target, graph, config=config)
+  File "/opt/miniconda/lib/python3.6/site-packages/tensorflow/python/client/session.py", line 633, in __init__
+    self._session = tf_session.TF_NewSession(self._graph._c_graph, opts)
+tensorflow.python.framework.errors_impl.InternalError: Failed to create session.
+2018-09-14 14:53:02 - __main__ - INFO - Train Batches = 19
+2018-09-14 14:53:02 - __main__ - INFO - Test Batches = 8
+2018-09-14 14:53:02 - __main__ - INFO - Training model...
+2018-09-14 14:53:27 - __main__ - INFO - Loading best weights...
+2018-09-14 14:53:28 - __main__ - INFO - Saving to FTP...
+2018-09-17 10:11:19 - __main__ - ERROR - 'validated_params_path'
+Traceback (most recent call last):
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 152, in <module>
+    SignFacingNetworkTrainer(train_config).train_network()
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 27, in __init__
+    self.model_params, self.validated_params = self._load_params()
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 31, in _load_params
+    validated_params = utils.json_load_classif_params(self.train_config[self.VALIDATED_PARAMS_PATH])
+KeyError: 'validated_params_path'
+2018-09-17 10:17:42 - __main__ - INFO - Computing best thresholds: True
+2018-09-17 10:17:42 - classification.scripts.network - INFO - Predicting...
+2018-09-17 10:17:44 - __main__ - ERROR - ('conf_front', 'occurred at index 305156_3deb8_591cfe45e1722_781_53_860_156_TURN_RESTRICTION_NO_TURNS_SUSPENDED_US.jpg')
+Traceback (most recent call last):
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 2566, in get_value
+    return libts.get_value_box(s, key)
+  File "pandas/_libs/tslib.pyx", line 1017, in pandas._libs.tslib.get_value_box
+  File "pandas/_libs/tslib.pyx", line 1025, in pandas._libs.tslib.get_value_box
+TypeError: 'str' object cannot be interpreted as an integer
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 152, in <module>
+    SignFacingNetworkTrainer(train_config).train_network()
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 131, in train_network
+    self._compute_best_thresholds(model)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 109, in _compute_best_thresholds
+    thresholds_df = postprocess.compute_best_thresholds(pred_df)
+  File "/home/mihaic/dev/imagerecognition/python_modules/classification/scripts/signs_facing_classifier/postprocess.py", line 79, in compute_best_thresholds
+    thresh_pred_df = apply_thresholds(pred_df, lt, rt)
+  File "/home/mihaic/dev/imagerecognition/python_modules/classification/scripts/signs_facing_classifier/postprocess.py", line 65, in apply_thresholds
+    pred_df.loc[:, PredDfColumn.PRED_CLASS_COL] = pred_df.apply(lambda r: get_class_for_thresh(r, lt, rt), axis=1)
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/frame.py", line 4877, in apply
+    ignore_failures=ignore_failures)
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/frame.py", line 4973, in _apply_standard
+    results[i] = func(v)
+  File "/home/mihaic/dev/imagerecognition/python_modules/classification/scripts/signs_facing_classifier/postprocess.py", line 65, in <lambda>
+    pred_df.loc[:, PredDfColumn.PRED_CLASS_COL] = pred_df.apply(lambda r: get_class_for_thresh(r, lt, rt), axis=1)
+  File "/home/mihaic/dev/imagerecognition/python_modules/classification/scripts/signs_facing_classifier/postprocess.py", line 48, in get_class_for_thresh
+    front_conf = r[PredDfColumn.CONF_FRONT_COL]
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/series.py", line 623, in __getitem__
+    result = self.index.get_value(self, key)
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 2574, in get_value
+    raise e1
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/indexes/base.py", line 2560, in get_value
+    tz=getattr(series.dtype, 'tz', None))
+  File "pandas/_libs/index.pyx", line 83, in pandas._libs.index.IndexEngine.get_value
+  File "pandas/_libs/index.pyx", line 91, in pandas._libs.index.IndexEngine.get_value
+  File "pandas/_libs/index.pyx", line 139, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 1265, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 1273, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: ('conf_front', 'occurred at index 305156_3deb8_591cfe45e1722_781_53_860_156_TURN_RESTRICTION_NO_TURNS_SUSPENDED_US.jpg')
+2018-09-17 10:31:56 - __main__ - INFO - Computing best thresholds: True
+2018-09-17 10:31:56 - classification.scripts.network - INFO - Predicting...
+2018-09-17 10:36:38 - __main__ - ERROR - Object of type 'int64' is not JSON serializable
+Traceback (most recent call last):
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 153, in <module>
+    SignFacingNetworkTrainer(train_config).train_network()
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 132, in train_network
+    self._compute_best_thresholds(model)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 111, in _compute_best_thresholds
+    self._save_best_thresholds(thresholds_df)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 103, in _save_best_thresholds
+    io_utils.json_dump(best_thresholds, self.THRESHOLDS_PATH)
+  File "/home/mihaic/dev/imagerecognition/python_modules/apollo_python_common/io_utils.py", line 59, in json_dump
+    json.dump(obj, outfile, sort_keys=True, indent=4, ensure_ascii=False)
+  File "/opt/miniconda/lib/python3.6/json/__init__.py", line 179, in dump
+    for chunk in iterable:
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 430, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 404, in _iterencode_dict
+    yield from chunks
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 437, in _iterencode
+    o = _default(o)
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 180, in default
+    o.__class__.__name__)
+TypeError: Object of type 'int64' is not JSON serializable
+2018-09-17 10:47:27 - __main__ - INFO - Computing best thresholds: True
+2018-09-17 10:47:27 - classification.scripts.network - INFO - Predicting...
+2018-09-17 10:52:23 - __main__ - ERROR - 0
+Traceback (most recent call last):
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 154, in <module>
+    SignFacingNetworkTrainer(train_config).train_network()
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 133, in train_network
+    self._compute_best_thresholds(model)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 112, in _compute_best_thresholds
+    self._save_best_thresholds(thresholds_df)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 97, in _save_best_thresholds
+    lt = thresholds_df.at[0, sf_constants.THRESHOLD_NAME_LEFT]
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/indexing.py", line 1869, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/frame.py", line 1985, in _get_value
+    return engine.get_value(series._values, index)
+  File "pandas/_libs/index.pyx", line 83, in pandas._libs.index.IndexEngine.get_value
+  File "pandas/_libs/index.pyx", line 91, in pandas._libs.index.IndexEngine.get_value
+  File "pandas/_libs/index.pyx", line 139, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 811, in pandas._libs.hashtable.Int64HashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 817, in pandas._libs.hashtable.Int64HashTable.get_item
+KeyError: 0
+2018-09-17 10:57:48 - __main__ - INFO - Computing best thresholds: True
+2018-09-17 10:57:48 - classification.scripts.network - INFO - Predicting...
+2018-09-17 11:02:37 - __main__ - ERROR - 0
+Traceback (most recent call last):
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 154, in <module>
+    SignFacingNetworkTrainer(train_config).train_network()
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 133, in train_network
+    self._compute_best_thresholds(model)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 112, in _compute_best_thresholds
+    self._save_best_thresholds(thresholds_df)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 97, in _save_best_thresholds
+    lt = thresholds_df.at[0, sf_constants.THRESHOLD_NAME_LEFT]
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/indexing.py", line 1869, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/frame.py", line 1985, in _get_value
+    return engine.get_value(series._values, index)
+  File "pandas/_libs/index.pyx", line 83, in pandas._libs.index.IndexEngine.get_value
+  File "pandas/_libs/index.pyx", line 91, in pandas._libs.index.IndexEngine.get_value
+  File "pandas/_libs/index.pyx", line 139, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 811, in pandas._libs.hashtable.Int64HashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 817, in pandas._libs.hashtable.Int64HashTable.get_item
+KeyError: 0
+2018-09-17 11:39:56 - __main__ - INFO - Computing best thresholds: True
+2018-09-17 11:39:56 - classification.scripts.network - INFO - Predicting...
+2018-09-17 11:47:02 - __main__ - ERROR - 0
+Traceback (most recent call last):
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 154, in <module>
+    SignFacingNetworkTrainer(train_config).train_network()
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 133, in train_network
+    self._compute_best_thresholds(model)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 112, in _compute_best_thresholds
+    self._save_best_thresholds(thresholds_df)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 97, in _save_best_thresholds
+    lt = thresholds_df.at[0, sf_constants.THRESHOLD_NAME_LEFT]
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/indexing.py", line 1869, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/frame.py", line 1985, in _get_value
+    return engine.get_value(series._values, index)
+  File "pandas/_libs/index.pyx", line 83, in pandas._libs.index.IndexEngine.get_value
+  File "pandas/_libs/index.pyx", line 91, in pandas._libs.index.IndexEngine.get_value
+  File "pandas/_libs/index.pyx", line 139, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 811, in pandas._libs.hashtable.Int64HashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 817, in pandas._libs.hashtable.Int64HashTable.get_item
+KeyError: 0
+2018-09-17 11:55:07 - __main__ - INFO - Computing best thresholds: True
+2018-09-17 11:55:07 - classification.scripts.network - INFO - Predicting...
+2018-09-17 12:00:38 - __main__ - INFO - lt: 0.1, rt: 0.1, score: 71 - best thresholds: {'lt': 0.1, 'rt': 0.1, 'score': 71}
+2018-09-17 12:00:38 - __main__ - ERROR - Object of type 'int64' is not JSON serializable
+Traceback (most recent call last):
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 155, in <module>
+    SignFacingNetworkTrainer(train_config).train_network()
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 134, in train_network
+    self._compute_best_thresholds(model)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 113, in _compute_best_thresholds
+    self._save_best_thresholds(thresholds_df)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 105, in _save_best_thresholds
+    io_utils.json_dump(best_thresholds, self.THRESHOLDS_PATH)
+  File "/home/mihaic/dev/imagerecognition/python_modules/apollo_python_common/io_utils.py", line 59, in json_dump
+    json.dump(obj, outfile, sort_keys=True, indent=4, ensure_ascii=False)
+  File "/opt/miniconda/lib/python3.6/json/__init__.py", line 179, in dump
+    for chunk in iterable:
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 430, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 404, in _iterencode_dict
+    yield from chunks
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 437, in _iterencode
+    o = _default(o)
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 180, in default
+    o.__class__.__name__)
+TypeError: Object of type 'int64' is not JSON serializable
+2018-09-17 12:07:29 - __main__ - INFO - Computing best thresholds: True
+2018-09-17 12:07:29 - classification.scripts.network - INFO - Predicting...
+2018-09-17 12:12:29 - __main__ - ERROR - 0
+Traceback (most recent call last):
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 155, in <module>
+    SignFacingNetworkTrainer(train_config).train_network()
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 134, in train_network
+    self._compute_best_thresholds(model)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 113, in _compute_best_thresholds
+    self._save_best_thresholds(thresholds_df)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 98, in _save_best_thresholds
+    lt = thresholds_df.at[0, sf_constants.THRESHOLD_NAME_LEFT]
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/indexing.py", line 1869, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+  File "/opt/miniconda/lib/python3.6/site-packages/pandas/core/frame.py", line 1985, in _get_value
+    return engine.get_value(series._values, index)
+  File "pandas/_libs/index.pyx", line 83, in pandas._libs.index.IndexEngine.get_value
+  File "pandas/_libs/index.pyx", line 91, in pandas._libs.index.IndexEngine.get_value
+  File "pandas/_libs/index.pyx", line 139, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 811, in pandas._libs.hashtable.Int64HashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 817, in pandas._libs.hashtable.Int64HashTable.get_item
+KeyError: 0
+2018-09-17 12:20:45 - __main__ - INFO - Computing best thresholds: True
+2018-09-17 12:20:45 - classification.scripts.network - INFO - Predicting...
+2018-09-17 12:26:10 - __main__ - INFO - lt: 0.45999999999999985, rt: 0.1, score: 50 - best thresholds: {'lt': 0.45999999999999985, 'rt': 0.1, 'score': 50}
+2018-09-17 12:26:10 - __main__ - ERROR - Object of type 'int64' is not JSON serializable
+Traceback (most recent call last):
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 156, in <module>
+    SignFacingNetworkTrainer(train_config).train_network()
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 135, in train_network
+    self._compute_best_thresholds(model)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 114, in _compute_best_thresholds
+    self._save_best_thresholds(thresholds_df)
+  File "../../../../classification/run/signs_facing_classifier/sf_network_trainer.py", line 106, in _save_best_thresholds
+    io_utils.json_dump(best_thresholds, self.THRESHOLDS_PATH)
+  File "/home/mihaic/dev/imagerecognition/python_modules/apollo_python_common/io_utils.py", line 59, in json_dump
+    json.dump(obj, outfile, sort_keys=True, indent=4, ensure_ascii=False)
+  File "/opt/miniconda/lib/python3.6/json/__init__.py", line 179, in dump
+    for chunk in iterable:
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 430, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 404, in _iterencode_dict
+    yield from chunks
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 437, in _iterencode
+    o = _default(o)
+  File "/opt/miniconda/lib/python3.6/json/encoder.py", line 180, in default
+    o.__class__.__name__)
+TypeError: Object of type 'int64' is not JSON serializable
+2018-09-17 13:51:52 - __main__ - INFO - Computing best thresholds: True
+2018-09-17 13:51:52 - classification.scripts.network - INFO - Predicting...
+2018-09-17 13:57:22 - __main__ - INFO - lt: 0.4299999999999998, rt: 0.1, score: 64 - best thresholds: {'lt': 0.4299999999999998, 'rt': 0.1, 'score': 64}
+2018-09-17 13:57:22 - __main__ - INFO - Saving model data ./ftp_bundle to FTP /ORBB/data/temp/sign_facing_test_bundle.zip...
+2018-09-17 14:09:34 - __main__ - INFO - Computing best thresholds: True
+2018-09-17 14:09:34 - classification.scripts.network - INFO - Predicting...
+2018-09-17 14:15:14 - __main__ - INFO - lt: 0.1, rt: 0.1, score: 67 - best thresholds: {'lt': 0.1, 'rt': 0.1, 'score': 67}
+2018-09-17 14:15:14 - __main__ - INFO - Saving model data ./ftp_bundle to FTP /ORBB/data/temp/sign_facing_test_bundle.zip...
+2018-09-17 14:38:00 - __main__ - INFO - Computing best thresholds: True
+2018-09-17 14:38:00 - classification.scripts.network - INFO - Predicting...
+2018-09-17 14:43:28 - __main__ - INFO - lt: 0.5299999999999998, rt: 0.1, score: 63 - best thresholds: {'lt': 0.5299999999999998, 'rt': 0.1, 'score': 63}
+2018-09-17 14:43:28 - __main__ - INFO - Saving model data ./ftp_bundle to FTP /ORBB/data/temp/sign_facing_test_bundle.zip...

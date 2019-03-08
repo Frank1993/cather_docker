@@ -1,0 +1,15 @@
+2018-12-19 10:21:03 - __main__ - INFO - labels: ['front', 'left', 'right']
+2018-12-19 10:21:14 - __main__ - INFO - size of set to predict: 15913
+2018-12-19 10:24:19 - __main__ - INFO - computing best left and right confidence thresholds: False
+2018-12-19 10:24:19 - __main__ - INFO - applying best left and right confidence thresholds: True
+2018-12-19 10:24:19 - __main__ - INFO - model score with thresholds: 611)
+2018-12-19 10:24:19 - __main__ - INFO - model score: 612)
+2018-12-19 10:25:49 - __main__ - INFO - labels: ['front', 'left', 'right']
+2018-12-19 10:25:57 - __main__ - INFO - size of set to predict: 15913
+2018-12-19 10:27:19 - __main__ - INFO - labels: ['front', 'left', 'right']
+2018-12-19 10:27:26 - __main__ - INFO - size of set to predict: 15913
+2018-12-19 10:30:51 - __main__ - INFO - computing best left and right confidence thresholds: True
+2018-12-19 11:26:58 - __main__ - INFO - best thresholds - score: 622 - ft: 0.36 - lt: 0.66 - rt: 0.56
+2018-12-19 11:26:58 - __main__ - INFO - applying best left and right confidence thresholds: True
+2018-12-19 11:26:58 - __main__ - INFO - model score with thresholds: 622)
+2018-12-19 11:26:58 - __main__ - INFO - model score: 612)

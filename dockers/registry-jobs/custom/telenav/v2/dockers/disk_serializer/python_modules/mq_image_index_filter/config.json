@@ -1,0 +1,15 @@
+{
+  "component": "image_index_filter",
+  "algorithm_version": "1.0.1",
+  "mq_host": "10.230.2.117",
+  "mq_port": 5672,
+  "mq_username": "adi",
+  "mq_password": "adi",
+  "mq_input_queue_name": "II_INPUT",
+  "mq_input_errors_queue_name": "II_INPUT_ERROR",
+  "mq_output_queue_name": "II_OUTPUT",
+  "elasticsearch_host": "10.230.2.26",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline",
+  "filter_config_path":"filter_config.json",
+  "no_ack": false
+}

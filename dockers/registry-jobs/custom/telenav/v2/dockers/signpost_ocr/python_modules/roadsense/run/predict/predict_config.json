@@ -1,0 +1,8 @@
+{
+    "bundle_path":"/home/docker/apollo/datasets/roadsense/output/test_output/",
+    "pred_input_folder":"/home/docker/apollo/datasets/roadsense/saved_data/f=100_s=30_b=0_pn=iphone_s=na_s=TEST/drive_20-07/",
+    "single_trip_filter":"",
+    "with_meta_aggregation":true,
+    "with_meta_min_trips_filtering":true,
+    "pred_output_folder":"./detections"
+}

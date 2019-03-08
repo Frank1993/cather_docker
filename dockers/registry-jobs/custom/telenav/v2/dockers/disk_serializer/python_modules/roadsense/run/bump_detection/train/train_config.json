@@ -1,0 +1,10 @@
+{
+            "dataset_config_path":"/home/docker/apollo/datasets/roadsense/part1/saved_data/f=100_s=30_b=0_pn=iphone_s=na_s=ALL_PROJ_POTHOLE/config/config.json",
+    "test_drive_days":["drive_23-08"],
+    "bundle_path":"/home/docker/apollo/datasets/roadsense/part1/output/v1",
+    "kept_hazards": ["speed_bump"],
+    "batch_size": 131072,
+    "epochs": 2,
+    "ckpt_folder": "/home/docker/apollo/datasets/roadsense/part1/dl_models",
+    "train_class_balance_factor":-1
+}

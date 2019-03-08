@@ -1,0 +1,20 @@
+{
+    "resources_path": "/home/docker/apollo/datasets/ocr_traffic_signs/fake_dataset_resources",
+    "line_img_width":600,
+    "line_img_height":80,
+    "final_width":125,
+    "final_height":125,
+    "left_offset": 50,
+    "up_offset": 20,
+    "max_blur_level": 27,
+    "min_blur_level": 1,
+    "noise_amplifier": 5,
+    "canvas_multiplier": 3,
+    "color_thresh": 200,
+    "min_font_size": 30,
+    "max_font_size": 50,
+    "min_x_rotation_angle": -30,
+    "max_x_rotation_angle": 30,
+    "min_z_rotation_angle": -50,
+    "max_z_rotation_angle": 50
+}

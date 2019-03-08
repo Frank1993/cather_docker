@@ -1,0 +1,16 @@
+{
+  "component": "quality_orientation_image_selector",
+  "algorithm_version": "1.0.7",
+  "mq_host": "10.230.2.117",
+  "mq_port": 5672,
+  "mq_username": "adi",
+  "mq_password": "adi",
+  "mq_input_queue_name": "CLASSIFIED_IMAGES",
+  "mq_input_errors_queue_name": "CLASSIFIED_IMAGES_ERROR",
+  "high_quality_queue_name": "GOOD_IMAGES",
+  "low_quality_queue_name": "PROCESSED_IMAGES",
+  "no_ack": false,
+  "mq_prefetch_count": 30,
+  "elasticsearch_host": "10.230.2.26",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline"
+}

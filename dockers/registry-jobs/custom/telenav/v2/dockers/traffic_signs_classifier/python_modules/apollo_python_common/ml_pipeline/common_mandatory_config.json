@@ -1,0 +1,14 @@
+{
+  "component": "inference traffic signs",
+  "algorithm": "RetinaNet",
+  "algorithm_version": "0.0.1",
+  "mq_host": "10.230.2.117",
+  "mq_port": 5672,
+  "mq_username": "adi",
+  "mq_password": "adi",
+  "mq_input_queue_name": "US_IMAGES",
+  "mq_input_errors_queue_name": "US_IMAGES_ERROR",
+  "mq_output_queue_name": "DETECTED_TRAFFIC_SIGNS",
+  "max_internal_queue_size": 30,
+  "predict_batch_size": 1
+}

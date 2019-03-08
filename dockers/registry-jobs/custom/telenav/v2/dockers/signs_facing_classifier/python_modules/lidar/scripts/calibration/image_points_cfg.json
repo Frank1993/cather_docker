@@ -1,0 +1,5 @@
+{
+  "working_dir": "/Users/mihaic7/Development/projects/telenav/lidar/data/calibration/cam_calibration/calib_data",
+  "img_file": "IMG_20181026_102315.jpg",
+  "points_file": "selected_points.txt"
+}

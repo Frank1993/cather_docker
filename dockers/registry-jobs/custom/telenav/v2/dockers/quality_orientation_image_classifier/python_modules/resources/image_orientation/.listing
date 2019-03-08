@@ -1,0 +1,6 @@
+drwxrwxr-x    2 1019     1022         4096 May 11  2018 .
+drwxrwxr-x    4 1019     1022         4096 Jun 18 13:51 ..
+-rw-rw-r--    1 1019     1022         2507 May 11  2018 model_params.json
+-rw-rw-r--    1 1019     1022         2471 May 11  2018 model_params.pickle
+-rw-rw-r--    1 1019     1022         9749 May 11  2018 model_structure.json
+-rw-rw-r--    1 1019     1022      2710128 May 11  2018 model_weights.h5

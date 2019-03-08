@@ -1,0 +1,7 @@
+{
+  "base_input_dir":"/data/roi_angle_predictor/predictor_dataset/train_dataset/raw_imgs",
+  "base_output_dir":"/data/roi_angle_predictor/predictor_dataset/script_test_train_1100_25/raw_imgs",
+  "filter_output_dir":"/data/roi_angle_predictor/predictor_dataset/script_test_train_1100_25",
+  "area":1100,
+  "threshold":25
+}

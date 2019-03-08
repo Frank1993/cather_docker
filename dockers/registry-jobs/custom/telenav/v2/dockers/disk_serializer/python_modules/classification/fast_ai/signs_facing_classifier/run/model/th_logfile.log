@@ -1,0 +1,7 @@
+2018-12-18 21:57:36 - __main__ - INFO - labels: ['front', 'left', 'right']
+2018-12-18 21:57:55 - __main__ - INFO - size of set to predict: 37217
+2018-12-18 22:05:04 - __main__ - INFO - computing best left and right confidence thresholds: True
+2018-12-19 00:07:00 - __main__ - INFO - best thresholds - score: 1615 - ft: 0.36000000000000004 - lt: 0.51 - rt: 0.41000000000000003
+2018-12-19 00:07:00 - __main__ - INFO - applying best left and right confidence thresholds: False
+2018-12-19 00:07:00 - __main__ - INFO - model score with thresholds: 1610)
+2018-12-19 00:07:00 - __main__ - INFO - model score: 1610)

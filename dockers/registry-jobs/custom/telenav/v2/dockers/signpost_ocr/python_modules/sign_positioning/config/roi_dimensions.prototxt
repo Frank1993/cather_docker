@@ -1,0 +1,780 @@
+trackable_objs {
+  type: SPEED_LIMIT_5_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_10_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_15_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_20_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_25_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_30_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_35_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_40_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_45_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_50_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_55_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_60_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_65_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_70_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_75_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_80_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_TRUCKS_60_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_TRUCKS_65_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_TRUCKS_70_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: SPEED_LIMIT_MINIMUM_55_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: TURN_RESTRICTION_STRAIGHT_RIGHT_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: TURN_RESTRICTION_STRAIGHT_LEFT_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: TURN_RESTRICTION_LEFT_RIGHT_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: TURN_RESTRICTION_STRAIGHT_THROUGH_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: TURN_RESTRICTION_LEFT_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: TURN_RESTRICTION_RIGHT_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: TURN_RESTRICTION_U_TURN_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: TURN_RESTRICTION_U_TURN_LEFT_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: TURN_RESTRICTION_NO_TURNS_GROUND_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: TURN_RESTRICTION_NO_TURNS_SUSPENDED_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: STOP_US
+  region: US
+  width: 762
+  height: 762
+  trunk_size_increase: 1.2
+  motorway_size_increase : 1.2
+}
+trackable_objs {
+  type: YIELD_US
+  region: US
+  width: 914.4
+  height: 791.7
+  trunk_size_increase: 1.2
+  motorway_size_increase : 1.2
+}
+trackable_objs {
+  type: TRAFFIC_LIGHTS_SIGN
+  region: US
+  width: 391.0
+  height: 1070.0
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+trackable_objs {
+  type: EXCLUSION_DO_NOT_ENTER_US
+  region: US
+  width: 762
+  height: 762
+  trunk_size_increase: 1.2
+  motorway_size_increase : 1.6
+}
+trackable_objs {
+  type: ONE_WAY_SMALL_RIGHT_US
+  region: US
+  width: 914.4
+  height: 304.8
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: ONE_WAY_SMALL_LEFT_US
+  region: US
+  width: 914.4
+  height: 304.8
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+trackable_objs {
+  type: ONE_WAY_LARGE_RIGHT_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: ONE_WAY_LARGE_LEFT_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+trackable_objs {
+  type: EXCLUSION_WRONG_WAY_US
+  region: US
+  width: 914.4
+  height: 609.6
+  trunk_size_increase: 1.2
+  motorway_size_increase : 1.2
+}
+
+trackable_objs {
+  type: NO_TURN_RED_SYMBOL_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+
+trackable_objs {
+  type: NO_TURN_RED_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 1.5
+}
+
+trackable_objs {
+  type: NO_TURN_RED_VARIANT_US
+  region: US
+  width: 762
+  height: 762
+  trunk_size_increase: 1.2
+  motorway_size_increase : 1.2
+}
+
+trackable_objs {
+  type: SIGNPOST_GENERIC
+  region: US
+  width: 2286
+  height: 1524
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: SL_US_HOUR_INTERVAL
+  region: US
+  width: 609.6
+  height: 304.8
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: SL_US_MON_FRI
+  region: US
+  width: 609.6
+  height: 304.8
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: SL_US_SCHOOL
+  region: US
+  width: 609.6
+  height: 165.1
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: SL_US_WHEN_FLASHING
+  region: US
+  width: 609.6
+  height: 308
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: SL_US_WORKSITE
+  region: US
+  width: 609.6
+  height: 152.4
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: SPEED_LIMIT_MINIMUM_40_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: SPEED_LIMIT_MINIMUM_45_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: STOP_ALL_WAY_US
+  region: US
+  width: 609.6
+  height: 152.4
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: TURN_LANE_CENTER_LANE_PLAQUE_US
+  region: US
+  width: 762
+  height: 304.8
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: TURN_LANE_LEFT_LANE_LEFT_US
+  region: US
+  width: 762
+  height: 762
+  trunk_size_increase: 1.2
+  motorway_size_increase : 1.2
+}
+
+trackable_objs {
+  type: TURN_LANE_RIGHT_LANE_RIGHT_US
+  region: US
+  width: 762
+  height: 762
+  trunk_size_increase: 1.2
+  motorway_size_increase : 1.2
+}
+
+trackable_objs {
+  type: TURN_LANE_LEFT_STRAIGHT_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: TURN_LANE_LEFT_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: TURN_LANE_RIGHT_STRAIGHT_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: TURN_LANE_RIGHT_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: TURN_LANE_STRAIGHT_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: TURN_LANE_U_TURN_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: TWO_WAY_LEFT_TURN_US
+  region: US
+  width: 762
+  height: 914.4
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: SHIELD_STATE
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: SHIELD_INTERSTATE
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: SHIELD_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: ROUNDABOUT_DIRECTIONAL_LARGE_US
+  region: US
+  width: 1524
+  height: 609.6
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: TURN_LANE_RIGHT_LANE_PLAQUE_US
+  region: US
+  width: 762
+  height: 304.8
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: TURN_LANE_LEFT_U_TURN_US
+  region: US
+  width: 762
+  height: 762
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: ROUNDABOUT_DIRECTIONAL_MEDIUM_US
+  region: US
+  width: 1219.2
+  height: 609.6
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: ROAD_CLOSED_US
+  region: US
+  width: 1219.2
+  height: 762
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: TURN_RESTRICTION_LEFT_TEXT_US
+  region: US
+  width: 457.2
+  height: 609.6
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: TURN_LANE_LEFT_STRAIGHT_RIGHT_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.2
+  motorway_size_increase : 1.2
+}
+
+trackable_objs {
+  type: TURN_LANE_LEFT_RIGHT_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.2
+  motorway_size_increase : 1.2
+}
+
+trackable_objs {
+  type: TURN_LANE_LEFT_U_TURN_LEFT_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.2
+  motorway_size_increase : 1.2
+}
+
+trackable_objs {
+  type: SHIELD_BUSINESS
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: SPEED_LIMIT_BEGIN_30_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: SL_US_RADAR_ENFORCED
+  region: US
+  width: 609.6
+  height: 457.2
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: ONE_WAY_BEGIN_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.25
+  motorway_size_increase : 1.25
+}
+
+trackable_objs {
+  type: TURN_LANE_LEFT_LANE_PLAQUE_US
+  region: US
+  width: 609.6
+  height: 457.2
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: ROUNDABOUT_DIRECTIONAL_SMALL_US
+  region: US
+  width: 762
+  height: 609.6
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: SPEED_LIMIT_BEGIN_25_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: ONE_WAY_END_US
+  region: US
+  width: 609.6
+  height: 762
+  trunk_size_increase: 1.25
+  motorway_size_increase : 1.25
+}
+
+trackable_objs {
+  type: SPEED_LIMIT_AHEAD_35_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: TURN_RESTRICTION_RIGHT_TEXT_US
+  region: US
+  width: 457.2
+  height: 609.6
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: ROAD_CLOSED_THRU_TRAFFIC_US
+  region: US
+  width: 1524
+  height: 762
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: SPEED_LIMIT_BEGIN_35_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: SPEED_LIMIT_TRUCKS_35_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: SPEED_LIMIT_BEGIN_45_US
+  region: US
+  width: 609.6
+  height: 609.6
+  trunk_size_increase: 1.5
+  motorway_size_increase : 2
+}
+
+trackable_objs {
+  type: ONE_WAY_DIVIDED_HIGHWAY_US
+  region: US
+  width: 609.6
+  height: 457.2
+  trunk_size_increase: 1.25
+  motorway_size_increase : 1.25
+}
+
+trackable_objs {
+  type: LANE_MUST_EXIT_RIGHT_US
+  region: US
+  width: 1981.2
+  height: 914.4
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: REVERSIBLE_CENTER_LANE_REVERSIBLE_US
+  region: US
+  width: 914.4
+  height: 1219.2
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}
+
+trackable_objs {
+  type: REVERSIBLE_CENTER_LANE_LEFT_STRAIGHT_US
+  region: US
+  width: 914.4
+  height: 1219.2
+  trunk_size_increase: 1
+  motorway_size_increase : 1
+}

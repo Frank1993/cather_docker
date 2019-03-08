@@ -1,0 +1,11 @@
+{
+ "resources_path":"/home/docker/apollo/datasets/ocr_sign_posts/fake_dataset_resources",
+ "img_generator_config_path":"./image_generator_config.json",
+ "save_path": "/home/docker/apollo/datasets/ocr_sign_posts/fake_generated/few_refactoring",
+ "width": 200,
+ "height": 50,
+ "nr_texts_per_length": 20,
+ "char_limit":16,
+ "max_char_length":16
+}
+ 

@@ -1,0 +1,43 @@
+{
+    "base_img_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/raw_imgs/",
+    "classIndex_2_class": {
+        "0": "down",
+        "1": "left",
+        "2": "right",
+        "3": "up"
+    },
+    "class_2_classIndex": {
+        "down": 0,
+        "left": 1,
+        "right": 2,
+        "up": 3
+    },
+    "classes": [
+        "down",
+        "left",
+        "right",
+        "up"
+    ],
+    "conv_layer_name": "mixed6",
+    "img_size": [
+        597,
+        336
+    ],
+    "nr_entries_per_split": 256,
+    "nr_images_per_class": 50000,
+    "params_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/processed/classes=4_imgs=50000_size=336_CONV_REV/params/",
+    "processed_base_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/processed/",
+    "processed_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/processed/classes=4_imgs=50000_size=336_CONV_REV/",
+    "suffix": "CONV_REV",
+    "test_conv_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/processed/classes=4_imgs=50000_size=336_CONV_REV/test/mixed6/",
+    "test_df_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/processed/classes=4_imgs=50000_size=336_CONV_REV/test/df/",
+    "test_img_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/processed/classes=4_imgs=50000_size=336_CONV_REV/test/imgs/",
+    "test_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/processed/classes=4_imgs=50000_size=336_CONV_REV/test/",
+    "train_conv_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/processed/classes=4_imgs=50000_size=336_CONV_REV/train/mixed6/",
+    "train_df_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/processed/classes=4_imgs=50000_size=336_CONV_REV/train/df/",
+    "train_img_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/processed/classes=4_imgs=50000_size=336_CONV_REV/train/imgs/",
+    "train_path": "/home/docker/apollo/datasets/image_orientation/osc-images/st_tr_tl_sl_gw_23_11_2017/processed/classes=4_imgs=50000_size=336_CONV_REV/train/",
+    "train_percentage": 0.8,
+    "with_vp_crop": false,
+    "working_dir": "classes=4_imgs=50000_size=336_CONV_REV/"
+}

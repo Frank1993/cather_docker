@@ -1,0 +1,11 @@
+{
+ "ckpt_path":"/home/docker/apollo/datasets/ocr_sign_posts/weights/weights_dataset=1mil_images_all_us_margins/model.ckpt-230975",   
+ "dataset_name":"fake_dataset",
+ "predict_folder": "/home/docker/apollo/datasets/ocr_sign_posts/real_images_test_dataset",
+ "output_csv_path": "./ocr_predictions.csv",
+ "nr_imgs":-1,
+ "with_evaluate": false,
+ "min_component_size":25,
+ "conf_thresh":0.5
+}
+ 

@@ -1,0 +1,16 @@
+{
+  "component": "disk_serializer",
+  "algorithm_version": "1.0.0",
+  "mq_host": "10.230.2.117",
+  "mq_port": 5672,
+  "mq_username": "adi",
+  "mq_password": "adi",
+  "mq_input_queue_name": "DS_INPUT",
+  "mq_input_errors_queue_name": "DS_INPUT_ERROR",
+  "mq_output_queue_name": "DS_OUTPUT",
+  "elasticsearch_host": "10.230.2.26",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline",
+  "input_proto_type":"imageset",
+  "output_path":"/home/docker/apollo/datasets/random/disk_serializer",
+  "timeout_period":60
+}

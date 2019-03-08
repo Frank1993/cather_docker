@@ -1,0 +1,5 @@
+{
+    "filter_config_path":"./filter_config.json",
+    "input_rois_file_path":"/data_4gpu/traffic_signs_09_2018/train_new/rois.bin",
+    "output_rois_folder":"/home/docker/apollo/datasets/random/image_index_filter"
+}

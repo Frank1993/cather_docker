@@ -1,0 +1,124 @@
+{
+    "filters":[
+        {
+            "trip_id":1284919,
+            "bound_list": [
+                {"start":190,
+                 "end":1139}
+            ]
+        },
+        {
+            "trip_id":1294729,
+            "bound_list": [
+                {"start":51,
+                 "end":1013}
+            ]
+        },
+        {
+            "trip_id":50344,
+            "bound_list": [
+                {"start":1264,
+                 "end":1729}
+            ]
+        },
+        {
+            "trip_id":1296793,
+            "bound_list": [
+                {"start":62,
+                 "end":901}
+            ]
+        },
+        {
+            "trip_id":1289963,
+            "bound_list": [
+                {"start":1419,
+                 "end":1693}
+            ]
+        },
+        {
+            "trip_id":11800,
+            "bound_list": [
+                {"start":1251,
+                 "end":1356}
+            ]
+        },
+        {
+            "trip_id":66552,
+            "bound_list": [
+                {"start":456,
+                 "end":605}
+            ]
+        },
+        {
+            "trip_id":1286255,
+            "bound_list": [
+                {"start":4921,
+                 "end":5409}
+            ]
+        },
+        {
+            "trip_id":1299227,
+            "bound_list": [
+                {"start":10,
+                 "end":535}
+            ]
+        },
+        {
+            "trip_id":1284259,
+            "bound_list": [
+                {"start":1373,
+                 "end":1624}
+            ]
+        },
+        {
+            "trip_id":1282043,
+            "bound_list": [
+                {"start":363,
+                 "end":594}
+            ]
+        },
+        {
+            "trip_id":1283039,
+            "bound_list": [
+                {"start":6521,
+                 "end":6835}
+            ]
+        },
+        {
+            "trip_id":1277065,
+            "bound_list": [
+                {"start":6194,
+                 "end":6502}
+            ]
+        },
+        {
+            "trip_id":1281039,
+            "bound_list": [
+                {"start":5236,
+                 "end":5591}
+            ]
+        },
+        {
+            "trip_id":1272129,
+            "bound_list": [
+                {"start":3691,
+                 "end":4042}
+            ]
+        },
+        {
+            "trip_id":494619,
+            "bound_list": [
+                {"start":758,
+                 "end":1792}
+            ]
+        },
+        {
+            "trip_id":471208,
+            "bound_list": [
+                {"start":244,
+                 "end":1361}
+            ]
+        }
+    ]
+}
+

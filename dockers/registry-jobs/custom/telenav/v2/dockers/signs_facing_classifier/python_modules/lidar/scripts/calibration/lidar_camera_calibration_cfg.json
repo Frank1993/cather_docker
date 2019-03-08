@@ -1,0 +1,8 @@
+{
+  "base_dir": "/Users/mihaic7/Development/projects/telenav/lidar/data/calibration",
+  "camera_info": "cam_calibration/calib_data/oneplus5t_camera_info.yaml",
+  "params_file": "lidar_cam_calibration/point_data/vlp16_oneplus5t_data.json",
+  "transform_file": "lidar_cam_calibration/calib_data/vlp16_oneplus5t_transform.json",
+  "err_threshold": 45,
+  "max_iter": 500
+}

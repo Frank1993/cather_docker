@@ -1,0 +1,70 @@
+PRED_INPUT_FILE = "pred_input_file"
+SELECTED_CLASSES_FILE = "selected_classes_file"
+CLUSTERING_CONFIG_FILE = "clustering_config_file"
+GT_FILE = "ground_truth_file"
+NR_THREADS = "nr_threads"
+
+IMAGE_PROTO = 'image_proto'
+CLUSTER_PROTO = 'cluster_proto'
+TRIP_ID = 'trip_id'
+GT_TRIP_ID = "gt_trip_id"
+IMAGE_INDEX = 'image_index'
+GT_IMAGE_INDEX = "gt_image_index"
+IMAGE_WIDTH = 'image_width'
+IMAGE_HEIGHT = 'image_height'
+ROIS = 'rois'
+ROI = 'roi'
+ROI_X = 'roi_x'
+ROI_Y = 'roi_y'
+ROI_WIDTH = 'roi_width'
+ROI_HEIGHT = 'roi_height'
+ROI_ID = 'roi_id'
+TYPE = 'type'
+TYPE_NAME = "type_name"
+GT_TYPE_NAME = "gt_type_name"
+CONFIDENCE = 'confidence'
+LAT = 'latitude'
+LON = 'longitude'
+DISTANCE = 'distance'
+GPS_ACC = 'gps_accuracy'
+GT_LAT = 'gt_latitude'
+GT_LON = 'gt_longitude'
+GT_DISTANCE = 'gt_distance'
+HEADING = 'heading'
+GT_HEADING = 'gt_heading'
+ANGLE_OF_ROI = 'angle_of_roi'
+WEIGHT = 'weight'
+PRED_CLUSTER_ID = 'pred_cluster_id'
+RECLUSTERING_LABEL = 'reclustering_label'
+PARENT_CLUSTER_ID = 'parent_cluster_id'
+
+GEOHASH = 'geohash'
+URL = 'url'
+WITH_VISUALIZATIONS = "with_visualizations"
+ROI_STATUS = "roi_status"
+MEMBER_ROIS = "member_rois"
+CLUSTER_COORDS = "cluster_coords"
+MATCHED_PRED_CLUSTER_ID = "matched_pred_cluster_id"
+MATCHED_GT_CLUSTER_ID = "matched_gt_cluster_id"
+CLUSTER_STATUS = "cluster_status"
+GT_CLUSTER_ID = 'gt_cluster_id'
+DETECTION_CLASS = 'detection_class'
+CLUSTER_OUTCOME = "cluster_outcome"
+OLD_GT_CLUSTER_ID = "old_gt_cluster_id"
+CLUSTER_STATUS_REASON = "cluster_status_reason"
+RAW_CLUSTER_ID = "raw_cluster_id"
+GT_LOGICAL_CLUSTER_ID = "gt_logical_cluster_id"
+
+NEW_CLUSTER_STATUS = "new_cluster_status"
+LOGICAL_CLUSTER_MEMBERS = "logical_clusters_members"
+LOGICAL_CLUSTER_STATUS = "logical_cluster_status"
+
+TP = "TP"
+FP = "FP"
+FN = "FN"
+
+INVALID_CLUSTER_ID = -1
+TOO_SMALL_PRED_CLUSTER_PLACEHOLDER = -1
+FN_ROI_PLACEHOLDER = -1
+
+CLUSTER_ANGLE_DIFF_THRESHOLD = 45

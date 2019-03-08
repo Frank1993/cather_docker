@@ -1,0 +1,12 @@
+{
+  "images_folder": "/data/traffic_signs_09_2018/train",
+  "ground_truth_rois_file": "/data/traffic_signs_09_2018/train/rois.bin",
+  "predictions_rois_file": "rois_retinanet.bin",
+  "min_size": 25,
+  "output_folder": "output_bad",
+  "iou_threshold": 0.25,
+  "signpost_threshold_area": 6000,
+  "score_thresholds_file": "classes_thresholds.json",
+  "selected_classes": [],
+  "selected_errors": ["FP", "FN"]
+}

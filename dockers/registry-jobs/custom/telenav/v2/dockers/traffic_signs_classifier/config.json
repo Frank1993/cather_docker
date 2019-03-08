@@ -1,0 +1,24 @@
+{
+  "component": "traffic_signs_classifier",
+  
+  "roi_classifier_bundle_path": "/home/job/dockers/traffic_signs_classifier/python_modules/resources/roi_classifier/",
+  "algorithm_version": "1.0.7",
+  "ftp_resources_path":"ORBB/data/classification/deploy/roi_classifier",
+  "mq_host": "localhost",
+  "mq_port": 5672,
+  "mq_username": "guest",
+  "mq_password": "guest",
+  "mq_input_queue_name": "RAW_DETECTED_TRAFFIC_SIGNS",
+  "mq_input_errors_queue_name": "RAW_DETECTED_TRAFFIC_SIGNS_ERROR",
+  "mq_output_queue_name": "DETECTED_TRAFFIC_SIGNS",
+  "max_internal_queue_size": 30,
+  "predict_batch_size": 32,
+  "no_ack": false,
+  "mq_prefetch_count": 30,
+  "elasticsearch_host": "localhost",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline",
+  "nr_preprocess_threads":5,
+  "nr_predict_threads":1,
+  "roi_bad_class_confidence_threshold":0.6,
+  "osc_api_url":"http://openstreetcam.org/1.0/photo/details/"
+}

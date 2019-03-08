@@ -1,0 +1,1 @@
+Starting from a rois.bin file, generates separate images for each ROI, where the ROI is highlighted

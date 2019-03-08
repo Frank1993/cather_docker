@@ -1,0 +1,5 @@
+{
+  "images_folder": "/data/traffic_signs_04_2018/test",
+  "rois_file": "/data/traffic_signs_04_2018/test/rois.bin",
+  "output_folder": "/home/adrianm/work/imagerecognition/python_modules/scripts/output_draw_rois"
+}

@@ -1,0 +1,16 @@
+{
+  "component": "geo_image_selector",
+  "algorithm_version": "1.0.5",
+  "regions_to_process": ["US"],
+  "mq_host": "10.230.2.117",
+  "mq_port": 5672,
+  "mq_username": "adi",
+  "mq_password": "adi",
+  "mq_input_queue_name": "GOOD_IMAGES",
+  "mq_input_errors_queue_name": "GOOD_IMAGES_ERROR",
+  "mq_output_queue_name": "PROCESSED_IMAGES",
+  "no_ack": false,
+  "mq_prefetch_count": 30,
+  "elasticsearch_host": "10.230.2.26",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline"
+}

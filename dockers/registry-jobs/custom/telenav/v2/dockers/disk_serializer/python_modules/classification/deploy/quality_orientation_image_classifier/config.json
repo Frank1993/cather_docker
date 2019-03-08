@@ -1,0 +1,31 @@
+{
+  "component": "quality_orientation_image_classifier",
+  
+  "image_quality_bundle_path": "/home/docker/python_modules/resources/image_quality/",
+  "image_orientation_bundle_path": "/home/docker/python_modules/resources/image_orientation/",
+  
+  "pred_thresholds":{
+      "image_quality":{
+          "bad":0.98
+      }
+  },
+  
+  "ftp_resources_path":"ORBB/data/classification/deploy/quality_orientation",
+  "algorithm_version": "1.0.6",
+  "mq_host": "10.230.2.117",
+  "mq_port": 5672,
+  "mq_username": "adi",
+  "mq_password": "adi",
+  "mq_input_queue_name": "RAW_IMAGES",
+  "mq_input_errors_queue_name": "RAW_IMAGES_ERROR",
+  "mq_output_queue_name": "CLASSIFIED_IMAGES",
+  "max_internal_queue_size": 30,
+  "predict_batch_size": 32,
+  "no_ack": false,
+  "mq_prefetch_count": 30,
+  "elasticsearch_host": "10.230.2.26",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline",
+  "nr_preprocess_threads":5,
+  "nr_predict_threads":1,
+  "osc_api_url":"http://openstreetcam.org/1.0/photo/details/"
+}

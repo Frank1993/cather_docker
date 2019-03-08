@@ -1,0 +1,12 @@
+{
+  "full_set_dir":"/data/roi_angle_predictor/full_dataset/full",
+  "new_orig_img_dir":"/data/traffic_signs_09_2018/train_new",
+  "old_orig_img_dir":"/data/traffic_signs_04_2018/train",
+  "new_detections_file":"/data/roi_angle_predictor/full_dataset/yolo_preds/rois_flaviu_train_v2.bin",
+  "old_detections_file":"/data/roi_angle_predictor/full_dataset/yolo_preds/rois.bin",
+  "train_set_dir":"/data/roi_angle_predictor/full_dataset/matched/train_set/raw_imgs",
+  "test_set_dir":"/data/roi_angle_predictor/full_dataset/matched/test_set/raw_imgs",
+  "matched_results_file":"/data/roi_angle_predictor/full_dataset/matched_results.csv",
+  "split_percentage":0.7,
+  "iou_threshold":0.25
+}

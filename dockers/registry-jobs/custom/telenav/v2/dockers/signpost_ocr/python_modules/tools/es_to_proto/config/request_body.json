@@ -1,0 +1,14 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {"run_configuration_component": "inference traffic signs"}},
+        {"match": {"run_configuration_algorithm": "RetinaNet"}},
+        {"match": {"run_configuration_algorithm_version": "0.0.1"}},
+        {"range": {"timestamp" : {"gte": "2015-01-01T00:00:00", "lte": "now", "time_zone": "+02:00"}}},
+        {"exists": { "field" : "proto_data_rois" }}
+      ]
+    }
+  },
+  "_source": "proto_data*"
+}

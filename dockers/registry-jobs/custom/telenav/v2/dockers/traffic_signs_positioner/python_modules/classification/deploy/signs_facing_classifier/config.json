@@ -1,0 +1,23 @@
+{
+  "component": "signs_facing_classifier",
+  "signs_facing_classifier_bundle_path": "/home/docker/python_modules/resources/signs_facing_classifier/",
+  "algorithm_version": "1.0.3",
+  "ftp_resources_path":"ORBB/data/classification/deploy/signs_facing_classifier",
+  "mq_host": "10.230.2.117",
+  "mq_port": 5672,
+  "mq_username": "adi",
+  "mq_password": "adi",
+  "mq_input_queue_name": "FACING_INPUT_IMAGES",
+  "mq_input_errors_queue_name": "FACING_INPUT_IMAGES_ERROR",
+  "mq_output_queue_name": "FACING_OUTPUT_IMAGES",
+  "max_internal_queue_size": 30,
+  "predict_batch_size": 32,
+  "no_ack": false,
+  "mq_prefetch_count": 30,
+  "elasticsearch_host": "10.230.2.26",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline",
+  "nr_preprocess_threads":5,
+  "nr_predict_threads":1,
+  "roi_bad_class_confidence_threshold":0.4,
+  "osc_api_url":"http://openstreetcam.org/1.0/photo/details/"
+}

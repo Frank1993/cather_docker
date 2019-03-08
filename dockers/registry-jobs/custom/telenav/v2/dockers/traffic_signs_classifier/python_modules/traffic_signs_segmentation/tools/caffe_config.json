@@ -1,0 +1,19 @@
+{
+  "component": "traffic_signs_segmentation",
+  "algorithm": "caffe_voc_fcn8s",
+  "algorithm_version": "1.0.0",
+  "output_folder": "output",
+  "mq_host": "10.230.2.117",
+  "mq_port": 5672,
+  "mq_username": "adi",
+  "mq_password": "adi",
+  "mq_input_queue_name": "RAW_IMAGE_META",
+  "mq_input_errors_queue_name": "RAW_IMAGE_META_ERROR",
+  "mq_output_queue_name": "PROCESSED_IMAGE",
+  "no_ack": false,
+  "mq_prefetch_count": 30,
+  "elasticsearch_host": "10.230.2.117",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline",
+  "nr_preprocess_threads": 1,
+  "nr_predict_threads": 1
+}

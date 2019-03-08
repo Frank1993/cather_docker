@@ -1,0 +1,21 @@
+{
+    "resources_path": "/home/docker/apollo/datasets/ocr_sign_posts/fake_dataset_resources",
+    "final_width":150,
+    "final_height":40,
+    "left_offset": 100,
+    "up_offset": 25,
+    "yellow_background_prob": 0.075,
+    "max_blur_level": 3,
+    "min_blur_level": 3,
+    "noise_amplifier": 10,
+    "canvas_multiplier": 3,
+    "color_thresh": 200,
+    "height_delta": 0,
+    "width_delta":  0,
+    "min_font_size": 20,
+    "max_font_size": 60,
+    "min_x_rotation_angle": -5,
+    "max_x_rotation_angle": 5,
+    "min_z_rotation_angle": -30,
+    "max_z_rotation_angle": 30
+}

@@ -1,0 +1,5 @@
+{
+  "elasticsearch_host": "4gpu.skobbler.local",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline",
+  "elasticsearch_doc_type": "audit"
+}

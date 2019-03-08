@@ -1,0 +1,4 @@
+{
+    "src_folder_path":"/data_4gpu/traffic_signs_09_2018/train_new",
+    "output_path":"/home/docker/apollo/datasets/random/quick_tag"
+}

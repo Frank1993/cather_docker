@@ -1,0 +1,14 @@
+{
+    "base_path":"/data/roi_angle_predictor/predictor_dataset/script_test_test_1100_25",
+    "img_dim":139,
+    "nr_images_per_class":25000,
+    "suffix":"KEEP_ASPECT",
+    "with_vp_crop":false,
+    "square_image":true,
+    "keep_aspect":true,
+    "augment_strategies" : {
+        "flip": false,
+        "rotate_cw": false,
+        "rotate_ccw": false
+    }
+}

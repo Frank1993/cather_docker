@@ -1,0 +1,8 @@
+{
+    "pred_input_file": "/Users/bogdang/Telenav/apollo/random/clustering_data/rois.bin",
+    "clustering_config_file":"/Users/bogdang/Telenav/apollo/projects/imagerecognition/python_modules/sign_clustering/config/clustering_config.json",
+    "ground_truth_file":"/Users/bogdang/Telenav/apollo/random/clustering_data/gt_clusters.csv",
+    "nr_threads":30,
+    "with_visualizations":false,
+    "selected_classes_file":"/Users/bogdang/Telenav/apollo/random/clustering_data/selected_classes.json"
+}

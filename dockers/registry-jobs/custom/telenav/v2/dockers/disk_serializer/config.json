@@ -1,0 +1,17 @@
+{
+  "component": "disk_serializer",
+  "algorithm_version": "1.1.0",
+  "mq_host": "localhost",
+  "mq_port": 5672,
+  "mq_username": "guest",
+  "mq_password": "guest",
+  "mq_input_queue_name": "POSITIONED_TRAFFIC_SIGNS",
+  "mq_input_errors_queue_name": "POSITIONED_TRAFFIC_SIGNS_ERROR",
+  "mq_output_queue_name": "PROCESSED_IMAGES",
+  "elasticsearch_host": "localhost",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline",
+  "input_proto_type":"imageset",
+  "output_path":"/home/job/output",
+  "timeout_period":30,
+  "accumulated_proto_size":100000
+}

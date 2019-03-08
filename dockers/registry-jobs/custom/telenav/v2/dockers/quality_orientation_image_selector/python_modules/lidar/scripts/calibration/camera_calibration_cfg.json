@@ -1,0 +1,9 @@
+{
+  "base_dir": "/Users/mihaic7/Development/projects/telenav/lidar/data/calibration",
+  "img_path" : "cam_calibration/imgs",
+  "output_path" : "cam_calibration/calib_data",
+  "calibration_file" : "oneplus5t_camera_info.yaml",
+  "board_columns" : 8,
+  "board_rows" : 6,
+  "board_square_size" : 0.040
+}

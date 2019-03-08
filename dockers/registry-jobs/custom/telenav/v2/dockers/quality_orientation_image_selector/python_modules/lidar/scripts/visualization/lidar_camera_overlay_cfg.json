@@ -1,0 +1,6 @@
+{
+  "input_dir": "/Users/mihaic7/Development/projects/telenav/lidar/data/overlay_input",
+  "matched_lidar_cam_file": "/Users/mihaic7/Development/projects/telenav/lidar/data/overlay_input/matched_6points.csv",
+  "camera_info": "/Users/mihaic7/Development/projects/telenav/lidar/data/calibration/cam_calibration/calib_data/oneplus5t_camera_info.yaml",
+  "transform_file": "/Users/mihaic7/Development/projects/telenav/lidar/data/calibration/lidar_cam_calibration/calib_data/vlp16_oneplus5t_transform.json"
+}

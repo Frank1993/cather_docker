@@ -1,0 +1,14 @@
+{
+  "component": "proto_loader",
+  "algorithm_version": "1.0.0",
+  "mq_host": "10.230.2.117",
+  "mq_port": 5672,
+  "mq_username": "adi",
+  "mq_password": "adi",
+  "mq_input_queue_name": "PL_INPUT",
+  "mq_input_errors_queue_name": "PL_INPUT_ERROR",
+  "elasticsearch_host": "10.230.2.26",
+  "elasticsearch_audit_index_name": "audit_ml_pipeline",
+  "input_path":"/home/docker/proto_loader_data",
+  "osc_api_url":"http://openstreetcam.org/1.0/photo/details/"
+}

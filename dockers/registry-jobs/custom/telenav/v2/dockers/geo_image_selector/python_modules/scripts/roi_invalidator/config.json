@@ -1,0 +1,5 @@
+{
+    "input_rois_file_path":"/data_4gpu/traffic_signs_09_2018/train_new/rois.bin",
+    "invalid_rois_folder":"/home/docker/apollo/datasets/random/quick_tag",
+    "output_folder":"/home/docker/apollo/datasets/random/roi_invalidator"
+}
