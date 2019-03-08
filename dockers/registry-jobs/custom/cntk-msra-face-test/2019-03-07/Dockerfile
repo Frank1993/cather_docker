@@ -224,7 +224,7 @@ RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learn
 ENV CNTK_ENABLE_ASGD true
 RUN chmod -R 777 /home/
 RUN cd /home/ && \
-    git clone -b lewlu/msra-face https://github.com/Cizoux/CNTK.git && \
+    git clone -b tizhan/msra-face-disableReg https://github.com/lygztq/CNTK.git && \
     cd CNTK && \
     git submodule update --init external/gsl && \
     git submodule update --init Source/CNTKv2LibraryDll/proto/onnx/onnx_repo && \
