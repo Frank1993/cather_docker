@@ -69,7 +69,8 @@ RUN conda install -y -c mingfeima mkldnn
 RUN export CUDA_HOME="/usr/local/cuda"
 
 RUN pip install --upgrade pip && \
-    pip install EasyDict==1.7 \
+    pip install msgpack==0.5.6 \
+                EasyDict==1.7 \
                 hickle==2.1.0 \
                 opencv-python==3.4.4.19 \
                 tensorboard==1.0.0a6 \
@@ -86,8 +87,26 @@ RUN pip install --upgrade pip && \
                 tensorboardX \
                 jsonlines
 
+# install spacy
+RUN conda config --add channels conda-forge
+RUN conda install spacy
+RUN python -m spacy download en_core_web_lg
+
+# install pytorch and related libraries
 RUN conda install pytorch==1.0.0 torchvision==0.2.1 -c pytorch
-RUN pip install pytorch-pretrained-bert
+RUN pip install pytorch-pretrained-bert==0.4.0
+
+# install dgl from source
+WORKDIR $STAGE_DIR
+RUN pip uninstall -y dgl || :
+RUN SHA=ToUcHMe git clone --recursive https://github.com/dmlc/dgl.git
+RUN mkdir $STAGE_DIR/dgl/build
+WORKDIR $STAGE_DIR/dgl/build
+RUN cmake .. && make -j4
+WORKDIR $STAGE_DIR/dgl/python
+RUN python setup.py install
+WORKDIR $STAGE_DIR
+RUN rm -rf dgl
 
 # Install horovod
 RUN HOROVOD_GPU_ALLREDUCE=NCCL pip install --no-cache-dir horovod
@@ -99,6 +118,7 @@ RUN pip uninstall -y apex || :
 # and therefore force cloning of the latest version of Apex
 RUN SHA=ToUcHMe git clone https://github.com/NVIDIA/apex.git
 WORKDIR $STAGE_DIR/apex
+RUN git reset --hard 37cd5dfdf59a9f984863cc99ba7b9c3c4df8a618
 RUN python setup.py install --cuda_ext --cpp_ext
 WORKDIR $STAGE_DIR
 RUN rm -rf apex
