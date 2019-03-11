@@ -8,7 +8,7 @@ LABEL description="This custom base docker has CUDA 10, OpenMPI 1.10.7, CUDNN 7.
       creator="wigale" \
       tooltype="asr" \
       tooltypeversion="1.0.1" \
-      createtime="2/28/2019"
+      createtime="3/8/2019"
 
 # Environment variables
 ENV STAGE_DIR=/root/gpu/install \
@@ -177,17 +177,32 @@ RUN echo "hwloc_base_binding_policy = none" >> /usr/local/etc/openmpi-mca-params
 # Install PyTorch
 RUN pip install https://download.pytorch.org/whl/cu100/torch-${PYTORCH_VERSION}-cp37-cp37m-linux_x86_64.whl
 
-# Install LM dependencies
+
+
+# Install LM base dependencies
 RUN apt-get install \
         # Pytables dependencies
+        tmux \
+        vim \
+        nano \
+        less \
         libhdf5-dev \
         liblzo2-dev -y && \
     # Install cython and numpy before pytables so that bindings work correctly
     pip install \
         numpy \
         cython \
-        python-lzo && \
-    pip install \
+        python-lzo
+
+# Install apex
+RUN cd /tmp && \
+    git clone https://github.com/NVIDIA/apex && \
+    cd apex && \
+    python setup.py install --cuda_ext --cpp_ext && \
+    rm -r /tmp/apex
+
+# Install remaining LM dependencies
+RUN    pip install \
         cffi \
         tqdm \
         spacy \
@@ -201,7 +216,8 @@ RUN apt-get install \
         tables \
         graphviz \
         git+https://github.com/szagoruyko/pytorchviz \
-        git+git://github.com/pytorch/fairseq.git
+        git+git://github.com/pytorch/fairseq.git \
+        pytorch-pretrained-bert
 
 RUN echo "PATH=$PATH" >> /etc/environment
 
