@@ -181,13 +181,13 @@ RUN pip install https://download.pytorch.org/whl/cu100/torch-${PYTORCH_VERSION}-
 
 # Install LM base dependencies
 RUN apt-get install \
-        # Pytables dependencies
-        tmux \
-        vim \
-        nano \
-        less \
-        libhdf5-dev \
-        liblzo2-dev -y && \
+            # Pytables dependencies
+            tmux \
+            vim \
+            nano \
+            less \
+            libhdf5-dev \
+            liblzo2-dev -y && \
     # Install cython and numpy before pytables so that bindings work correctly
     pip install \
         numpy \
@@ -203,21 +203,21 @@ RUN cd /tmp && \
 
 # Install remaining LM dependencies
 RUN    pip install \
-        cffi \
-        tqdm \
-        spacy \
-        mpi4py \
-        ipdb \
-        pandas \
-        matplotlib \
-        py3nvml \
-        psutil \
-        tensorboard_logger \
-        tables \
-        graphviz \
-        git+https://github.com/szagoruyko/pytorchviz \
-        git+git://github.com/pytorch/fairseq.git \
-        pytorch-pretrained-bert
+           cffi \
+           tqdm \
+           spacy \
+           mpi4py \
+           ipdb \
+           pandas \
+           matplotlib \
+           py3nvml \
+           psutil \
+           tensorboard_logger \
+           tables \
+           graphviz \
+           git+https://github.com/szagoruyko/pytorchviz \
+           git+git://github.com/pytorch/fairseq.git \
+           pytorch-pretrained-bert
 
 RUN echo "PATH=$PATH" >> /etc/environment
 
