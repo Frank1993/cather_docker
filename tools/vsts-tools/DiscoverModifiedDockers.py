@@ -144,7 +144,10 @@ def inherited_docker_modified(dockerdir, dockers):
         inherited_directory = inherited_docker.replace('phillyregistry.azurecr.io/philly/', 'dockers/registry-').replace(':', '/')
         if inherited_directory in dockers:
             return inherited_directory
-        return inherited_docker_modified(inherited_directory, dockers)
+        if os.path.isdir(inherited_directory):
+            return inherited_docker_modified(inherited_directory, dockers)
+        else:
+            print(" Path not found: {0}. Skipping checks for inherited image".format(inherited_directory))
     return None
 
 # Test that the modified dockers conform to expected formats
