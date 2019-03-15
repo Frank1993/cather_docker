@@ -1,0 +1,140 @@
+#!/bin/bash
+
+echo "### toolkit-execute v0.2 2018-02-08 22:08 ###"
+
+# based on the bash-job example
+#  - config file = path to command to execute
+#  - extra arguments = arguments passed as cmd-line arguments
+# Differences to bash job:
+#  - Philly-related parameters are passed via environment variables
+#  - that's it
+
+# BUGBUG: If the additional command-line arguments have the same names
+# as the ones passed to this tool, this tool would not know when to stop parsing.
+
+#echo "Hello World. Called with these arguments:"
+#while [ "$1" != "" ]; do
+#      echo "Received: <${1}>" && shift;
+#done;
+
+# additional arguments to the script
+export PHILLY_GPU_COUNT=NONE
+export PHILLY_DATA_DIR=NONE
+export PHILLY_MODEL_DIR=NONE
+export PHILLY_LOG_DIR=$PWD
+export PHILLY_STDOUT_DIR=$PWD
+export PHILLY_PREV_MODEL_PATH=NONE
+export PHILLY_IS_MEMCHECK=false
+export PHILLY_IS_DEBUG=false
+export PHILLY_IS_PERF_TRACE=false
+export PHILLY_IS_GDB_WRAPPED=false
+
+# parsing command line arguments:
+while [[ $# > 0 ]]
+do
+key="$1"
+case $key in
+    -h|--help)
+    echo "Usage: toolkit-execute [run_options]"
+    echo "Options:"
+    echo "  -c|--configFile <config> - path to executable or bash script (required)"
+    echo "  -n|--nGPU <num> - how many GPUs used for this job (default NONE)"
+    echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
+    echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
+    echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  -s|--stdoutDir <path> - directory path to save the stdout (default \$PWD)"
+    echo "  --debug - job is in debug mode (not used)"
+    echo "  --perfTrace - job should run in perf trace mode (not used)"
+    echo "  --gdbWrapped - job should run with GDB (default FALSE)"
+    echo "  --prevModelDir - the prev model path to copy from (default None)"
+    echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    exit 1
+    ;;
+
+    # "config file" is actually the command to execute
+    -c|--configFile)
+    COMMAND="$2"
+    shift # pass argument
+    ;;
+
+    -n|--nGPU)
+    export PHILLY_GPU_COUNT="$2"
+    shift # pass argument
+    ;;
+    -d|--dataDir)
+    export PHILLY_DATA_DIR="$2"
+    shift # pass argument
+    ;;
+    -l|--logDir)
+    export PHILLY_LOG_DIR="$2"
+    shift # pass argument
+    ;;
+    -m|--modelDir)
+    export PHILLY_MODEL_DIR="$2"
+    shift # pass argument
+    ;;
+    -s|--stdoutDir)
+    export PHILLY_STDOUT_DIR="$2"
+    shift # pass argument
+    ;;
+    --debug)
+    export PHILLY_IS_DEBUG=true
+    ;;
+    --perfTrace)
+    export PHILLY_IS_PERF_TRACE=true
+    ;;
+    --gdbWrapped)
+    export PHILLY_IS_GDB_WRAPPED=true
+    ;;
+    --prevModelDir)
+    export PHILLY_PREV_MODEL_PATH="$2"
+    shift # pass argument
+    ;;
+    --memCheck)
+    export PHILLY_IS_MEMCHECK=TRUE
+    ;;
+    *)
+    break
+    ;;
+esac
+shift # past argument or value
+done
+
+# the remaining arguments are passed directly to the tool as is via "$@" below
+
+# we also pass the current MPI rank to the script
+export PHILLY_MPI_RANK=$OMPI_COMM_WORLD_RANK
+
+echo -e "toolkit-execute: executing:\n""$COMMAND" "$@"
+
+echo "toolkit-execute: PHILLY_GPU_COUNT       = $PHILLY_GPU_COUNT"
+echo "toolkit-execute: PHILLY_MPI_RANK        = $PHILLY_MPI_RANK"
+echo "toolkit-execute: PHILLY_DATA_DIR        = $PHILLY_DATA_DIR"
+echo "toolkit-execute: PHILLY_MODEL_DIR       = $PHILLY_MODEL_DIR"
+echo "toolkit-execute: PHILLY_LOG_DIR         = $PHILLY_LOG_DIR"
+echo "toolkit-execute: PHILLY_STDOUT_DIR      = $PHILLY_STDOUT_DIR"
+echo "toolkit-execute: PHILLY_PREV_MODEL_PATH = $PHILLY_PREV_MODEL_PATH"
+echo "toolkit-execute: PHILLY_IS_MEMCHECK     = $PHILLY_IS_MEMCHECK"
+echo "toolkit-execute: PHILLY_IS_DEBUG        = $PHILLY_IS_DEBUG"
+echo "toolkit-execute: PHILLY_IS_PERF_TRACE   = $PHILLY_IS_PERF_TRACE"
+echo "toolkit-execute: PHILLY_IS_GDB_WRAPPED  = $PHILLY_IS_GDB_WRAPPED"
+
+# additional environment variables that are useful, although not universal
+# target script's directory to LD_LIBRARY_PATH
+COMMAND_DIR="$(dirname "$COMMAND")"
+export LD_LIBRARY_PATH="$COMMAND_DIR":/usr/local/boost-1.60.0:$LD_LIBRARY_PATH
+echo "toolkit-execute: LD_LIBRARY_PATH  = $LD_LIBRARY_PATH"
+
+# NCCL workaround for Infiniband
+export NCCL_IB_HCA='mlx5_0,mlx5_2'
+
+# some diagnostics  --TODO: delete once no longer deemed useful
+#echo "c: $COMMAND"
+#echo "d: $COMMAND_DIR"
+#ls -l /usr/local
+#ldd $COMMAND
+#ls -l `ldd $COMMAND | awk '{print $3}'`
+
+echo -e "\n\ntoolkit-execute: ----------- BEGIN USER CODE -----------\n\n"
+"$COMMAND" "$@" || exit 1
+echo -e "\n\ntoolkit-execute: ----------- END USER CODE -----------\n\n"
