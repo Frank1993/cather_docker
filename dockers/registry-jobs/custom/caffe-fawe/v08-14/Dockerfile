@@ -1,4 +1,4 @@
-FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.8.0-cudnn.5
+FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.1-cudnn.7
 # Copy the files to the necessary folder
 RUN mkdir /home/job
 COPY toolkit-execute /home/job/toolkit-execute
