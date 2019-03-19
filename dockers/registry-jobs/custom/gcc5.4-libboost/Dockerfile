@@ -14,7 +14,7 @@ WORKDIR /usr/local/
 
 RUN apt-get update
 
-RUN apt-get install -y build-essential cmake libboost-all-dev libgoogle-perftools-dev libprotobuf-dev libprotobuf9v5 libssl-dev openssl protobuf-compiler zlib1g-dev
+RUN apt-get install -y build-essential cmake libboost-all-dev libgoogle-perftools-dev libprotobuf-dev libprotobuf9v5 libssl-dev openssl protobuf-compiler zlib1g-dev git zip unzip
 
 WORKDIR /root/
 COPY toolkit-execute /home/job/toolkit-execute
