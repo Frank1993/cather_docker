@@ -79,6 +79,8 @@ CONFIG_DIR=$(dirname "$CONFIG_FILE")
 CONFIG_EXT="${CONFIGB##*.}"
 CONFIG_NAME="${CONFIGB%.*}"
 
+nvidia-smi
+
 if [[ ${CONFIG_EXT} == "py" ]] ; then
     echo python3.6 $CONFIG_FILE --model_dir $MODEL_DIR --data_dir $DATA_DIR --log_dir $LOG_DIR $EXTRA_ARGS
     cd ${CONFIG_DIR} && python3.6 ${CONFIGB} --model_dir $MODEL_DIR --data_dir $DATA_DIR --log_dir $LOG_DIR $EXTRA_ARGS || exit 1
