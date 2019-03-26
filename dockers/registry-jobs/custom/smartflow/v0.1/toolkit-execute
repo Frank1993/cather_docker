@@ -1,0 +1,154 @@
+#!/bin/bash
+# parsing command line arguments:
+
+is_mono_debug=false
+input_app_dir=NONE
+input_prev_model_path=NONE
+input_training_data_path=NONE
+input_validation_data_path=NONE
+output_model_path=NONE
+runtime_binary=NONE
+app_script=NONE
+declare -a extra_args
+
+
+while [[ $# -gt 0 ]]
+do
+	key="$1"
+
+	case $key in
+		-h|--help)
+		echo "Usage: toolkit-execute [run_options]"
+		echo "Options:"
+		echo "  --mono-debug - set MONO_LOG_LEVEL=debug (default unset)"
+		echo "  --input-app-dir <path> - (default NONE)"
+		echo "  --input-previous-model-path <path> - (default NONE)"
+		echo "  --input-training-data-path <path> - (default NONE)"
+		echo "  --input-validation-data-path <path> - (default NONE)"
+		echo "  --pathout <path> - directory path to save the model files (default NONE)"
+		echo "  --runtime-binary <binary name> - mono (default NONE)"
+		echo "  --app-script <script name> - Transformer.exe (default (NONE)"
+		exit 1
+		;;
+	    --mono-debug)
+		is_mono_debug=true
+		;;
+ 		--input-app-dir)
+		input_app_dir="$2"
+		shift # pass argument
+		;;
+		--input-previous-model-path)
+		input_prev_model_path="$2"
+		shift # pass argument
+		;;
+		--input-training-data-path)
+		input_training_data_path="$2"
+		shift # pass argument
+		;;
+		--input-validation-data-path)
+		input_validation_data_path="$2"
+		shift # pass argument
+		;;
+		--output-model-path)
+		output_model_path="$2"
+		shift # pass argument
+		;;
+		--runtime-binary)
+		runtime_binary="$2"
+		shift # pass argument
+		;;
+		--app-script)
+		app_script="$2"
+		shift # pass argument
+		;;
+		*)
+		extra_args+=("$1")
+		;;
+	esac
+	shift # past argument or value
+done
+
+# Subsitue these: [#input-previous-model-path], [#input-training-data-path], [#input-validation-data-path], [#output-model-path]
+#args=("$@")
+substituted_args=()
+
+for arg in "${extra_args[@]}"; do
+	arg=${arg/\[#input-previous-model-path\]/$input_prev_model_path}
+	arg=${arg/\[#input-training-data-path\]/$input_training_data_path}
+	arg=${arg/\[#input-validation-data-path\]/$input_validation_data_path}
+	arg=${arg/\[#output-model-path\]/$output_model_path}
+	substituted_args+=("$arg")
+done
+
+
+# Workaround: currently Philly does not handle quote in extraParams well, quote always get dropped before final script is called
+# Use --app-args-begin and --app-args-end as a workaround, anything between --app-args-begin and --app-args-end will be combined as --app-args and pass down
+new_args=()
+
+in_app_args=0
+app_args=""
+
+for arg in "${substituted_args[@]}"; do
+    if [ "${arg}" == "--app-args-begin" ]; then
+        in_app_args=1
+        continue
+    fi
+
+    if [ "${arg}" == "--app-args-end" ]; then
+        in_app_args=0
+        new_args+=("--app-args")
+        new_args+=("$app_args")
+        continue
+    fi
+
+    if [ ${in_app_args} -eq 0 ]; then
+        new_args+=("$arg")
+    else
+        app_args+="$arg "
+    fi
+done
+
+echo "=================="
+echo "toolkit-execute: extra_args=${extra_args[*]}"
+echo "=================="
+echo "toolkit-execute: substituted_args=${substituted_args[*]}"
+echo "=================="
+echo "toolkit-execute: new_args=${new_args[*]}"
+echo "=================="
+echo "toolkit-execute: app_args=${app_args[*]}"
+echo "=================="
+echo "toolkit-execute: input-app-dir=$input_app_dir"
+echo "=================="
+echo "toolkit-execute: input-previous-model-path=$input_prev_model_path"
+echo "=================="
+echo "toolkit-execute: input-training-data-path=$input_validation_data_path"
+echo "=================="
+echo "toolkit-execute: input-validation-data-path=$input_validation_data_path"
+echo "=================="
+echo "toolkit-execute: output-model-path=$output_model_path"
+echo "=================="
+echo "toolkit-execute: runtime-binary=$runtime_binary"
+echo "=================="
+echo "toolkit-execute: app-script=$app_script"
+echo "=================="
+echo "toolkit-execute: mono-debug=$is_mono_debug"
+
+if $is_mono_debug; then
+	echo "toolkit-execute: set MONO_LOG_LEVEL=debug"
+	export MONO_LOG_LEVEL=debug
+fi
+	
+echo "toolkit-execute: environment variables:"
+env
+
+echo "=================="
+
+cd $input_app_dir
+
+echo "toolkit-execute: dir in curent directory:" $PWD
+dir
+
+echo "toolkit-execute: executing: " $runtime_binary $app_script $app_args
+$runtime_binary $app_script $app_args || exit 1
+
+#$runtime_binary $app_script "${new_args[@]}" || exit 1
