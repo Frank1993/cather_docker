@@ -1,6 +1,15 @@
 FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
 ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
+# Labels for the docker
+LABEL description="This docker has tensorflow-1.12 and python-3.5" \
+      repository="philly/jobs/custom/tensorflow/tf110_cp35_parasail" \
+      tag="community-gpu-1.10.0-cp35" \
+      creator="guzhao" \
+      tooltype="tensorflow" \
+      tooltypeversion="1.10" \
+      createtime="03/27/2019"
+
 RUN apt-get -y update && \
     apt-get install -y \
         unzip \
@@ -125,11 +134,11 @@ RUN echo "AppRunner=wenho@4c01319, Runtime=tensorflow_community_gpu_1.10.0_cp35@
 ENV APPRUNNER_DIR=/tmp/apprunner
 ENV APPRUNNER_RUNTIME_BINARY=tensorflow_community_gpu_1.10.0_cp35
 
+COPY AppRunner /tmp/AppRunner
 WORKDIR $APPRUNNER_DIR
-
-COPY apprunner /root/apprunner
-RUN cd /root/apprunner && python3 apprunner.py run --host-platform Philly --app-type tensorflow --runtime-binary tensorflow_community_gpu_1.10.0_cp35 --setup-only --apprunner-working-root /tmp/apprunner/.working  && \
- rm -rf /root/apprunner
+RUN cp /tmp/AppRunner/Scripts/start_apprunner.py start_apprunner.py && \
+    python3 start_apprunner.py --apprunner-data-root /tmp/AppRunner --host-platform Philly --app-type tensorflow --runtime-binary $APPRUNNER_RUNTIME_BINARY --setup-only && \
+    chmod 777 -R .
 
 # Create the home directory for the custom-docker
 RUN mkdir /home/job
@@ -145,3 +154,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcudnn7=$CUDNN_VERSION-1+cuda9.0 \
     libcudnn7-dev=$CUDNN_VERSION-1+cuda9.0 && \
     rm -rf /var/lib/apt/lists/*
+
