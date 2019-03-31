@@ -1,5 +1,6 @@
-FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:philly-ubuntu.16.04-cuda.10.0-cudnn.7
+FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
 
+RUN echo CUDA_PATH=$CUDA_PATH
 RUN mkdir /home/job
 COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
@@ -83,7 +84,7 @@ RUN _CUDNN_VERSION=$(echo $CUDNN_VERSION | cut -d. -f1-2) && \
     cp -av /usr/local/cuda/include/nvml.h /usr/include/nvidia/gdk/nvml.h
 
 
-ARG CUB_VERSION=1.8.0
+ARG CUB_VERSION=1.7.4
 RUN wget https://github.com/NVlabs/cub/archive/${CUB_VERSION}.zip && \
     unzip -d /usr/local ${CUB_VERSION}.zip && \
     rm ${CUB_VERSION}.zip
@@ -215,12 +216,12 @@ ENV LD_LIBRARY_PATH /usr/local/halide/lib:$LD_LIBRARY_PATH
 ENV HALIDE_PATH /usr/local/halide
 
 
-ARG NCCL_VERSION=2.4.2
-RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1404/x86_64/libnccl2_2.4.2-1+cuda10.0_amd64.deb && \
-    dpkg -i libnccl2_2.4.2-1+cuda10.0_amd64.deb && \
+ARG NCCL_VERSION=2.2.12
+RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1404/x86_64/libnccl2_2.2.12-1+cuda9.0_amd64.deb && \
+    dpkg -i libnccl2_2.2.12-1+cuda9.0_amd64.deb && \
     rm libnccl*
 
-
+RUN echo CUDA_PATH=$CUDA_PATH
 ENV CNTK_ENABLE_ASGD true
 RUN chmod -R 777 /home/
 RUN cd /home/ && \
