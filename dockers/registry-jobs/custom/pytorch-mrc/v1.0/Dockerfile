@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-RUN pip install tqdm click tensorboard-logger h5py --upgrade
+RUN pip install unidecode tqdm click tensorboard-logger h5py --upgrade
 
 RUN pip install git+https://riz6bmtj3tjgjafugbx6l34mrhhfbxvs643wihqdz25kklnid56a:x-oauth-basic@dev.azure.com/maluuba/vocab-tools/_git/vocab-tools --upgrade
 RUN pip install git+https://riz6bmtj3tjgjafugbx6l34mrhhfbxvs643wihqdz25kklnid56a:x-oauth-basic@dev.azure.com/maluuba/pytorch-utils/_git/pytorch-utils@azureml #helllo4
