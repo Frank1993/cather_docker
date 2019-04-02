@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Workaround: Philly will change /etc/hosts before launching toolkit-execute, 127.0.0.1=>localhost is somehow removed
+# Without 127.0.0.1=>localhost, tf 0.12 distributed training will hang
+if [ "$OMPI_COMM_WORLD_LOCAL_RANK" == "0" ]; then
+    # Update /etc/hosts only once per container
+    echo "add localhost to /etc/hosts"
+    sudo chmod 777 /etc/hosts
+    printf "127.0.0.1\tlocalhost\n" >> /etc/hosts
+    cat /etc/hosts
+fi
+
+
+
+# Workaround: currently Philly does not handle quote in extraParams well, quote always get dropped before final script is called
+# Use --app-args-begin and --app-args-end as a workaround, anything between --app-args-begin and --app-args-end will be combined as --app-args and pass down
+args=("$@")
+new_args=()
+
+in_app_args=0
+app_args=""
+
+for arg in "${args[@]}"; do
+    if [ "${arg}" == "--app-args-begin" ]; then
+        in_app_args=1
+        continue
+    fi
+
+    if [ "${arg}" == "--app-args-end" ]; then
+        in_app_args=0
+        new_args+=("--app-args")
+        new_args+=("$app_args")
+        continue
+    fi
+
+    if [ ${in_app_args} -eq 0 ]; then
+        new_args+=("$arg")
+    else
+        app_args+="$arg "
+    fi
+done
+
+export CLASSPATH="$(/usr/local/hadoop/bin/hadoop classpath --glob)"
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export HADOOP_HOME=/usr/local/hadoop
+export HADOOP_HDFS_HOME=/usr/local/hadoop
+
+apprunner_dir="/tmp/apprunner"
+cd $apprunner_dir
+
+# Workaround: pip install might fail due to permission issue even we already set chmod to 777
+sudo chown $USER:$USER -R $apprunner_dir
+
+python3 ./.working/apprunner/apprunner.py launch --host-platform Philly "${new_args[@]}" || exit $?
+
+
