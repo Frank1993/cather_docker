@@ -7,8 +7,8 @@ RUN chmod u+x /home/job/toolkit-execute
 # Labels for the docker
 LABEL description="This docker has pytorch 0.3.1 in anaconda python36 with cuda 9.0, and cudnn 7.0 along with dependencies for petridish. Modified from the one by v-qizhou" \
       repository="philly/jobs/custom/pytorch" \
-      tag="pytorch0.3.1-py36" \
-      creator="v-qizhou" tooltype="pytorch" \
+      tag="pytorch0.3.1-py36-petridish" \
+      creator="dedey" tooltype="pytorch" \
       tooltypeversion="0.3.1" \
       createtime="04/02/2019"
 # Everything above this line is required for the docker.
