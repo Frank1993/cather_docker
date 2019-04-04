@@ -22,4 +22,4 @@ RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION nltk && \
     git clone https://github.com/NVIDIA/apex.git && cd apex && python setup.py install --cuda_ext --cpp_ext && \
     pip install sentencepiece && \
     pip install requests && \
-    pip install Cython
+    pip install numba
