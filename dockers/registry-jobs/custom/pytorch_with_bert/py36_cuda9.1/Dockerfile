@@ -34,7 +34,11 @@ RUN sudo chmod -R 777 /opt/conda && \
         ninja imgaug prettytable   && \
     conda install pytorch torchvision cuda91 -c pytorch
 
-
+# Install apex
+WORKDIR $STAGE_DIR
+RUN pip uninstall -y apex || :
+RUN git clone https://github.com/NVIDIA/apex.git && cd apex && python setup.py install --cuda_ext --cpp_ext && cd .. \
+RUN rm -rf apex
     
 
 
