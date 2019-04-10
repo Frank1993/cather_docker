@@ -60,5 +60,5 @@ echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
 echo "toolkit-execute: EXTRA_ARGS=$EXTRA_ARGS"
 
 # Data location is passed in through $EXTRA_ARGS
-echo "python3.6 $CONFIG_FILE -modelPath=$MODEL_DIR -dataPath=$DATA_DIR $EXTRA_ARGS"
-python3.6 $CONFIG_FILE -modelPath=$MODEL_DIR -dataPath=$DATA_DIR $EXTRA_ARGS
+echo "python3.5 $CONFIG_FILE -modelPath=$MODEL_DIR -dataPath=$DATA_DIR $EXTRA_ARGS"
+python3.5 $CONFIG_FILE -modelPath=$MODEL_DIR -dataPath=$DATA_DIR $EXTRA_ARGS

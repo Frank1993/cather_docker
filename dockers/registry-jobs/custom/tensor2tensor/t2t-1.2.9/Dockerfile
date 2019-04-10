@@ -19,7 +19,7 @@ RUN apt-get -y install software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 
 RUN apt-get -y update && \
-    apt-get -y install python3.6
-RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.6
+    apt-get -y install python3.5
+RUN curl https://bootstrap.pypa.io/get-pip.py | sudo python3.5
 
-RUN python3.6 -m pip install --upgrade tensorflow-gpu==1.4.1 numpy scipy opencv-python h5py tensor2tensor==1.2.9
+RUN python3.5 -m pip install --upgrade tensorflow-gpu==1.4.1 numpy scipy opencv-python h5py tensor2tensor==1.2.9
