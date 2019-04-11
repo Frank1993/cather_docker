@@ -84,6 +84,8 @@ RUN mkdir -p /usr/local/caffe/bin
 RUN mkdir -p /usr/local/caffe/lib
 RUN cp -r $CAFFE_DIR/Caffe-TrainingTool/code/caffe/distribute/bin /usr/local/caffe
 RUN cp -r $CAFFE_DIR/Caffe-TrainingTool/code/caffe/distribute/lib /usr/local/caffe
+RUN chmod a+rx /root
+RUN chmod -R a+rwx $CAFFE_DIR/Caffe-TrainingTool/code/caffe/python
 
 # RUN ls /opt/caffe/bin
 # RUN ls /opt/caffe/lib
@@ -91,10 +93,13 @@ RUN cp -r $CAFFE_DIR/Caffe-TrainingTool/code/caffe/distribute/lib /usr/local/caf
 # Update environment variables
 ENV PATH=/usr/local/caffe/bin:$PATH
 ENV LD_LIBRARY_PATH=/usr/local/caffe/lib:$LD_LIBRARY_PATH
+ENV PYTHONPATH=$CAFFE_DIR/Caffe-TrainingTool/code/caffe/python:$PYTHONPATH
 
-# RUN echo $PATH
-# RUN echo "PATH=$PATH" >> ~/.ssh/environment
-# RUN echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> ~/.ssh/environment
+RUN echo $PATH
+RUN mkdir ~/.ssh
+RUN echo "PATH=$PATH" >> ~/.ssh/environment
+RUN echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> ~/.ssh/environment
+RUN echo "PYTHONPATH=$PYTHONPATH" >> ~/.ssh/environment
 
 # Suppress libdc1394 error
 RUN ln -s /dev/null /dev/raw1394
