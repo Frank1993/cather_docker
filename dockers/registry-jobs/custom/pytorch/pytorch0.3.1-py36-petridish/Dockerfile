@@ -7,7 +7,7 @@ RUN chmod u+x /home/job/toolkit-execute
 # Labels for the docker
 LABEL description="This docker has pytorch 0.3.1 in anaconda python36 with cuda 9.0, and cudnn 7.0 along with dependencies for petridish. Modified from the one by v-qizhou" \
       repository="philly/jobs/custom/pytorch" \
-      tag="pytorch0.3.1-py36-petridish" \
+      tag="pytorch0.3.1-py36-petridish2" \
       creator="dedey" tooltype="pytorch" \
       tooltypeversion="0.3.1" \
       createtime="04/02/2019"
@@ -39,6 +39,8 @@ RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION cuda90 pytorch
     /opt/conda/bin/conda clean -ya
 
 # Install other dependencies
-RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION astroid autopep8 backcall certifi cffi colorama decorator graphviz intel-openmp ipython mkl numpy parso pickleshare pip prompt_toolkit pyyaml six matplotlib wheel yaml wrapt &&\
+RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION astroid autopep8 backcall certifi cffi colorama decorator graphviz intel-openmp ipython mkl numpy parso pickleshare pip prompt_toolkit pyyaml six matplotlib wheel yaml wrapt matplotlib pillow &&\
     /opt/conda/bin/conda clean -ya
 
+RUN pip install tensorflow
+RUN pip install tensorboardX
