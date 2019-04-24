@@ -102,7 +102,15 @@ RUN pip install \
     git+https://github.com/pytorch/ignite.git \
     git+https://github.com/pytorch/vision.git \
     num2words \
+    tqdm \
     unidecode
+
+RUN conda install -y seaborn \
+    matplotlib \
+    pillow \
+    h5py \
+    scikit-learn \
+    jupyter
 
 # install warp-CTC
 ENV LD_LIBRARY_PATH /usr/local/lib:$LD_LIBRARY_PATH
@@ -127,3 +135,6 @@ RUN pip install --upgrade pytest \
     pytest-flake8
 
 RUN conda clean -a -y
+
+# Setting permissions
+RUN chmod -R ugo+rw /opt/conda
