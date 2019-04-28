@@ -14,15 +14,19 @@ LABEL description="This docker has tensorflow 1.8 and all packages Tacotron depe
 # Everything above this line is required for the docker.
 
 # Add your personalized features below here.
-RUN apt-get update
-RUN apt-get -y install python3-pip
+RUN apt-get -y update
 RUN apt-get -y install git
-RUN apt-get -y install vim
 RUN apt-get -y install htop
 RUN apt-get -y install tmux
 RUN apt-get -y install unzip
 RUN apt-get -y install zip
 RUN apt-get -y install libsndfile-dev
+RUN apt-get -y install apt-transport-https vim iproute2 net-tools build-essential ca-certificates curl wget 
+RUN apt-get -y install software-properties-common
+RUN add-apt-repository ppa:jonathonf/python-3.6
+RUN apt-get -y update
+RUN apt-get -y install python3.6
+RUN apt-get -y install python3-pip
 
 RUN python3 -m pip install tensorflow-gpu==1.8.0
 RUN python3 -m pip install --upgrade torch==1.0.0 torchvision tensorboardX soundfile jupyter
