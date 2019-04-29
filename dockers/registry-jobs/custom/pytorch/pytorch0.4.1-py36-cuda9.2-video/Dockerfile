@@ -149,8 +149,6 @@ RUN /opt/conda/bin/conda install -y --name pytorch-py$PYTHON_VERSION pysoundfile
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
 
-ENV PATH /opt/conda/bin:$PATH
-
 RUN pip install --upgrade pip && \
     pip install opencv-python \
                 scikit-image \
