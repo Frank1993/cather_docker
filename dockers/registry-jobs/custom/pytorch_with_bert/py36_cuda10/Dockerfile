@@ -5,12 +5,12 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has tensorpack 0.8.8 on tensorflow 1.10.1 using Anaconda5.2(py36), has pytorch_pretrained_bert 0.6.1 on pytorch" \
+LABEL description="This docker has tensorpack 0.8.8 on tensorflow 1.10.1 using Anaconda5.2(py36), has pytorch_pretrained_bert 0.6.2 on pytorch" \
       repository="philly/jobs/custom/pytorch_with_bert" \
       tag="pytorch_with_bert" \
       creator="t-genl" tooltype="pytorch_pretrained_bert" \
-      tooltypeversion="0.6.1" \
-      createtime="3/7/2019"
+      tooltypeversion="0.6.2" \
+      createtime="4/29/2019"
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
 
@@ -30,11 +30,16 @@ RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.
     echo "conda activate base" >> ~/.bashrc 
 
 RUN sudo chmod -R 777 /opt/conda && \
-    pip install tensorflow-gpu==1.10.1 pytorch-pretrained-bert easydict h5py tensorboardX pysrt opencv-python msgpack pycocotools tensorpack \
+    pip install tensorflow-gpu==1.10.1 pytorch-pretrained-bert deepdish easydict h5py tensorboardX pysrt opencv-python msgpack pycocotools tensorpack \
         ninja imgaug prettytable   && \
     conda install pytorch torchvision cudatoolkit=10.0 -c pytorch
 
-
+# Install apex
+WORKDIR $STAGE_DIR
+RUN pip uninstall -y apex || :
+RUN git clone https://github.com/NVIDIA/apex.git && cd apex && python setup.py install --cuda_ext --cpp_ext && cd .. \
+RUN rm -rf apex
+    
     
 
 

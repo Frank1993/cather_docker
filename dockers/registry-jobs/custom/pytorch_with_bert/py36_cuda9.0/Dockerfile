@@ -5,11 +5,11 @@ COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has tensorpack 0.8.8 on tensorflow 1.10.1 using Anaconda5.2(py36), has pytorch_pretrained_bert 0.6.1 on pytorch" \
+LABEL description="This docker has tensorpack 0.8.8 on tensorflow 1.10.1 using Anaconda5.2(py36), has pytorch_pretrained_bert 0.6.2 on pytorch" \
       repository="philly/jobs/custom/pytorch_with_bert" \
       tag="pytorch_with_bert" \
       creator="t-genl" tooltype="pytorch_pretrained_bert" \
-      tooltypeversion="0.6.1" \
+      tooltypeversion="0.6.2" \
       createtime="4/26/2019"
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
