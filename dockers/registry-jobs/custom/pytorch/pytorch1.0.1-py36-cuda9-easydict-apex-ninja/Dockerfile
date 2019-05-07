@@ -1,0 +1,74 @@
+FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
+
+# Copy the files to the necessary folder
+COPY toolkit-execute /home/job/toolkit-execute
+RUN chmod u+x /home/job/toolkit-execute
+
+# Labels for the docker
+LABEL description="This docker has pytorch 1.0.1 in anaconda python36 with cuda 9.0, and cudnn 7.0." \
+      repository="philly/jobs/custom/pytorch" \
+      tag="pytorch1.0.1-py36-cuda9-easydict-apex-ninja" \
+      creator="v-mingll" tooltype="pytorch" \
+      tooltypeversion="1.0.1" \
+      createtime="07/05/2019"
+# Everything above this line is required for the docker.
+# Add your personalized features below here.
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+         git \
+		 ninja-build\
+         curl \
+         vim \
+         cmake \
+         tmux \
+         htop \
+         ca-certificates \
+         libnccl2 \
+         libnccl-dev \
+         libjpeg-dev \
+         libyaml-dev \
+         libpng-dev &&\
+         rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
+ENV PYTHON_VERSION=3.6
+
+RUN curl -o ~/anaconda.sh -O  https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh  && \
+     chmod +x ~/anaconda.sh && \
+     ~/anaconda.sh -b -p /opt/conda && \
+     rm ~/anaconda.sh
+
+ENV PATH /opt/conda/bin/:$PATH
+
+RUN conda install torchvision cudatoolkit=9.0 pytorch=1.0.1 -c pytorch && conda clean -ya
+
+RUN pip install --upgrade pip && \
+    pip install EasyDict==1.7 \
+                opencv-python==3.4.1.15 \
+                tensorboardX>=1.2 \
+                shapely==1.6.4 \
+                yacs==0.1.5 \
+                Cython \
+                scipy \
+                pyyaml \
+                json_tricks \
+                scikit-image \
+                pandas \
+                munkres \
+                tqdm
+
+
+# Install apex
+WORKDIR $STAGE_DIR
+RUN pip uninstall -y apex || :
+# SHA is something the user can touch to force recreation of this Docker layer, 
+# and therefore force cloning of the latest version of Apex
+RUN SHA=ToUcHMe git clone https://github.com/NVIDIA/apex.git
+WORKDIR $STAGE_DIR/apex
+RUN python setup.py install --cuda_ext --cpp_ext
+WORKDIR $STAGE_DIR
+RUN rm -rf apex
+
+
+WORKDIR /workspace
+RUN chmod -R a+w /workspace
+
