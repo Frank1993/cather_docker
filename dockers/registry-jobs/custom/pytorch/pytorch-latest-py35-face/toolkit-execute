@@ -108,6 +108,9 @@ nvidia-smi || true
 nvidia-smi --query-gpu=name --format=csv,noheader || true
 cat /proc/cpuinfo
 
+# Activate python environment
+conda activate py35
+
 sh $CONFIG_FILE $DATA_DIR $MODEL_DIR $CONFIG_FILE
 
 exit $RETURN_CODE
