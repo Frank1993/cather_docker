@@ -107,10 +107,17 @@ RUN pip install \
 
 RUN conda install -y seaborn \
     matplotlib \
-    pillow \
     h5py \
     scikit-learn \
     jupyter
+
+RUN conda uninstall -y --force pillow pil jpeg libtiff && \
+    pip   uninstall -y         pillow pil jpeg libtiff && \
+    conda install -y -c conda-forge libjpeg-turbo && \
+    CFLAGS="${CFLAGS} -mavx2" pip install --upgrade \
+            --no-cache-dir --force-reinstall --no-binary \
+            :all: --compile pillow-simd && \
+    conda install -y jpeg libtiff
 
 # install warp-CTC
 ENV LD_LIBRARY_PATH /usr/local/lib:$LD_LIBRARY_PATH
