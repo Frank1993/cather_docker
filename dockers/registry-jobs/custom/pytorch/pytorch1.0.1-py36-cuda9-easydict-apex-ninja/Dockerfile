@@ -16,7 +16,9 @@ LABEL description="This docker has pytorch 1.0.1 in anaconda python36 with cuda 
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
          git \
-		 ninja-build\
+         ninja-build\
+         zip\
+         unzip\
          curl \
          vim \
          cmake \
