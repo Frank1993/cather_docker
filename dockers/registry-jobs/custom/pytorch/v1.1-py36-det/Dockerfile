@@ -38,7 +38,7 @@ RUN curl -o ~/anaconda.sh -O  https://repo.continuum.io/archive/Anaconda3-5.1.0-
 
 ENV PATH /opt/conda/bin/:$PATH
 
-RUN conda install torchvision cuda90 pytorch=1.1.0 -c pytorch && conda clean -ya
+RUN conda install pytorch torchvision cudatoolkit=9.0 -c pytorch && conda clean -ya
 
 RUN pip install --upgrade pip && \
     pip install EasyDict==1.7 \
