@@ -1,4 +1,4 @@
-FROM xnming/pytorch-latest-py36-cuda9.2-horovod:torch-1.1.0
+FROM xnming/pytorch:py36-cuda9.2-torch1.1.0
 
 # Copy the files to the necessary folder
 COPY toolkit-execute /home/job/toolkit-execute
