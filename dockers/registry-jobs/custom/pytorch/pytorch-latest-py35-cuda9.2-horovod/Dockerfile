@@ -1,13 +1,13 @@
-FROM xnming/pytorch:py36-cuda9.2-torch1.1.0
+FROM xnming/pytorch:py35-cuda9.2-torch1.1.0
 
 # Copy the files to the necessary folder
 COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
 
 # Labels for the docker
-LABEL description="This docker has latest released pytorch with python3.6 and cuda 9.2" \
+LABEL description="This docker has latest released pytorch with python3.5 and cuda 9.2" \
       repository="philly/jobs/custom/pytorch" \
-      tag="pytorch-latest-py36-cuda9.2-horovod" \
+      tag="pytorch-latest-py35-cuda9.2-horovod" \
       creator="v-ximing" \
       tooltype="pytorch" \
       tooltypeversion="latest" \
