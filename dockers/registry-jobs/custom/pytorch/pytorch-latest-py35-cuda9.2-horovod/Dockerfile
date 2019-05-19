@@ -1,4 +1,4 @@
-FROM xnming/pytorch:py35-cuda9.2-torch1.1.0
+FROM xnming/pytorch:py35-cuda9.2-torch1.0.1
 
 # Copy the files to the necessary folder
 COPY toolkit-execute /home/job/toolkit-execute
@@ -15,7 +15,8 @@ LABEL description="This docker has latest released pytorch with python3.5 and cu
 # Everything above this line is required for the docker.
 
 # Add your personalized features below here.
-RUN git clone https://github.com/pytorch/vision.git ~/torchvision
+RUN git clone --recursive -b v0.2.2 --single-branch \
+        https://github.com/pytorch/vision.git ~/torchvision
 RUN cd ~/torchvision && python setup.py install
 RUN rm -r ~/torchvision
 
