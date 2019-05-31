@@ -45,8 +45,11 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      /opt/conda/bin/conda create -y --name pytorch-py$PYTHON_VERSION python=$PYTHON_VERSION numpy pyyaml scipy ipython mkl tqdm && \
      /opt/conda/bin/conda clean -ya
 
+# install pip
 RUN /opt/conda/bin/conda install pip
+
 RUN /opt/conda/bin/pip install sentencepiece
+
 ENV PATH /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 
 RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION pytorch=1.1.0 torchvision -c pytorch && \
