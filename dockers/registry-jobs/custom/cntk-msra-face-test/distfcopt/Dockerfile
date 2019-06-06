@@ -1,6 +1,12 @@
 FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
 
-RUN echo CUDA_PATH=$CUDA_PATH
+# Labels for the docker
+LABEL description="Distributed FC opt" \
+      repository="philly/jobs/custom/cntk-msra-face-test" \
+      tag="distfcopt" \
+      creator="v-zhimao" tooltype="cntk" \
+      createtime="06/06/2019"
+
 RUN mkdir /home/job
 COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
@@ -16,11 +22,9 @@ RUN DEBIAN_FRONTEND=noninteractive && \
         libjasper-dev \
         libjpeg-dev \
         libpng-dev \
-        # TODO Note, selecting 'libpng12-dev' instead of 'libpng-dev'
         liblapacke-dev \
         libswscale-dev \
         libtiff-dev \
-        # TODO Note, selecting 'libtiff5-dev' instead of 'libtiff-dev'
         pkg-config \
         wget \
         zlib1g-dev \
@@ -31,7 +35,6 @@ RUN DEBIAN_FRONTEND=noninteractive && \
         libtool-bin \
         autoconf \
         libbz2-dev \
-        openjdk-8-jdk \
         gawk \
         python \
         python-yaml \
@@ -45,7 +48,6 @@ RUN DEBIAN_FRONTEND=noninteractive && \
         autoconf \
         subversion \
         libapr1 libaprutil1 libltdl-dev libltdl7 libserf-1-1 libsigsegv2 libsvn1 m4 \
-        # Additional dependencies
         rsync \
         curl \
         wget \
@@ -68,9 +70,6 @@ RUN PROTOBUF_STRING=protobuf-$PROTOBUF_VERSION && \
     rm -rf $PROTOBUF_STRING
 
 
-# Allow CNTK's configure to pick up GDK and CuDNN where it expects it.
-# (Note: $CUDNN_VERSION is defined by NVidia's base image)
-# TODO hack, CNTK configure should be improved.
 RUN _CUDNN_VERSION=$(echo $CUDNN_VERSION | cut -d. -f1-2) && \
     mkdir -p /usr/local/cudnn-$_CUDNN_VERSION/cuda/include && \
     ln -s /usr/include/cudnn.h /usr/local/cudnn-$_CUDNN_VERSION/cuda/include/cudnn.h && \
@@ -88,16 +87,6 @@ ARG CUB_VERSION=1.7.4
 RUN wget https://github.com/NVlabs/cub/archive/${CUB_VERSION}.zip && \
     unzip -d /usr/local ${CUB_VERSION}.zip && \
     rm ${CUB_VERSION}.zip
-
-
-ARG SWIG_VERSION=3.0.10
-RUN wget -q http://prdownloads.sourceforge.net/swig/swig-$SWIG_VERSION.tar.gz -O - | tar xvfz - && \
-    cd swig-$SWIG_VERSION && \
-    ./configure --prefix=/usr/local/swig-$SWIG_VERSION --without-perl5 && \
-    make -j $(nproc) && \
-    make install && \
-    cd .. && \
-    rm -rf swig-$SWIG_VERSION
 
 
 ARG BOOST_VERSION=1.60.0
@@ -143,7 +132,6 @@ ARG OFED_VERSION=3.3-1.0.4.0
 RUN DEBIAN_FRONTEND=noninteractive && \
         apt-get -y update && \
         apt-get install -y --no-install-recommends \
-        # For MLNX OFED
         dnsutils \
         pciutils \
         ethtool \
@@ -156,7 +144,6 @@ RUN DEBIAN_FRONTEND=noninteractive && \
         graphviz \
         autoconf \
         chrpath \
-        swig \
         automake \
         tk8.4 \
         tcl8.4 \
@@ -171,7 +158,6 @@ RUN DEBIAN_FRONTEND=noninteractive && \
         && \
         apt-get -y autoremove && \
         rm -rf /var/lib/apt/lists/* && \
-        # libnl1 is not available in ubuntu16 so build from source
         wget -q -O - http://www.infradead.org/~tgr/libnl/files/libnl-1.1.4.tar.gz | tar xzf - && \
         cd libnl-1.1.4 && \
         ./configure && \
@@ -221,19 +207,20 @@ RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learn
     dpkg -i libnccl2_2.2.12-1+cuda9.0_amd64.deb && \
     rm libnccl*
 
-RUN echo CUDA_PATH=$CUDA_PATH
+
 ENV CNTK_ENABLE_ASGD true
 RUN chmod -R 777 /home/
 RUN cd /home/ && \
-    git clone -b lewlu/msra-face https://github.com/Veason-silverbullet/CNTK.git && \
+    git clone -b distFC-opt https://github.com/Veason-silverbullet/CNTK.git && \
     cd CNTK && \
     git submodule update --init external/gsl && \
     git submodule update --init Source/CNTKv2LibraryDll/proto/onnx/onnx_repo && \
     git submodule update --init Source/Multiverso && \
     mkdir build/release -p && \
     cd build/release && \
-    ../../configure --asgd=no && \
+    ../../configure --asgd=no --cuda=yes --java=no --python=no --csharp=no && \
     make clean && make -j $(nproc) && \
     cd bin && \
     chmod 777 cntk
 ENV PATH /home/CNTK/build/release/bin:$PATH
+
