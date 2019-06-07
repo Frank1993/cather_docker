@@ -202,9 +202,9 @@ ENV LD_LIBRARY_PATH /usr/local/halide/lib:$LD_LIBRARY_PATH
 ENV HALIDE_PATH /usr/local/halide
 
 
-ARG NCCL_VERSION=2.2.12
-RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1404/x86_64/libnccl2_2.2.12-1+cuda9.0_amd64.deb && \
-    dpkg -i libnccl2_2.2.12-1+cuda9.0_amd64.deb && \
+ARG NCCL_VERSION=2.4.7
+RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1404/x86_64/libnccl2_2.4.7-1+cuda9.0_amd64.deb && \
+    dpkg -i libnccl2_2.4.7-1+cuda9.0_amd64.deb && \
     rm libnccl*
 
 
