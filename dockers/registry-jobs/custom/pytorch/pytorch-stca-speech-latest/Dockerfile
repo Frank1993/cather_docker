@@ -45,7 +45,7 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      /opt/conda/bin/conda clean -ya
 
 RUN pip install --upgrade pip
-RUN pip install tensorboardX soundfile librosa pysptk museval
+RUN pip install tensorboardX pysoundfile librosa pysptk museval
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
