@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
          unzip \
          locales \
          language-pack-en \
+         libsndfile1 \
          htop && \
      rm -rf /var/lib/apt/lists/*
 
@@ -44,8 +45,8 @@ ENV PATH /opt/conda/bin:$PATH
 ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:/usr/local/cuda/include:$LD_LIBRARY_PATH
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:/opt/OpenBLAS/lib:$LD_LIBRARY_PATH
 
-RUN pip install --upgrade pip
-RUN pip install tensorboardX soundfile librosa pysptk museval
+RUN pip install --upgrade pip && \
+    pip install soundfile librosa pysptk museval tensorboardX
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
