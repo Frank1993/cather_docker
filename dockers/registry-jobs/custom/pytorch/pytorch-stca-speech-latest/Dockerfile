@@ -21,11 +21,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
          vim \
          zip \
          unzip \
+         locales \
+         language-pack-en \
          htop && \
      rm -rf /var/lib/apt/lists/*
 
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
+RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales && locale
 
+ENV PYTHON_VERSION=3.7
 ENV PATH=/opt/conda/bin:$PATH
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/include:$LD_LIBRARY_PATH
 ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:/opt/OpenBLAS/lib:$LD_LIBRARY_PATH
@@ -34,7 +40,7 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      chmod +x ~/miniconda.sh && \
      ~/miniconda.sh -b -p /opt/conda && \
      rm ~/miniconda.sh && \
-     /opt/conda/bin/conda install -y python=$PYTHON_VERSION numpy scipy scikit-learn matplotlib && \
+     /opt/conda/bin/conda install -y python=$PYTHON_VERSION numpy scipy scikit-learn matplotlib pyyaml tqdm && \
      /opt/conda/bin/conda install -y torchvision pytorch=1.1.0 cudatoolkit=10.0 -c pytorch && \
      /opt/conda/bin/conda clean -ya
 
