@@ -26,16 +26,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
          htop && \
      rm -rf /var/lib/apt/lists/*
 
-ENV LANG=en_US.UTF-8
-ENV LANGUAGE=en_US:en
-ENV LC_ALL=en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales && locale
 
-ENV PYTHON_VERSION=3.7
-ENV PATH=/opt/conda/bin:$PATH
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/include:$LD_LIBRARY_PATH
-ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:/opt/OpenBLAS/lib:$LD_LIBRARY_PATH
-
+ENV PYTHON_VERSION 3.7
 RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
      chmod +x ~/miniconda.sh && \
      ~/miniconda.sh -b -p /opt/conda && \
@@ -44,8 +40,12 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      /opt/conda/bin/conda install -y torchvision pytorch=1.1.0 cudatoolkit=10.0 -c pytorch && \
      /opt/conda/bin/conda clean -ya
 
+ENV PATH /opt/conda/bin:$PATH
+ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:/usr/local/cuda/include:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:/opt/OpenBLAS/lib:$LD_LIBRARY_PATH
+
 RUN pip install --upgrade pip
-RUN pip install tensorboardX pysoundfile librosa pysptk museval
+RUN pip install tensorboardX soundfile librosa pysptk museval
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
