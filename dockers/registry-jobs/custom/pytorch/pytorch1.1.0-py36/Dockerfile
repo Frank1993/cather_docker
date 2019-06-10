@@ -48,6 +48,7 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
 ENV PATH /opt/conda/envs/pytorch-py$PYTHON_VERSION/bin:$PATH
 
 RUN /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION pytorch=1.1.0 torchvision -c pytorch && \
+    /opt/conda/bin/conda install --name pytorch-py$PYTHON_VERSION -c conda-forge librosa && \
     /opt/conda/bin/conda clean -ya
 
 WORKDIR /workspace
