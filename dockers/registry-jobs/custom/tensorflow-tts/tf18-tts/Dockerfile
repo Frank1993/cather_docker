@@ -36,3 +36,4 @@ RUN python3 -m pip install nnmnkwii tensorboard_logger nltk docopt
 
 RUN apt-get -y install libnccl2=2.3.7-1+cuda9.0 libnccl-dev=2.3.7-1+cuda9.0
 RUN HOROVOD_GPU_ALLREDUCE=NCCL python3 -m pip install --no-cache-dir horovod
+RUN git clone https://github.com/NVIDIA/apex && cd apex && python3 -m pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" .
