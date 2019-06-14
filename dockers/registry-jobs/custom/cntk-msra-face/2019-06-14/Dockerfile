@@ -1,9 +1,9 @@
 FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
 
 # Labels for the docker
-LABEL description="dist" \
+LABEL description="2019-06-14" \
       repository="philly/jobs/custom/cntk-msra-face" \
-      tag="dist" \
+      tag="2019-06-14" \
       creator="v-zhimao" tooltype="cntk" \
       createtime="06/14/2019"
 
@@ -231,7 +231,7 @@ RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learn
 ENV CNTK_ENABLE_ASGD true
 RUN chmod -R 777 /home/
 RUN cd /home/ && \
-    git clone -b lewlu/msra-face-dist https://github.com/Microsoft/CNTK.git && \
+    git clone -b lewlu/msra-face https://github.com/Microsoft/CNTK.git && \
     cd CNTK && \
     git submodule update --init external/gsl && \
     git submodule update --init Source/CNTKv2LibraryDll/proto/onnx/onnx_repo && \
