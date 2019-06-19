@@ -36,6 +36,7 @@ RUN apt-get -y update && \
       python3 \
       python3-dev \
       python3-pip \
+      python3-venv  \
       python-six \
       build-essential \
       automake \
@@ -148,6 +149,9 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
     PATH="/usr/local/hadoop/bin:${PATH}" \
     LD_LIBRARY_PATH="/usr/local/hadoop/lib/native:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server:${LD_LIBRARY_PATH}"
 
+# update pip
+RUN pip install --upgrade pip
+
 # Install TensorFlow
 ENV TENSORFLOW_VERSION=1.12.0
 RUN pip3 install tensorflow-gpu==${TENSORFLOW_VERSION} h5py && \
@@ -173,6 +177,20 @@ RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.d
     cd HorovodBarrierWheel && ls -l && \
     HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=0 pip3 install wheel/horovod-0.15.2-cp35-cp35m-linux_x86_64.whl &&  \
     HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=0 pip install wheel/horovod-0.15.2-cp27-cp27mu-linux_x86_64.whl
+
+# setup appsunner
+RUN echo "AppRunner=master@239cc8b0189456e482e9e4854eb7c9045fae0f27"
+ENV APPRUNNER_DIR=/tmp/apprunner
+ENV APPRUNNER_RUNTIME_BINARY=tensorflow_community_gpu_1.13.1_cp35
+
+RUN mkdir /tmp/apprunner
+COPY start_apprunner.py /tmp/apprunner/start_apprunner.py
+WORKDIR $APPRUNNER_DIR
+RUN python3 start_apprunner.py --host-platform Philly --app-type tensorflow --runtime-binary $APPRUNNER_RUNTIME_BINARY --setup-only && \
+    chmod 777 -R .
+
+# Make run_tf global, activate venv
+ENV PATH /home/job:$APPRUNNER_DIR/.working/runtime/env/bin:$PATH
 
 RUN mkdir /home/job
 COPY toolkit-execute /home/job/toolkit-execute
