@@ -34,9 +34,10 @@ ENV PATH /opt/conda/bin/:$PATH
 RUN conda install pytorch torchvision cudatoolkit=10.0 -c pytorch && conda clean -ya
 
 RUN pip install --upgrade pip && \
-    pip install tensorflow==1.13.1 \
+    pip install --upgrade \
+                tensorflow==1.13.1 \
                 matplotlib==2.1.0 \
-                numpy==1.13.3 \
+                numpy \
                 inflect==0.2.5 \
                 librosa==0.6.0 \
                 scipy==1.0.0 \
