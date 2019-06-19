@@ -5,7 +5,7 @@ LABEL description="2019-06-14" \
       repository="philly/jobs/custom/cntk-msra-face" \
       tag="2019-06-14" \
       creator="v-zhimao" tooltype="cntk" \
-      createtime="06/18/2019"
+      createtime="06/20/2019"
 
 RUN mkdir /home/job
 COPY toolkit-execute /home/job/toolkit-execute
