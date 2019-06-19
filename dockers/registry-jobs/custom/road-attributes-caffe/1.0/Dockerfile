@@ -75,7 +75,8 @@ RUN unzip $CAFFE_DIR/Caffe-TrainingTool.zip -d $CAFFE_DIR/Caffe-TrainingTool
 WORKDIR $CAFFE_DIR/Caffe-TrainingTool/code/caffe
 RUN ls .
 # RUN cp Makefile.config.16.04.example Makefile.config
-RUN apt-get -y install vim python-numpy libatlas-base-dev python-skimage python-protobuf python-opencv
+RUN apt-get update
+RUN apt-get -y --fix-missing install vim python-numpy libatlas-base-dev python-skimage python-protobuf python-opencv
 RUN make all -j8
 
 RUN make distribute
