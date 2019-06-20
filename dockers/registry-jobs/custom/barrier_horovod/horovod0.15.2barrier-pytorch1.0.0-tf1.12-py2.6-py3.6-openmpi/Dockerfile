@@ -149,6 +149,17 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
     PATH="/usr/local/hadoop/bin:${PATH}" \
     LD_LIBRARY_PATH="/usr/local/hadoop/lib/native:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server:${LD_LIBRARY_PATH}"
 
+# install hadoop
+ENV HADOOP_VERSION=2.7.6
+COPY build_scripts /root/build_scripts
+RUN mkdir /tmp/hadoop
+RUN cd /tmp/hadoop && \
+    wget http://www-us.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz && \
+    tar xzf hadoop-${HADOOP_VERSION}.tar.gz -C /usr/local   && \
+    ln -sf /usr/local/hadoop-${HADOOP_VERSION} /usr/local/hadoop    &&  \
+    rm -rf /usr/local/hadoop/etc/hadoop &&  \
+    cp -r /root/build_scripts/hadoop /usr/local/hadoop/etc/hadoop
+
 # update pip
 RUN pip install --upgrade pip
 
