@@ -161,18 +161,19 @@ RUN cd /tmp/hadoop && \
     cp -r /root/build_scripts/hadoop /usr/local/hadoop/etc/hadoop
 
 # update pip
+# RUN pip install --upgrade pip && pip install --upgrade setuptools
 RUN pip install --upgrade pip
 
 # Install TensorFlow
 ENV TENSORFLOW_VERSION=1.12.0
 RUN pip3 install tensorflow-gpu==${TENSORFLOW_VERSION} h5py && \
-    pip install tensorflow-gpu==${TENSORFLOW_VERSION} h5py &&   \
+    # pip install tensorflow-gpu==${TENSORFLOW_VERSION} h5py &&   \
     ldconfig
 
 # Install PyTorch
 ENV PYTORCH_VERSION=1.0.0
 RUN pip3 install --no-cache-dir torch==${PYTORCH_VERSION} && \
-    pip install --no-cache-dir torch==${PYTORCH_VERSION} &&     \
+    # pip install --no-cache-dir torch==${PYTORCH_VERSION} &&     \
     ldconfig
 
 # Install Dependencies
@@ -186,8 +187,9 @@ RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.d
     cd /tmp/HorovodBarrierWheel && \
     git lfs clone https://github.com/amazingyyc/HorovodBarrierWheel.git &&  \
     cd HorovodBarrierWheel && ls -l && \
-    HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=0 pip3 install wheel/horovod-0.15.2-cp35-cp35m-linux_x86_64.whl &&  \
-    HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=0 pip install wheel/horovod-0.15.2-cp27-cp27mu-linux_x86_64.whl
+    HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=0 pip3 install wheel/horovod-0.15.2-cp35-cp35m-linux_x86_64.whl
+    #  &&  \
+    # HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=0 pip install wheel/horovod-0.15.2-cp27-cp27mu-linux_x86_64.whl
 
 # setup appsunner
 RUN echo "AppRunner=master@239cc8b0189456e482e9e4854eb7c9045fae0f27"
