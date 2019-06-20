@@ -9,7 +9,7 @@ LABEL description="This docker is a special docker that include a special Horovo
       tooltypeversion="1.12" \
       createtime="14/06/2019"
 
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64
 ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu
 
@@ -160,11 +160,27 @@ RUN cd /tmp/hadoop && \
     rm -rf /usr/local/hadoop/etc/hadoop &&  \
     cp -r /root/build_scripts/hadoop /usr/local/hadoop/etc/hadoop
 
+# setup appsunner
+COPY AppRunner /tmp/AppRunner
+RUN echo "AppRunner=master@239cc8b0189456e482e9e4854eb7c9045fae0f27"
+ENV APPRUNNER_DIR=/tmp/apprunner
+ENV APPRUNNER_RUNTIME_BINARY=tensorflow_community_gpu_1.13.1_cp35
+
+RUN mkdir /tmp/apprunner
+COPY start_apprunner.py /tmp/apprunner/start_apprunner.py
+WORKDIR $APPRUNNER_DIR
+RUN python3 start_apprunner.py --host-platform Philly --app-type tensorflow --runtime-binary $APPRUNNER_RUNTIME_BINARY --setup-only && \
+    chmod 777 -R .
+
+# Make run_tf global, activate venv
+ENV PATH /home/job:$APPRUNNER_DIR/.working/runtime/env/bin:$PATH
+
 # update pip
 # RUN pip install --upgrade pip && pip install --upgrade setuptools
 RUN pip --default-timeout=10000 install --upgrade pip
 
 # Install TensorFlow
+RUN pip3 --default-timeout=10000 uninstall tensorflow-gpu -y
 ENV TENSORFLOW_VERSION=1.12.0
 RUN pip3 --default-timeout=10000 install tensorflow-gpu==${TENSORFLOW_VERSION} h5py && \
     ldconfig
@@ -187,19 +203,28 @@ RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.d
     cd HorovodBarrierWheel && ls -l && \
     HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=0 pip3 --default-timeout=10000 install wheel/horovod-0.15.2-cp35-cp35m-linux_x86_64.whl
 
-# setup appsunner
-RUN echo "AppRunner=master@239cc8b0189456e482e9e4854eb7c9045fae0f27"
-ENV APPRUNNER_DIR=/tmp/apprunner
-ENV APPRUNNER_RUNTIME_BINARY=tensorflow_community_gpu_1.13.1_cp35
-
-RUN mkdir /tmp/apprunner
-COPY start_apprunner.py /tmp/apprunner/start_apprunner.py
-WORKDIR $APPRUNNER_DIR
-RUN python3 start_apprunner.py --host-platform Philly --app-type tensorflow --runtime-binary $APPRUNNER_RUNTIME_BINARY --setup-only && \
-    chmod 777 -R .
-
-# Make run_tf global, activate venv
-ENV PATH /home/job:$APPRUNNER_DIR/.working/runtime/env/bin:$PATH
+RUN ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcublas.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcublas.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcuda.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcuda.so.1 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcufft.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcufft.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcufftw.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcufftw.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcurand.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcurand.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcusolver.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcusolver.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcusparse.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcusparse.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppc.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppc.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppial.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppial.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppicc.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppicc.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppicom.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppicom.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppidei.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppidei.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppif.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppif.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppig.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppig.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppim.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppim.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppist.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppist.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppisu.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppisu.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppitc.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnppitc.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnpps.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnpps.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnvgraph.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnvgraph.so.9.0 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnvidia-ml.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnvidia-ml.so.1 && \ 
+    ln -s /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnvrtc.so /usr/local/cuda/targets/x86_64-linux/lib/stubs/libnvrtc.so.9.0
 
 RUN mkdir /home/job
 COPY toolkit-execute /home/job/toolkit-execute
