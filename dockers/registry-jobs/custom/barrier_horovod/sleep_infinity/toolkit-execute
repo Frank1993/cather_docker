@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Workaround: Philly will change /etc/hosts before launching toolkit-execute, 127.0.0.1=>localhost is somehow removed
+# Without 127.0.0.1=>localhost, tf 0.12 distributed training will hang
+if [ "$OMPI_COMM_WORLD_LOCAL_RANK" == "0" ]; then
+    # Update /etc/hosts only once per container
+    echo "add localhost to /etc/hosts"
+    sudo chmod 777 /etc/hosts
+    printf "127.0.0.1\tlocalhost\n" >> /etc/hosts
+    cat /etc/hosts
+fi
+
+sleep infinity
