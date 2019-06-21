@@ -55,7 +55,7 @@ RUN mkdir /tmp/Horovod && \
     git clone --recursive https://github.com/amazingyyc/horovod.git && \
     cd horovod && \
     git checkout -b v0.15.2barrier origin/v0.15.2barrier && \
-    python setup.py sdist && \ 
+    python3 setup.py sdist && \ 
     HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 HOROVOD_WITH_PYTORCH=0 pip3 --default-timeout=10000 install dist/horovod-0.15.2.tar.gz && \
     ldconfig
 
