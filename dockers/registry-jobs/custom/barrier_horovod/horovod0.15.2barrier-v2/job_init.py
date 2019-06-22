@@ -5,7 +5,7 @@ import tempfile
 
 
 tmp_dir = tempfile.mkdtemp()
-print(tmp_dir)
+print("copy all python libraries into {}".format(tmp_dir))
 
 for lib_path in sys.path:
     if os.path.exists(lib_path):
