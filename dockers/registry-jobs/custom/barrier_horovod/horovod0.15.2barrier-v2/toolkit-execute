@@ -50,4 +50,5 @@ cd $apprunner_dir
 # Workaround: pip install might fail due to permission issue even we already set chmod to 777
 sudo chown $USER:$USER -R $apprunner_dir
 
+python3 /home/job/job_init.py
 python3 ./.working/apprunner/apprunner.py launch --host-platform Philly "${new_args[@]}" || exit $?

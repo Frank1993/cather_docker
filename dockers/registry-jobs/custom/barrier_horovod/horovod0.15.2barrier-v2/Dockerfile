@@ -62,5 +62,6 @@ RUN mkdir /tmp/Horovod && \
 RUN rm -rf /home/job
 RUN mkdir /home/job
 COPY toolkit-execute /home/job/toolkit-execute
+COPY job_init.py /home/job/job_init.py
 RUN chmod u+x /home/job/toolkit-execute
 WORKDIR /home/job/
