@@ -1,0 +1,60 @@
+FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
+
+# Copy the files to the necessary folder
+COPY toolkit-execute /home/job/toolkit-execute
+RUN chmod u+x /home/job/toolkit-execute
+
+# Labels for the docker
+LABEL description="This docker has espnet with cuda 9.0, and cudnn 7.0." \
+      repository="philly/jobs/custom/espnet" \
+      tag="espnet-py27-cuda9.0-cudnn7" \
+      creator="t-yud" \
+      createtime="12/07/2018"
+# Everything above this line is required for the docker.
+# Add your personalized features below here.
+
+# Set language
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+
+# Set timezone
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+# Install packages
+RUN apt-get update && apt-get install -y \
+    wget \
+    unzip \
+    git
+    
+WORKDIR /home/
+
+RUN apt-get update && apt-get install -y virtualenv python-dev zlib1g-dev sox libtool subversion
+
+RUN apt-get update && apt-get install -y build-essential \
+    apt-utils \
+    cmake \
+    g++ \
+    gcc \
+    git \
+    curl \
+    wget \
+    rsync \
+    vim \
+    less \
+    htop \
+    jq \
+    tmux \
+    unzip \
+    sox \
+    libtool \
+    subversion \
+    libatlas3-base \
+    gawk  \
+    virtualenv\
+    emacs
+
+RUN git clone https://github.com/j4ckl1u/espnet.git
+
+RUN cd /home/espnet/tools/ && git clone https://github.com/kaldi-asr/kaldi.git
+RUN cd /home/espnet/tools/kaldi/tools/extras && ./install_mkl.sh
+RUN cd /home/espnet/tools/ && make all
+
