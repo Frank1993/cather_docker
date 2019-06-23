@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# Workaround: Philly will change /etc/hosts before launching toolkit-execute, 127.0.0.1=>localhost is somehow removed
+# Without 127.0.0.1=>localhost, tf 0.12 distributed training will hang
+if [ "$OMPI_COMM_WORLD_LOCAL_RANK" == "0" ]; then
+    # Update /etc/hosts only once per container
+    echo "add localhost to /etc/hosts"
+    sudo chmod 777 /etc/hosts
+    printf "127.0.0.1\tlocalhost\n" >> /etc/hosts
+    cat /etc/hosts
+fi
+
+# Workaround: currently Philly does not handle quote in extraParams well, quote always get dropped before final script is called
+# Use --app-args-begin and --app-args-end as a workaround, anything between --app-args-begin and --app-args-end will be combined as --app-args and pass down
+args=("$@")
+new_args=()
+
+in_app_args=0
+app_args=""
+
+for arg in "${args[@]}"; do
+    if [ "${arg}" == "--app-args-begin" ]; then
+        in_app_args=1
+        continue
+    fi
+
+    if [ "${arg}" == "--app-args-end" ]; then
+        in_app_args=0
+        new_args+=("--app-args")
+        new_args+=("$app_args")
+        continue
+    fi
+
+    if [ ${in_app_args} -eq 0 ]; then
+        new_args+=("$arg")
+    else
+        app_args+="$arg "
+    fi
+done
+
+export CLASSPATH="$(/usr/local/hadoop/bin/hadoop classpath --glob)"
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export HADOOP_HOME=/usr/local/hadoop
+export HADOOP_HDFS_HOME=/usr/local/hadoop
+
+apprunner_dir="/tmp/apprunner"
+cd $apprunner_dir
+
+# Workaround: pip install might fail due to permission issue even we already set chmod to 777
+sudo chown $USER:$USER -R $apprunner_dir
+
+python3 /home/job/job_init.py
+# python3 ./.working/apprunner/apprunner.py launch --host-platform Philly "${new_args[@]}" || exit $?
+# run a simple job
+mpirun -np 2 --host localhost   \
+python3 QnA_unshare_qp_scratch/finetune.py  \
+--app-args-begin   \
+--data_dir=hdfs://eu2/ipgsrch/aether/6c144a27_cbbc_40ec_9d01_3566a9d5b87e___Copy_data_from_FileOrDirectory_to_AzureBlob___08d454de___6_11_2019_11_40_37_AM/39904046-79ea-42e5-8e1e-08194946dfc3/2ce79248_f66a_49bc_881b_60fdea0f8863
+--bert_config_file=bert_config.json \
+--task_name=spacev_ranking \
+--test_file=qp_predict_top2000_10M.tsv \
+--ideal_eval_path=HRS_map_full.tsv \
+--vocab_file=vocab.txt \
+--output_dir=hdfs://eu2/ipgsrch/aether/8080c461_a171_4dfb_89c6_bfa9196d09e0___Copy_data_from_FileOrDirectory_to_AzureBlob___72efb390___6_22_2019_08_41_49_AM/6bc6248c-8f35-4782-84db-cc445563eacb/87d088a1_41ef_4b93_9f85_11f34a38d0d6
+--do_predict \
+--predict_batch_size=128 \
+--ranking_loss=pairwise_logistic_loss \
+--list_size=16 \
+--learning_rate=1e-5 \
+--num_train_epochs=1 \
+--max_eval_steps=200 \
+--max_seq_length_query=20 \
+--max_seq_length_meta=100 \
+--column_query_predict=3 \
+--column_passage_predict=4  \
+--direct-hdfs
+
+
