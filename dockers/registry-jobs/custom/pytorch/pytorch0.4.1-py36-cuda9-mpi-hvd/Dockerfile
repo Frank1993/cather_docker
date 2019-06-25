@@ -7,10 +7,10 @@ RUN chmod u+x /home/job/toolkit-execute
 # Labels for the docker
 LABEL description="This docker has custom pytorch in python36 with cuda 9.0, and cudnn 7.0. with mpi nccl" \
       repository="philly/jobs/custom/pytorch" \
-      tag="pytorch1.0.0-py36-mpi-nccl" \
-      creator="v-jiarxu" tooltype="pytorch" \
-      tooltypeversion="1.0.0" \
-      createtime="26/12/2018"
+      tag="pytorch1.0.0-py36-mpi-hvd" \
+      creator="v-kairli" tooltype="pytorch" \
+      tooltypeversion="0.4.1" \
+      createtime="18/12/2018"
 
 #RUN wget --no-verbose http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/libnccl2_2.1.15-1+cuda9.0_amd64.deb && \
 #    dpkg -i libnccl2_2.1.15-1+cuda9.0_amd64.deb
@@ -43,11 +43,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         vim \
         tmux \
         unzip \
-        htop \
-        libxrender1 \
-        libsm6 \
-        libxext6 
-
+        htop 
+		
+# Install OPENMPI4.0.0
+COPY openmpi-4.0.0.tar.gz /
+RUN tar -xvf /openmpi-4.0.0.tar.gz
+WORKDIR /openmpi-4.0.0/ && \
+RUN sh configure --prefix=/usr/local && \
+    make all install && \
+    ldconfig
 # Set timezone
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
@@ -65,12 +69,12 @@ RUN conda clean -ya
 RUN conda install -y mkl-include cmake cffi typing
 RUN conda install -y -c mingfeima mkldnn
 
-# Install pytorch 
-RUN conda install -y torchvision pytorch==0.4.1 -c pytorch
 
-RUN pip install mmcv cython
+# Install pytorch 
+RUN conda install -y pytorch==0.4.1 torchvision -c pytorch
 
 # Set CUDA_ROOT
 RUN export CUDA_HOME="/usr/local/cuda"
 
-RUN  HOROVOD_GPU_ALLREDUCE=NCCL pip install --no-cache-dir horovod==0.16.4
+# Install horovod
+RUN HOROVOD_GPU_ALLREDUCE=NCCL pip install --no-cache-dir horovod==0.16.4
