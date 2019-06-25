@@ -62,6 +62,8 @@ RUN cd /home/espnet/tools/ && git clone https://github.com/kaldi-asr/kaldi.git
 RUN cd /home/espnet/tools/kaldi/tools/extras && ./install_mkl.sh
 RUN cd /home/espnet/tools/ && make all
 RUN rm /home/espnet/tools/kaldi-io-for-python/kaldi_io_py.py && ln -s /home/espnet/tools/kaldi-io-for-python/kaldi_io/kaldi_io.py /home/espnet/tools/kaldi-io-for-python/kaldi_io_py.py
+RUN cd /home/espnet/tools && . venv/bin/activate && cd kaldi-io-for-python && pip install .
+RUN cd /home/espnet/tools && . venv/bin/activate && pip install sentencepiece
 
 
 
