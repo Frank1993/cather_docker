@@ -15,6 +15,7 @@ LABEL description="This docker has espnet with cuda 9.0, and cudnn 7.0." \
 
 # Set language
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV CUDA_HOME=/usr/local/cuda
 
 # Set timezone
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
@@ -23,13 +24,14 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN apt-get update && apt-get install -y \
     wget \
     unzip \
-    git
-    
-WORKDIR /home/
-
-RUN apt-get update && apt-get install -y virtualenv python-dev zlib1g-dev sox libtool subversion
-
-RUN apt-get update && apt-get install -y build-essential \
+    git \
+    virtualenv \
+    python-dev \
+    zlib1g-dev \
+    sox \
+    libtool \
+    subversion \
+     build-essential \
     apt-utils \
     cmake \
     g++ \
@@ -50,11 +52,17 @@ RUN apt-get update && apt-get install -y build-essential \
     libatlas3-base \
     gawk  \
     virtualenv\
-    emacs
-
+    emacs\
+    flac\
+    bc
+    
+WORKDIR /home/
 RUN git clone https://github.com/j4ckl1u/espnet.git
-
 RUN cd /home/espnet/tools/ && git clone https://github.com/kaldi-asr/kaldi.git
 RUN cd /home/espnet/tools/kaldi/tools/extras && ./install_mkl.sh
 RUN cd /home/espnet/tools/ && make all
+RUN rm /home/espnet/tools/kaldi-io-for-python/kaldi_io_py.py && ln -s /home/espnet/tools/kaldi-io-for-python/kaldi_io/kaldi_io.py /home/espnet/tools/kaldi-io-for-python/kaldi_io_py.py
+
+
+
 
