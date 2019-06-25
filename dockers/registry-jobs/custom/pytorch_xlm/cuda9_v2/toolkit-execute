@@ -1,0 +1,100 @@
+#!/bin/bash
+
+CONFIG_FILE=NONE
+DATA_DIR=NONE
+LOG_DIR=$PWD
+STDOUT_DIR=$PWD
+MODEL_DIR=NONE
+PREV_MODEL_DIR=NONE
+N_GPU=1
+IS_DEBUG=FALSE
+IS_MEMCHECK=FALSE
+EXTRA_ARGS=""
+
+# parsing command line arguments:
+while [[ $# > 0 ]]
+do
+key="$1"
+
+case $key in
+    -h|--help)
+    echo "Usage: toolkit-execute [run_options]"
+    echo "Options:"
+    echo "  -c|--configFile <config> - which configuration file to use (default NONE)"
+    echo "  -d|--dataDir <path> - directory path to input files (default NONE)"
+    echo "  -l|--logDir <path> - directory path to save the log files (default \$PWD)"
+    echo "  -m|--modelDir <path> - directory path to save the model files (default NONE)"
+    echo "  --memCheck - start job in memcheck mode (default FALSE)"
+    exit 1
+    ;;
+    -c|--configFile)
+    CONFIG_FILE="$2"
+    shift # pass argument
+    ;;
+    -d|--dataDir)
+    DATA_DIR="$2"
+    shift # pass argument
+    ;;
+    --stdoutDir)
+    STDOUT_DIR="$2"
+    shift # pass argument
+    ;;
+    -l|--logDir)
+    LOG_DIR="$2"
+    shift # pass argument
+    ;;
+    --modelDir)
+    MODEL_DIR="$2"
+    shift # pass argument
+    ;;
+    --prevModelDir)
+    PREV_MODEL_DIR="$2"
+    ;;
+    -m|--nGPU)
+    N_GPU="$2"
+    shift # pass argument
+    ;;
+    --debug)
+    IS_DEBUG=TRUE
+    ;;
+    --memCheck)
+    IS_MEMCHECK=TRUE
+    ;;
+    *)
+    EXTRA_ARGS="$EXTRA_ARGS $1"
+    ;;
+esac
+shift # past argument or value
+done
+
+echo "toolkit-execute: CONFIG_FILE=$CONFIG_FILE"
+echo "toolkit-execute: DATA_DIR=$DATA_DIR"
+echo "toolkit-execute: LOG_DIR=$LOG_DIR"
+echo "toolkit-execute: STDOUT_DIR=$STDOUT_DIR"
+echo "toolkit-execute: N_GPU=$N_GPU"
+echo "toolkit-execute: MODEL_DIR=$MODEL_DIR"
+echo "toolkit-execute: PREV_MODEL_DIR=$PREV_MODEL_DIR"
+echo "toolkit-execute: IS_DEBUG=$IS_DEBUG"
+echo "toolkit-execute: IS_MEMCHECK=$IS_MEMCHECK"
+
+
+CONFIGB=$(basename "$CONFIG_FILE")
+CONFIG_DIR=$(dirname "$CONFIG_FILE")
+CONFIG_EXT="${CONFIGB##*.}"
+CONFIG_NAME="${CONFIGB%.*}"
+
+nvidia-smi
+
+if [ -f "${CONFIG_DIR}/requirements.txt" ]; then
+    echo "Installing custom requirements..."
+    pip install -r ${CONFIG_DIR}/requirements.txt --user || exit $?
+fi
+
+if [[ ${CONFIG_EXT} == "py" ]] ; then
+    echo python $CONFIG_FILE --model_dir $MODEL_DIR --data_dir $DATA_DIR --log_dir $LOG_DIR --prev_model_dir $PREV_MODEL_DIR $EXTRA_ARGS
+    cd ${CONFIG_DIR} && python ${CONFIGB} --model_dir $MODEL_DIR --data_dir $DATA_DIR --log_dir $LOG_DIR --prev_model_dir $PREV_MODEL_DIR $EXTRA_ARGS || exit 1
+
+else
+    cmd="${CONFIG_FILE} --model_dir ${MODEL_DIR} --data_dir ${DATA_DIR} --log_dir ${LOG_DIR} --prev_model_dir $PREV_MODEL_DIR ${EXTRA_ARGS}"
+    ${cmd} || exit 1
+fi
