@@ -47,11 +47,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		
 # Install OPENMPI4.0.0
 COPY openmpi-4.0.0.tar.gz /
-RUN tar -xvf /openmpi-4.0.0.tar.gz
-WORKDIR /openmpi-4.0.0/ && \
-RUN sh configure --prefix=/usr/local && \
-    make all install && \
-    ldconfig
+COPY openmpi_install.sh /
+RUN chmod 777 /openmpi_install.sh && sh /openmpi_install.sh 
 # Set timezone
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
@@ -70,7 +67,7 @@ RUN conda install -y mkl-include cmake cffi typing
 RUN conda install -y -c mingfeima mkldnn
 
 
-# Install pytorch 
+# Install pytorch
 RUN conda install -y pytorch==0.4.1 torchvision -c pytorch
 
 # Set CUDA_ROOT
