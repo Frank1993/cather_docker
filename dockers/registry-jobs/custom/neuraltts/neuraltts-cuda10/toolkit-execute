@@ -111,7 +111,7 @@ CONFIG_EXT="${CONFIGB##*.}"
 CONFIG_NAME="${CONFIGB%.*}"
 if [[ ${CONFIG_EXT} == "dll" ]] ; then
     cd ${CONFIG_DIR} && ./ttsserver ${EXTRA_ARGS} OutputDir=${MODEL_DIR}/waves || exit 1
-    python compress.py ${MODEL_DIR}/waves ${MODEL_DIR} ${EXTRA_ARGS}
+    python compress.py ${MODEL_DIR}/waves ${MODEL_DIR} "${EXTRA_ARGS}"
 else
     cmd="${CONFIG_FILE} --modelDir ${MODEL_DIR} --logDir ${LOG_DIR} ${EXTRA_ARGS}"
     ${cmd} || exit 1
