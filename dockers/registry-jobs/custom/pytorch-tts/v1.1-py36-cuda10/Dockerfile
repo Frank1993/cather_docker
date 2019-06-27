@@ -19,6 +19,7 @@ RUN apt-get update && \
             libnccl2=2.4.2-1+cuda10.0 \
             git \
             unzip \
+            ffmpeg \
             curl && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
