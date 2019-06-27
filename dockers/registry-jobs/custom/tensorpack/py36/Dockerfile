@@ -32,7 +32,7 @@ RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.
 RUN sudo chmod -R 777 /opt/conda && \
     pip install tensorflow-gpu==1.10.1 opencv-python msgpack pycocotools tensorpack \
         ninja  imgaug tensorboardX  prettytable   && \
-    conda install pytorch torchvision -c pytorch
+    conda install pytorch=1.1.0 torchvision -c pytorch
 
 RUN pip install torch-encoding
 
