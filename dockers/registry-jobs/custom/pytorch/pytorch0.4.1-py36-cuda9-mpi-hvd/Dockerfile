@@ -1,8 +1,23 @@
-FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
+FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:philly-ubuntu.16.04-cuda.9.0-cudnn.7
 
 # Copy the files to the necessary folder
 COPY toolkit-execute /home/job/toolkit-execute
 RUN chmod u+x /home/job/toolkit-execute
+
+RUN rm -rf /usr/local/openmpi-1.10.3
+# Install OPENMPI4.0.0
+COPY openmpi-4.0.0.tar.gz /
+RUN tar -xvf /openmpi-4.0.0.tar.gz -C / && \
+    cd /openmpi-4.0.0 && \
+    ./configure --prefix=/usr/local/openmpi/ && \
+    make -j8 && \
+    make install -j8 && \
+    # Sanity check:
+    test -f /usr/local/openmpi/bin/mpic++
+
+# Update environment variables
+ENV PATH=/usr/local/openmpi/bin:$PATH \
+    LD_LIBRARY_PATH=/usr/local/lib:/usr/local/openmpi/lib:/usr/local/openmpi/lib64:$LD_LIBRARY_PATH
 
 # Labels for the docker
 LABEL description="This docker has custom pytorch in python36 with cuda 9.0, and cudnn 7.0. with mpi nccl" \
@@ -43,12 +58,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         vim \
         tmux \
         unzip \
-        htop 
-		
-# Install OPENMPI4.0.0
-COPY openmpi-4.0.0.tar.gz /
-COPY openmpi_install.sh /
-RUN chmod 777 /openmpi_install.sh && sh /openmpi_install.sh 
+        htop
+
 # Set timezone
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
