@@ -3,7 +3,7 @@ FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.
 # Labels for the docker
 LABEL description="Horovod barrier v4 with openmpi" \
       repository="philly/jobs/custom/barrier_horovod" \
-      tag="horovod0.15.2barrier-v4" \
+      tag="horovod-v0.15.2-barrier-v4" \
       creator="yuanya" \
       tooltype="tensorflow" \
       tooltypeversion="1.12" \
@@ -118,7 +118,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
 
 COPY AppRunner /tmp/AppRunner
 COPY build_scripts /root/build_scripts
-RUN cd /root/build_scripts && chmod 777 install_hadoop.sh && ./install_hadoop.sh && rm -rf /root/build_scripts
+RUN cd /root/build_scripts && sudo chmod -R 777 install_hadoop.sh && bash install_hadoop.sh && rm -rf /root/build_scripts
 
 # Install Python
 ENV PYTHON_WITH_VERSION=python3.5
