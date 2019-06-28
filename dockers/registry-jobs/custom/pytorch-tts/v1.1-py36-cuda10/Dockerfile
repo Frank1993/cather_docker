@@ -17,6 +17,7 @@ LABEL description="This docker has pytorch 1.1.0 in anaconda python36 with cuda 
 RUN apt-get update && \
     apt-get install -y --allow-change-held-packages --no-install-recommends \
             libnccl2=2.4.2-1+cuda10.0 \
+            sox \
             git \
             unzip \
             ffmpeg \
