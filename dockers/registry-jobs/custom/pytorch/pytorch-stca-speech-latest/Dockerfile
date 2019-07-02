@@ -14,6 +14,10 @@ LABEL description="This docker has pytorch 1.1.0 in python37 with cuda 9.0, and 
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
 
+ENV CUDA_VERSION 9.0
+ENV PYTHON_VERSION 3.7
+ENV PYTORCH_VERSION 1.1.0
+
 RUN apt update && apt install -y --no-install-recommends \
          git \
          ca-certificates \
@@ -22,14 +26,9 @@ RUN apt update && apt install -y --no-install-recommends \
          unzip \
          libsndfile1 \
          htop && \
-    rm -rf /var/lib/apt/lists/*
-
-ENV CUDA_VERSION 9.0
-ENV PYTHON_VERSION 3.7
-ENV PYTORCH_VERSION 1.1.0
-
-# Install NCCL
-RUN mkdir /tmp/nccl && cd /tmp/nccl && \
+    rm -rf /var/lib/apt/lists/* && \
+    # Install NCCL
+    mkdir /tmp/nccl && cd /tmp/nccl && \
     wget --no-verbose https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb && \
     dpkg -i nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb && \
     apt update && \
