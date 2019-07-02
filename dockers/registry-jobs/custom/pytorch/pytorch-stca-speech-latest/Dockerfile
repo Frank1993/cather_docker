@@ -14,9 +14,9 @@ LABEL description="This docker has pytorch 1.1.0 in python37 with cuda 9.0, and 
 # Everything above this line is required for the docker.
 # Add your personalized features below here.
 
-ENV CUDA_VERSION 9.0
-ENV PYTHON_VERSION 3.7
-ENV PYTORCH_VERSION 1.1.0
+ENV CUDA_VERSION=9.0 \
+    PYTHON_VERSION=3.7 \
+    PYTORCH_VERSION=1.1.0
 
 RUN apt update && apt install -y --no-install-recommends \
          git \
@@ -43,12 +43,12 @@ RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-la
      /opt/conda/bin/conda install -y torchvision pytorch=$PYTORCH_VERSION cudatoolkit=$CUDA_VERSION -c pytorch && \
      /opt/conda/bin/conda clean -ya
 
-ENV PATH /opt/conda/bin:$PATH
-ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:/usr/local/cuda/include:$LD_LIBRARY_PATH
-ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:/opt/OpenBLAS/lib:$LD_LIBRARY_PATH
+ENV PATH=/opt/conda/bin:$PATH \
+    LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/include:$LD_LIBRARY_PATH \
+    LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:/opt/OpenBLAS/lib:$LD_LIBRARY_PATH
 
 RUN pip install --upgrade pip && \
-    pip install soundfile librosa pysptk museval tensorboardX
+    pip install soundfile librosa pysptk museval tensorboardX seaborn
 
 WORKDIR /workspace
 RUN chmod -R a+w /workspace
