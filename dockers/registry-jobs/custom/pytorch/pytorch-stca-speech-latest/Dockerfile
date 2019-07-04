@@ -1,4 +1,4 @@
-FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:1.10.3-ubuntu.16.04-cuda.9.0-cudnn.7
+FROM phillyregistry.azurecr.io/philly/jobs/base/philly-openmpi:philly-ubuntu.16.04-cuda.9.0-cudnn.7
 
 # Copy the files to the necessary folder
 COPY toolkit-execute /home/job/toolkit-execute
@@ -19,6 +19,8 @@ ENV CUDA_VERSION=9.0 \
     PYTORCH_VERSION=1.1.0
 
 RUN apt update && apt install -y --no-install-recommends \
+         libnccl2=2.4.2-1+cuda$CUDA_VERSION \
+         libnccl-dev=2.4.2-1+cuda$CUDA_VERSION \
          git \
          ca-certificates \
          vim \
@@ -26,16 +28,9 @@ RUN apt update && apt install -y --no-install-recommends \
          unzip \
          libsndfile1 \
          htop && \
-    rm -rf /var/lib/apt/lists/* && \
-    # Install NCCL
-    mkdir /tmp/nccl && cd /tmp/nccl && \
-    wget --no-verbose https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb && \
-    dpkg -i nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb && \
-    apt update && \
-    apt install -y libnccl2=2.4.7-1+cuda$CUDA_VERSION libnccl-dev=2.4.7-1+cuda$CUDA_VERSION && \
-    rm -f nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+    rm -rf /var/lib/apt/lists/*
 
-RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+RUN curl -o ~/miniconda.sh -O https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
      chmod +x ~/miniconda.sh && \
      ~/miniconda.sh -b -p /opt/conda && \
      rm ~/miniconda.sh && \
