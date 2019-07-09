@@ -1,0 +1,18 @@
+FROM phillyregistry.azurecr.io/philly/jobs/toolkit/tensorflow:community-gpu-1.13.1-cp35
+
+# Copy the files to the necessary folder
+COPY toolkit-execute /home/job/toolkit-execute
+RUN chmod u+x /home/job/toolkit-execute
+
+# Labels for the docker
+LABEL description="Docker for rnr" \
+      repository="philly/jobs/custom/rnr_rf113" \
+      tag="tf113_hd" \
+      creator="peh" tooltype="custom" \
+      tooltypeversion="4.3.11(1)-release" \
+      createtime="5/23/2019"
+
+# Everything above this line is required for the docker.
+# Add your personalized features below here.
+
+RUN ldconfig /usr/local/cuda-10.0/targets/x86_64-linux/lib/stubs && HOROVOD_GPU_ALLREDUCE=NCCL HOROVOD_WITH_TENSORFLOW=1 pip install --no-cache-dir horovod && ldconfig
